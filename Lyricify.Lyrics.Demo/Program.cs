@@ -1,5 +1,4 @@
-﻿using Lyricify.Lyrics.Helpers;
-using Lyricify.Lyrics.Models;
+﻿using Lyricify.Lyrics.Models;
 
 namespace Lyricify.Lyrics.Demo
 {
@@ -16,6 +15,8 @@ namespace Lyricify.Lyrics.Demo
             //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
 
             //lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/YrcDemo.txt"), LyricsRawTypes.Yrc);
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
+            //Helpers.Optimization.Yrc.StandardizeYrcLyrics(lyricsData!.Lines!); // 优化 YRC 歌词
             //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
 
             //lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/SpotifyDemo.txt"), LyricsRawTypes.Spotify);
