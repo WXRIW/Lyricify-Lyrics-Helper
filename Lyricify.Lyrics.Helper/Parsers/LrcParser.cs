@@ -40,7 +40,7 @@ namespace Lyricify.Lyrics.Parsers
                                 if (curTimestamps[j] == -1) break;
                                 lines.Add(new LineInfo(
                                     input.Slice(curStateStartPosition + 1, i - curStateStartPosition - 1).ToString(),
-                                    curTimestamps[j] + offset));
+                                    curTimestamps[j] - offset));
                             }
                             if (input[i + 1] == '\n' || input[i + 1] == '\r') i++;
                             currentTimestampPosition = 0;
@@ -65,7 +65,7 @@ namespace Lyricify.Lyrics.Parsers
                         if (curTimestamps[j] == -1) break;
                         lines.Add(new LineInfo(
                             input.Slice(curStateStartPosition + 1, i - curStateStartPosition - (lastCharacterIsLineBreak ? 1 : 0)).ToString(),
-                            curTimestamps[j] + offset));
+                            curTimestamps[j] - offset));
                     }
                     continue;
                 }
