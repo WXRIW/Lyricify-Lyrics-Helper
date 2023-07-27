@@ -26,7 +26,7 @@
         public FullSyllableInfo() { }
 #pragma warning restore CS8618
 
-        public FullSyllableInfo(IEnumerable<ISyllableInfo> syllableInfos)
+        public FullSyllableInfo(IEnumerable<SyllableInfo> syllableInfos)
         {
             SubItems = syllableInfos.ToList();
         }
@@ -40,7 +40,7 @@
         private int? _endTime = null;
         public int EndTime => _endTime ??= SubItems.Last().EndTime;
 
-        public List<ISyllableInfo> SubItems { get; set; }
+        public List<SyllableInfo> SubItems { get; set; }
 
         /// <summary>
         /// Refresh preloaded properties if SubItems have been updated

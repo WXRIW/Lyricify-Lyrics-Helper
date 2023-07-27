@@ -26,37 +26,10 @@ namespace Lyricify.Lyrics.Parsers
             var lyricsLines = GetSplitedKrc(krc).ToList();
 
             // 处理 Attributes
-            for (int i = 0; i < lyricsLines.Count; i++)
-            {
-                if (IsAttributeLine(lyricsLines[i]))
-                {
-                    var attribute = GetAttribute(lyricsLines[i]);
-                    switch (attribute.Key)
-                    {
-                        case "ar":
-                            data.TrackMetadata.Artist = attribute.Value;
-                            break;
-                        case "al":
-                            data.TrackMetadata.Album = attribute.Value;
-                            break;
-                        case "ti":
-                            data.TrackMetadata.Title = attribute.Value;
-                            break;
-                        case "length":
-                            data.TrackMetadata.DurationMs = attribute.Value;
-                            break;
-                    }
-                    if (attribute.Key == "hash")
-                        additionalInfo.Hash = attribute.Value;
-                    else
-                        additionalInfo.Attributes!.Add(attribute);
-
-                    lyricsLines.RemoveAt(i--);
-                }
-            }
+            var offset = AttributesHelper.ParseGeneralAttributesToLyricsData(data, lyricsLines);
 
             // 处理歌词
-            var lyrics = ParseLyrics(lyricsLines);
+            var lyrics = ParseLyrics(lyricsLines, offset);
             if (CheckKrcTranslation(krc))
             {
                 var lyricsTrans = GetTranslationFromKrc(krc);
@@ -98,7 +71,7 @@ namespace Lyricify.Lyrics.Parsers
             return lyrics;
         }
 
-        public static List<ILineInfo> ParseLyrics(List<string> lyricsLines)
+        public static List<ILineInfo> ParseLyrics(List<string> lyricsLines, int? offset = null)
         {
             var lyrics = new List<ILineInfo>();
 
@@ -113,6 +86,12 @@ namespace Lyricify.Lyrics.Parsers
                     }
                 }
             }
+
+            if (offset.HasValue && offset != 0)
+            {
+                Helpers.OffsetHelper.AddOffset(lyrics, offset.Value);
+            }
+
             return lyrics;
         }
 

@@ -23,40 +23,17 @@ namespace Lyricify.Lyrics.Parsers
             };
 
             // 处理 Attributes
-            for (int i = 0; i < lyricsLines.Count; i++)
-            {
-                if (IsAttributeLine(lyricsLines[i]))
-                {
-                    var attribute = GetAttribute(lyricsLines[i]);
-                    switch (attribute.Key)
-                    {
-                        case "ar":
-                            data.TrackMetadata.Artist = attribute.Value;
-                            break;
-                        case "al":
-                            data.TrackMetadata.Album = attribute.Value;
-                            break;
-                        case "ti":
-                            data.TrackMetadata.Title = attribute.Value;
-                            break;
-                        case "length":
-                            data.TrackMetadata.DurationMs = attribute.Value;
-                            break;
-                    }
-                    ((GeneralAdditionalInfo)data.File.AdditionalInfo).Attributes!.Add(attribute);
+            var offset = AttributesHelper.ParseGeneralAttributesToLyricsData(data, lyricsLines);
 
-                    lyricsLines.RemoveAt(i--);
-                }
-            }
-
-            var lines = ParseLyrics(lyricsLines);
+            var lines = ParseLyrics(lyricsLines, offset);
             data.Lines = lines.Cast<ILineInfo>().ToList();
 
             return data;
         }
 
-        public static List<LineInfo> ParseLyrics(List<string> lines)
+        public static List<LineInfo> ParseLyrics(List<string> lines, int? offset = null)
         {
+            offset ??= 0;
             var lyricsArray = new List<LineInfo>();
             foreach (var line in lines)
             {
@@ -69,28 +46,13 @@ namespace Lyricify.Lyrics.Parsers
                     lyricsArray.Add(new()
                     {
                         Text = text,
-                        StartTime = begin,
-                        EndTime = end,
+                        StartTime = begin - offset,
+                        EndTime = end - offset,
                     });
                 }
                 catch { }
             }
             return lyricsArray;
-        }
-
-        /// <summary>
-        /// 是否是 Attribute 信息行
-        /// </summary>
-        public static bool IsAttributeLine(string line) => line.StartsWith('[') && line.EndsWith(']') && line.Contains(':');
-
-        /// <summary>
-        /// 获取 Attribute 信息
-        /// </summary>
-        public static KeyValuePair<string, string> GetAttribute(string line)
-        {
-            string key = line.Between("[", ":");
-            string value = line[(line.IndexOf(':') + 1)..^1];
-            return new KeyValuePair<string, string>(key, value);
         }
     }
 }
