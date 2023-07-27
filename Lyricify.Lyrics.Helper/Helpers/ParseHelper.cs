@@ -18,6 +18,8 @@ namespace Lyricify.Lyrics.Helpers
         {
             switch (lyricsRawType)
             {
+                case LyricsRawTypes.LyricifyLines:
+                    return Parsers.LyricifyLinesParser.Parse(lyrics);
                 case LyricsRawTypes.Lrc:
                     return Parsers.LrcParser.Parse(lyrics);
                 case LyricsRawTypes.Krc:

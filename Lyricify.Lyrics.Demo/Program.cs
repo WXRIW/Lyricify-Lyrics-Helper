@@ -1,4 +1,5 @@
-﻿using Lyricify.Lyrics.Models;
+﻿using Lyricify.Lyrics.Helpers;
+using Lyricify.Lyrics.Models;
 
 namespace Lyricify.Lyrics.Demo
 {
@@ -7,6 +8,9 @@ namespace Lyricify.Lyrics.Demo
         static void Main(string[] args)
         {
             LyricsData? lyricsData;
+
+            //lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/LyricifyLinesDemo.txt"), LyricsRawTypes.LyricifyLines);
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
 
             //lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/LrcDemo.txt"), LyricsRawTypes.Lrc);
             //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));

@@ -25,6 +25,9 @@
     <None Update="RawLyrics\LrcDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="RawLyrics\LyricifyLinesDemo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="RawLyrics\SpotifyDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

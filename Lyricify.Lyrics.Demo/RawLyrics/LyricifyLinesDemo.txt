@@ -1,0 +1,58 @@
+[type:LyricifyLines]
+[ti:Cruel Summer]
+[ar:Taylor Swift]
+[al:Lover]
+[offset:0]
+[5841,8298]Fever dream high in the quiet of the night
+[8298,11511]You know that I caught it (Oh yeah, you're right, I want it)
+[11511,13978]Bad, bad boy shiny toy with a price
+[13978,16986]You know that I bought it (Oh yeah, you're right, I want it)
+[16433,19108]Killing me slow, out the window
+[19108,22076]I'm always waiting for you to be waiting below
+[22076,24749]Devils roll the dice, angels roll their eyes
+[24749,27882]What doesn't kill me makes me want you more
+[27882,32289]And it's new, the shape of your body, it's blue
+[32289,36605]The feeling I got and it's, ooh, whoa-oh
+[36561,39383]It's a cruel summer
+[39383,42231]It's cool, that's what I tell 'em
+[42231,47866]No rules in breakable heaven but, ooh, whoa-oh
+[47866,51468]It's a cruel summer with you
+[53866,56948]Hang your head low in the glow of the vending machine
+[56948,59492]I'm not dying (Oh yeah, you're right, I want it)
+[59492,62465]Say that we'll just screw it up in these trying times
+[62465,64920]We're not trying (Oh yeah, you're right, I want it)
+[64291,67098]So cut the headlights, summer's a knife
+[67098,70065]I'm always waiting for you just to cut to the bone
+[70065,72725]Devils roll the dice, angels roll their eyes
+[72725,75511]And if I bleed, you'll be the last to know
+[75511,80303]Oh, it's new, the shape of your body, it's blue
+[80303,84546]The feeling I got and it's, ooh, whoa-oh
+[84546,87376]It's a cruel summer
+[87376,90217]It's cool, that's what I tell 'em
+[90217,95837]No rules in breakable heaven but, ooh, whoa-oh
+[95837,99417]It's a cruel summer with you
+[99384,101509]I'm drunk in the back of the car
+[101509,104815]And I cried like a baby coming home from the bar, oh
+[104815,107127]Said, "I'm fine," but it wasn't true
+[107127,109981]I don't wanna keep secrets just to keep you
+[109981,112776]And I snuck in through the garden gate
+[112776,116130]Every night that summer just to seal my fate, oh
+[116130,118600]And I scream, for whatever it's worth
+[118600,121953]"I love you, ain't that the worst thing you ever heard?"
+[121953,124100]He looks up, grinning like a devil
+[124100,128285]It's new, the shape of your body, it's blue
+[128285,132550]The feeling I got and it's, ooh, whoa-oh
+[132550,135367]It's a cruel summer
+[135367,138181]It's cool, that's what I tell 'em
+[138181,143813]No rules in breakable heaven but, ooh, whoa-oh
+[143813,147376]It's a cruel summer with you
+[147367,149495]I'm drunk in the back of the car
+[149495,152852]And I cried like a baby coming home from the bar, oh
+[152852,155113]Said, "I'm fine" but it wasn't true
+[155113,157961]I don't wanna keep secrets just to keep you
+[157961,160796]And I snuck in through the garden gate
+[160796,164137]Every night that summer just to seal my fate, oh
+[164137,166589]And I scream, for whatever it's worth
+[166589,170316]"I love you, ain't that the worst thing you ever heard?"
+[170316,173101]Yeah, yeah
+[173101,175023]Yeah, yeah
