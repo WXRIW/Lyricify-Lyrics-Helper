@@ -72,7 +72,7 @@ namespace Lyricify.Lyrics.Parsers
             List<SyllableInfo> lyricItems = new();
             MatchCollection matches = Regex.Matches(line, @"(.*?)\((\d+),(\d+)\)");
 
-            foreach (Match match in matches)
+            foreach (Match match in matches.Cast<Match>())
             {
                 if (match.Groups.Count == 4)
                 {
@@ -87,21 +87,6 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             return new(lyricItems);
-        }
-
-        private enum CurrentState
-        {
-            None,
-            LyricTimestamp,
-            WordTimestamp,
-            LyricDuration,
-            WordDuration,
-            WordUnknownItem,
-            PossiblyLyricDuration,
-            PossiblyWordDuration,
-            PossiblyLyricTimestamp,
-            PossiblyWordTimestamp,
-            Lyric
         }
     }
 }
