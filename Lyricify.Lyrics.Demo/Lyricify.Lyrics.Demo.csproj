@@ -19,6 +19,9 @@
     <None Update="RawLyrics\AppleSyllableDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="RawLyrics\QrcDemo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="RawLyrics\KrcDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

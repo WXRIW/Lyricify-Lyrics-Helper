@@ -16,12 +16,13 @@ namespace Lyricify.Lyrics.Parsers
                 {
                     Type = LyricsTypes.Krc,
                     SyncTypes = SyncTypes.SyllableSynced,
-                    AdditionalInfo = new KrcAdditionalInfo(),
+                    AdditionalInfo = new KrcAdditionalInfo()
+                    {
+                        Attributes = new(),
+                    },
                 },
                 TrackMetadata = new TrackMetadata()
             };
-            var additionalInfo = (KrcAdditionalInfo)data.File.AdditionalInfo;
-            additionalInfo.Attributes = new();
 
             var lyricsLines = GetSplitedKrc(krc).ToList();
 

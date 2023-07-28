@@ -22,6 +22,8 @@ namespace Lyricify.Lyrics.Helpers
                     return Parsers.LyricifyLinesParser.Parse(lyrics);
                 case LyricsRawTypes.Lrc:
                     return Parsers.LrcParser.Parse(lyrics);
+                case LyricsRawTypes.Qrc:
+                    return Parsers.QrcParser.Parse(lyrics);
                 case LyricsRawTypes.Krc:
                     return Parsers.KrcParser.Parse(lyrics);
                 case LyricsRawTypes.Yrc:
