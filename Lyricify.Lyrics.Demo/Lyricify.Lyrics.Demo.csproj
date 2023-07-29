@@ -22,6 +22,9 @@
     <None Update="RawLyrics\LyricifySyllableDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="RawLyrics\LsMixQrcDemo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="RawLyrics\QrcDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
