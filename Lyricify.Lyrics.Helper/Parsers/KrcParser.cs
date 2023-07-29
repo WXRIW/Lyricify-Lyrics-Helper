@@ -31,9 +31,9 @@ namespace Lyricify.Lyrics.Parsers
 
             // 处理歌词
             var lyrics = ParseLyrics(lyricsLines, offset);
-            if (CheckKrcTranslation(krc))
+            if (KrcTranslationParser.CheckKrcTranslation(krc))
             {
-                var lyricsTrans = GetTranslationFromKrc(krc);
+                var lyricsTrans = KrcTranslationParser.GetTranslationFromKrc(krc);
                 if (lyricsTrans != null)
                 {
                     for (int i = 0; i < lyrics.Count && i < lyricsTrans.Count; i++)
@@ -55,9 +55,9 @@ namespace Lyricify.Lyrics.Parsers
             var lyricsLines = GetSplitedKrcWithoutInfoLine(krc).ToList();
             var lyrics = ParseLyrics(lyricsLines);
 
-            if (CheckKrcTranslation(krc))
+            if (KrcTranslationParser.CheckKrcTranslation(krc))
             {
-                var lyricsTrans = GetTranslationFromKrc(krc);
+                var lyricsTrans = KrcTranslationParser.GetTranslationFromKrc(krc);
                 if (lyricsTrans != null)
                 {
                     for (int i = 0; i < lyrics.Count && i < lyricsTrans.Count; i++)
@@ -80,7 +80,7 @@ namespace Lyricify.Lyrics.Parsers
             {
                 if (line.StartsWith('['))
                 {
-                    var l = GetVerbatimLyricsFromKrcLine(line);
+                    var l = ParseLyricsLine(line);
                     if (l != null)
                     {
                         lyrics.Add(l);
@@ -101,7 +101,7 @@ namespace Lyricify.Lyrics.Parsers
         /// </summary>
         /// <param name="krc"></param>
         /// <returns></returns>
-        public static string[] GetSplitedKrc(string krc)
+        private static string[] GetSplitedKrc(string krc)
         {
             string[] lines = krc
                 .Replace("\r\n", "\n")
@@ -115,7 +115,7 @@ namespace Lyricify.Lyrics.Parsers
         /// </summary>
         /// <param name="krc"></param>
         /// <returns></returns>
-        public static string[] GetSplitedKrcWithoutInfoLine(string krc)
+        private static string[] GetSplitedKrcWithoutInfoLine(string krc)
         {
             string[] lines = krc
                 .Replace("\r\n", "\n")
@@ -136,33 +136,11 @@ namespace Lyricify.Lyrics.Parsers
         }
 
         /// <summary>
-        /// 获取 Krc 歌词的 Hash 标签内容
-        /// </summary>
-        /// <param name="krc"></param>
-        /// <returns></returns>
-        public static string? GetHashTagFromKrc(string krc)
-        {
-            string[] lines = krc
-                .Replace("\r\n", "\n")
-                .Replace("\r", "")
-                .Split('\n');
-            foreach (string line in lines)
-            {
-                if (line.StartsWith("[hash:") && line.Length >= 7)
-                {
-                    var _line = line.Trim();
-                    return _line[6..^1];
-                }
-            }
-            return null;
-        }
-
-        /// <summary>
         /// 将 Krc 歌词行转换为 SyllableLineInfo
         /// </summary>
         /// <param name="line"></param>
         /// <returns></returns>
-        public static SyllableLineInfo? GetVerbatimLyricsFromKrcLine(string line)
+        public static SyllableLineInfo? ParseLyricsLine(string line)
         {
             string[] words = line[(line.IndexOf(']') + 1)..].Split(",0>");
             if (words.Length < 1) return null;
@@ -196,24 +174,10 @@ namespace Lyricify.Lyrics.Parsers
             }
             return new(syllables);
         }
+    }
 
-        /// <summary>
-        /// 是否是 Attribute 信息行
-        /// </summary>
-        public static bool IsAttributeLine(string line) => line.StartsWith('[') && line.EndsWith(']') && line.Contains(':');
-
-        /// <summary>
-        /// 获取 Attribute 信息
-        /// </summary>
-        public static KeyValuePair<string, string> GetAttribute(string line)
-        {
-            string key = line.Between("[", ":");
-            string value = line[(line.IndexOf(':') + 1)..^1];
-            return new KeyValuePair<string, string>(key, value);
-        }
-
-        #region Translation
-
+    public static class KrcTranslationParser
+    {
         /// <summary>
         /// 检查 KRC 中是否有翻译
         /// </summary>
@@ -283,7 +247,5 @@ namespace Lyricify.Lyrics.Parsers
 
             return JsonConvert.DeserializeObject<KugouTranslation>(decode);
         }
-
-        #endregion Translation
     }
 }
