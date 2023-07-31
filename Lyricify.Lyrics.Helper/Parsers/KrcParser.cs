@@ -189,7 +189,7 @@ namespace Lyricify.Lyrics.Parsers
             {
                 var language = krc[(krc.IndexOf("[language:") + "[language:".Length)..];
                 language = language[..language.IndexOf(']')];
-                var decode = Encoding.ASCII.GetString(Convert.FromBase64String(language));
+                var decode = Encoding.UTF8.GetString(Convert.FromBase64String(language));
 
                 var translation = JsonConvert.DeserializeObject<KugouTranslation>(decode);
                 if (translation!.Content!.Count > 0) return true;
@@ -210,7 +210,7 @@ namespace Lyricify.Lyrics.Parsers
 
             var language = krc[(krc.IndexOf("[language:") + "[language:".Length)..];
             language = language[..language.IndexOf(']')];
-            var decode = Encoding.ASCII.GetString(Convert.FromBase64String(language));
+            var decode = Encoding.UTF8.GetString(Convert.FromBase64String(language));
 
             var translation = JsonConvert.DeserializeObject<KugouTranslation>(decode);
 
@@ -243,7 +243,7 @@ namespace Lyricify.Lyrics.Parsers
 
             var language = krc[(krc.IndexOf("[language:") + "[language:".Length)..];
             language = language[..language.IndexOf(']')];
-            var decode = Encoding.ASCII.GetString(Convert.FromBase64String(language));
+            var decode = Encoding.UTF8.GetString(Convert.FromBase64String(language));
 
             return JsonConvert.DeserializeObject<KugouTranslation>(decode);
         }
