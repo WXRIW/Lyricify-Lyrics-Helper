@@ -2,7 +2,7 @@
 
 namespace Lyricify.Lyrics.Models
 {
-    public interface ILineInfo
+    public interface ILineInfo : IComparable
     {
         public string Text { get; }
 

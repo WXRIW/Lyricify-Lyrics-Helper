@@ -238,6 +238,7 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             ArrayPool<int>.Shared.Return(curTimestamps, true);
+            lines.Sort();
 
             var lyricsData = new LyricsData
             {
@@ -440,6 +441,7 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             ArrayPool<int>.Shared.Return(curTimestamps, true);
+            lines.Sort();
             return lines.Cast<ILineInfo>().ToList();
         }
 

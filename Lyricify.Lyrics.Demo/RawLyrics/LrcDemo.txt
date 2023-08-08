@@ -1,12 +1,12 @@
 [offset:0]
 [00:00.000] 作词 : Ryan Tedder
 [00:00.835] 作曲 : Ryan Tedder
-[00:01.670]Lately, I've been, I've been losing sleep
-[00:04.850]Dreaming about the things that we could be
-[00:09.480]But baby, I've been, I've been praying hard
-[00:13.480]Said no more counting dollars
-[00:16.040]We'll be counting stars
+[00:01.670][01:17.870]Lately, I've been, I've been losing sleep
+[00:04.850][01:21.390]Dreaming about the things that we could be
+[00:09.480][01:25.390]But baby, I've been, I've been praying hard
+[00:13.480][01:29.390]Said no more counting dollars
 [00:18.920]Yeah, we'll be counting stars
+[00:16.040]We'll be counting stars
 [00:37.720]I see this life
 [00:39.030]Like a swinging vine
 [00:40.340]Swing my heart across the line
@@ -22,10 +22,6 @@
 [01:06.310]doing the right thing
 [01:09.880]I couldn't lie, couldn't lie, couldn't lie
 [01:13.500]Everything that kills me makes me feel alive
-[01:17.870]Lately, I've been, I've been losing sleep
-[01:21.390]Dreaming about the things that we could be
-[01:25.390]But baby, I've been, I've been praying hard
-[01:29.390]Said no more counting dollars
 [01:31.210]We'll be counting stars
 [01:33.210]Lately, I've been, I've been losing sleep
 [01:37.200]Dreaming about the things that we could be

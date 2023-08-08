@@ -31,6 +31,18 @@
         public LyricsAlignment LyricsAlignment { get; set; } = LyricsAlignment.Unspecified;
 
         public ILineInfo? SubLine { get; set; }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is ILineInfo line)
+            {
+                if (StartTime is null || line.StartTime is null) return 0;
+                if (StartTime == line.StartTime) return 0;
+                if (StartTime < line.StartTime) return -1;
+                else return 1;
+            }
+            return 0;
+        }
     }
 
     public class SyllableLineInfo : ILineInfo
@@ -60,6 +72,18 @@
         public List<ISyllableInfo> Syllables { get; set; }
 
         public bool IsSyllable => Syllables is { Count: > 0 };
+
+        public int CompareTo(object obj)
+        {
+            if (obj is ILineInfo line)
+            {
+                if (StartTime is null || line.StartTime is null) return 0;
+                if (StartTime == line.StartTime) return 0;
+                if (StartTime < line.StartTime) return -1;
+                else return 1;
+            }
+            return 0;
+        }
     }
 
     public class FullLineInfo : LineInfo, IFullLineInfo
