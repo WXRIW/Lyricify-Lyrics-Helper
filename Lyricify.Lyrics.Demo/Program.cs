@@ -7,6 +7,8 @@ namespace Lyricify.Lyrics.Demo
     {
         static void Main(string[] args)
         {
+            /* Parsers Demo */
+
             LyricsData? lyricsData;
 
             //lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/LyricifySyllableDemo.txt"), LyricsRawTypes.LyricifySyllable);
@@ -40,6 +42,11 @@ namespace Lyricify.Lyrics.Demo
 
             //lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/SpotifyUnsyncedDemo.txt"), LyricsRawTypes.Spotify);
             //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
+
+            /* Type Detector Demo */
+
+            //Console.WriteLine(Helpers.Types.Lrc.IsLrc(File.ReadAllText("RawLyrics/LrcDemo.txt")));
+            //Console.WriteLine(Helpers.Types.Lrc.IsLrc(File.ReadAllText("RawLyrics/QrcDemo.txt")));
         }
     }
 }
