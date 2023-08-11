@@ -1,20 +1,32 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>netstandard2.1</TargetFramework>
-	<LangVersion>10</LangVersion>
-	<RootNamespace>Lyricify.Lyrics</RootNamespace>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>0.1.1</AssemblyVersion>
-    <FileVersion>0.1.1</FileVersion>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>netstandard2.1</TargetFrameworks>
+		<LangVersion>10.0</LangVersion>
+		<RootNamespace>Lyricify.Lyrics</RootNamespace>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<AssemblyVersion>0.1.2</AssemblyVersion>
+		<FileVersion>0.1.2</FileVersion>
+		<Authors>XY Wang</Authors>
+		<Company>WXRIW</Company>
+		<Title>Lyricify Lyrics Helper</Title>
+		<PackageProjectUrl>https://github.com/WXRIW/Lyricify-Lyrics-Helper</PackageProjectUrl>
+		<Description>All around Lyricify</Description>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CHTCHSConv" Version="1.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="SharpZipLib" Version="1.4.2" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="CHTCHSConv" Version="1.0.0" />
+		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="SharpZipLib" Version="1.4.2" />
+	</ItemGroup>
 
+	<PropertyGroup>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+	</PropertyGroup>
 </Project>
