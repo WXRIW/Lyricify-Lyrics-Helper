@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Text.RegularExpressions;
+﻿using System.Text.RegularExpressions;
 
 namespace Lyricify.Lyrics.Helpers.Types
 {
@@ -9,6 +6,8 @@ namespace Lyricify.Lyrics.Helpers.Types
     {
         public static bool IsLrc(string input)
         {
+            if (input == null) return false;
+
             var pattern = @"\[\d+:\d+\.\d+\](.+)";
             var regex = new Regex(pattern);
 
