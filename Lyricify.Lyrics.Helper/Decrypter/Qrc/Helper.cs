@@ -13,7 +13,7 @@ namespace Lyricify.Lyrics.Decrypter.Qrc
         public static QqLyricsResponse? GetLyricsByMid(string mid)
         {
             var song = GetSong(mid).Result;
-            if (song == null || song.Data is { Length: > 0 }) return null;
+            if (song == null || song.Data is not { Length: > 0 }) return null;
             var id = song.Data?[0].Id;
             return GetLyricsAsync(id!).Result;
         }
@@ -26,7 +26,7 @@ namespace Lyricify.Lyrics.Decrypter.Qrc
         public static async Task<QqLyricsResponse?> GetLyricsByMidAsync(string mid)
         {
             var song = await GetSong(mid);
-            if (song == null || song.Data is { Length: > 0 }) return null;
+            if (song == null || song.Data is not { Length: > 0 }) return null;
             var id = song.Data?[0].Id;
             return await GetLyricsAsync(id!);
         }
@@ -151,6 +151,11 @@ namespace Lyricify.Lyrics.Decrypter.Qrc
 
             try
             {
+                if (json.Contains("getOneSongInfoCallback"))
+                {
+                    json = json.Replace("getOneSongInfoCallback", "")[1..^1];
+                }
+
                 return JsonConvert.DeserializeObject<SongResponse>(json);
             }
             catch
