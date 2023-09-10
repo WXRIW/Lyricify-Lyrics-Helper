@@ -13,7 +13,7 @@ namespace Lyricify.Lyrics.Parsers
             var trackMetadata = new TrackMetadata();
             var curStateStartPosition = 0;
             var timeCalculationCache = 0;
-            var curTimestamps = ArrayPool<int>.Shared.Rent(16); // Max Count
+            var curTimestamps = ArrayPool<int>.Shared.Rent(64); // Max Count
             int curTimestamp = 0;
             int currentTimestampPosition = 0;
             var offset = 0;
@@ -241,7 +241,7 @@ namespace Lyricify.Lyrics.Parsers
                 }
             }
 
-            ArrayPool<int>.Shared.Return(curTimestamps, true);
+            ArrayPool<int>.Shared.Return(curTimestamps);
             lines.Sort();
 
             var lyricsData = new LyricsData
@@ -262,7 +262,7 @@ namespace Lyricify.Lyrics.Parsers
             var lines = new List<LineInfo>();
             var curStateStartPosition = 0;
             var timeCalculationCache = 0;
-            var curTimestamps = ArrayPool<int>.Shared.Rent(16); // Max Count 
+            var curTimestamps = ArrayPool<int>.Shared.Rent(64); // Max Count 
             int curTimestamp = 0;
             int currentTimestampPosition = 0;
             var reachesEnd = false;
@@ -448,7 +448,7 @@ namespace Lyricify.Lyrics.Parsers
                 }
             }
 
-            ArrayPool<int>.Shared.Return(curTimestamps, true);
+            ArrayPool<int>.Shared.Return(curTimestamps);
             lines.Sort();
             return lines.Cast<ILineInfo>().ToList();
         }
