@@ -162,7 +162,8 @@ namespace Lyricify.Lyrics.Parsers
                                     trackMetadata.Title = attribute.Value;
                                     break;
                                 case "length":
-                                    trackMetadata.DurationMs = attribute.Value;
+                                    if (int.TryParse(attribute.Value, out int result))
+                                        trackMetadata.DurationMs = result;
                                     break;
                             }
                             attributes.Add(attribute);

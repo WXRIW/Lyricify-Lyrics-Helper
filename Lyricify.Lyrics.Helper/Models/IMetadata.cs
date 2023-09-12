@@ -25,7 +25,7 @@
         /// <summary>
         /// Track length in milliseconds
         /// </summary>
-        public string? DurationMs { get; set; }
+        public int? DurationMs { get; set; }
 
         /// <summary>
         /// ISRC of the track

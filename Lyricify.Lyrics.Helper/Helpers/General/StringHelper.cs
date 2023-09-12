@@ -307,5 +307,41 @@ namespace Lyricify.Lyrics.Helpers.General
         {
             return Regex.IsMatch(str, "^\\d+$", RegexOptions.Compiled);
         }
+
+        /// <summary>
+        /// 在字符串中移除
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="substring"></param>
+        /// <returns></returns>
+        public static string Remove(this string str, string substring)
+        {
+            if (str == null) return null;
+
+            return str.Replace(substring, "");
+        }
+
+        /// <summary>
+        /// 移除字符串中的控制字符
+        /// </summary>
+        /// <param name="value"></param>
+        /// <param name="excludeChars">不移除的控制字符</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static string RemoveControlChars(this string value, params char[] excludeChars)
+        {
+            char[] excludeChars2 = excludeChars;
+            if (value == null)
+            {
+                throw new ArgumentNullException("value");
+            }
+
+            if (excludeChars2 == null)
+            {
+                excludeChars2 = Array.Empty<char>();
+            }
+
+            return new string(value.Where((char c) => !char.IsControl(c) || excludeChars2.Contains(c)).ToArray());
+        }
     }
 }

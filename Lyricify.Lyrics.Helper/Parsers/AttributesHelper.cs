@@ -36,7 +36,8 @@ namespace Lyricify.Lyrics.Parsers
                                 data.TrackMetadata.Title = attribute.Value;
                                 break;
                             case "length":
-                                data.TrackMetadata.DurationMs = attribute.Value;
+                                if (int.TryParse(attribute.Value, out int result))
+                                    data.TrackMetadata.DurationMs = result;
                                 break;
                             case "offset":
                                 try { offset = int.Parse(attribute.Value); } catch { }
@@ -84,7 +85,8 @@ namespace Lyricify.Lyrics.Parsers
                             data.TrackMetadata.Title = attribute.Value;
                             break;
                         case "length":
-                            data.TrackMetadata.DurationMs = attribute.Value;
+                            if (int.TryParse(attribute.Value, out int result))
+                                data.TrackMetadata.DurationMs = result;
                             break;
                         case "offset":
                             try { offset = int.Parse(attribute.Value); } catch { }
