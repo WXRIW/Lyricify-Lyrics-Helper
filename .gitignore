@@ -3,6 +3,12 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
+# Visual Studio Code directory
+.vscode/
+
+# Mac-specific hidden file
+.DS_Store
+
 # User-specific files
 *.rsuser
 *.suo
