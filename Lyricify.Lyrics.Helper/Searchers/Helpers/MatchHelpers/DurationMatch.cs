@@ -37,6 +37,9 @@
             };
         }
 
+        /// <summary>
+        /// 时长匹配程度
+        /// </summary>
         public enum DurationMatchType
         {
             Perfect,

@@ -2,8 +2,16 @@
 
 namespace Lyricify.Lyrics.Helpers
 {
+    /// <summary>
+    /// 解析帮助类
+    /// </summary>
     public static class ParseHelper
     {
+        /// <summary>
+        /// 解析歌词
+        /// </summary>
+        /// <param name="lyrics">歌词字符串</param>
+        /// <returns>解析后的歌词数据</returns>
         public static LyricsData? ParseLyrics(string lyrics)
         {
             var type = TypeHelper.GetLyricsTypes(lyrics);
@@ -14,26 +22,25 @@ namespace Lyricify.Lyrics.Helpers
             return null;
         }
 
+        /// <summary>
+        /// 解析歌词
+        /// </summary>
+        /// <param name="lyrics">歌词字符串</param>
+        /// <param name="lyricsRawType">该歌词字符串的原始类型</param>
+        /// <returns>解析后的歌词数据</returns>
         public static LyricsData? ParseLyrics(string lyrics, LyricsRawTypes lyricsRawType)
         {
-            switch (lyricsRawType)
+            return lyricsRawType switch
             {
-                case LyricsRawTypes.LyricifySyllable:
-                    return Parsers.LyricifySyllableParser.Parse(lyrics);
-                case LyricsRawTypes.LyricifyLines:
-                    return Parsers.LyricifyLinesParser.Parse(lyrics);
-                case LyricsRawTypes.Lrc:
-                    return Parsers.LrcParser.Parse(lyrics);
-                case LyricsRawTypes.Qrc:
-                    return Parsers.QrcParser.Parse(lyrics);
-                case LyricsRawTypes.Krc:
-                    return Parsers.KrcParser.Parse(lyrics);
-                case LyricsRawTypes.Yrc:
-                    return Parsers.YrcParser.Parse(lyrics);
-                case LyricsRawTypes.Spotify:
-                    return Parsers.SpotifyParser.Parse(lyrics);
-            }
-            return null;
+                LyricsRawTypes.LyricifySyllable => Parsers.LyricifySyllableParser.Parse(lyrics),
+                LyricsRawTypes.LyricifyLines => Parsers.LyricifyLinesParser.Parse(lyrics),
+                LyricsRawTypes.Lrc => Parsers.LrcParser.Parse(lyrics),
+                LyricsRawTypes.Qrc => Parsers.QrcParser.Parse(lyrics),
+                LyricsRawTypes.Krc => Parsers.KrcParser.Parse(lyrics),
+                LyricsRawTypes.Yrc => Parsers.YrcParser.Parse(lyrics),
+                LyricsRawTypes.Spotify => Parsers.SpotifyParser.Parse(lyrics),
+                _ => null,
+            };
         }
     }
 }

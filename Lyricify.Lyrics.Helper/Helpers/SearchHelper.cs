@@ -1,7 +1,8 @@
 using Lyricify.Lyrics.Models;
+using Lyricify.Lyrics.Searchers;
 using Lyricify.Lyrics.Searchers.Helpers;
 
-namespace Lyricify.Lyrics.Searchers
+namespace Lyricify.Lyrics.Helpers
 {
     /// <summary>
     /// 搜索帮助类
@@ -14,7 +15,7 @@ namespace Lyricify.Lyrics.Searchers
         /// <param name="track">指定曲目</param>
         /// <param name="searcher">搜索提供者</param>
         /// <returns>对应曲目</returns>
-        public async Task<ISearchResult?> Search(ITrackMetadata track, Searchers searcher)
+        public async Task<ISearchResult?> Search(ITrackMetadata track, Searchers.Searchers searcher)
             => await Search(track, searcher.GetSearcher());
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace Lyricify.Lyrics.Searchers
         /// <param name="searcher">搜索提供者</param>
         /// <param name="minimumMatch">最低匹配要求</param>
         /// <returns>对应曲目</returns>
-        public async Task<ISearchResult?> Search(ITrackMetadata track, Searchers searcher, CompareHelper.MatchType minimumMatch)
+        public async Task<ISearchResult?> Search(ITrackMetadata track, Searchers.Searchers searcher, CompareHelper.MatchType minimumMatch)
             => await Search(track, searcher.GetSearcher(), minimumMatch);
 
         /// <summary>

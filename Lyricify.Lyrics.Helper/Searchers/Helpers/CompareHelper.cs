@@ -4,11 +4,23 @@ namespace Lyricify.Lyrics.Searchers.Helpers
 {
     public static partial class CompareHelper
     {
+        /// <summary>
+        /// 比较曲目匹配程度
+        /// </summary>
+        /// <param name="track">原曲目</param>
+        /// <param name="searchResult">搜索得到的曲目</param>
+        /// <returns>曲目匹配程度</returns>
         public static MatchType CompareTrack(ITrackMetadata track, ISearchResult searchResult)
         {
             return CompareTrack(TrackMultiArtistMetadata.GetTrackMultiArtistMetadata(track), searchResult);
         }
 
+        /// <summary>
+        /// 比较曲目匹配程度
+        /// </summary>
+        /// <param name="track">原曲目</param>
+        /// <param name="searchResult">搜索得到的曲目</param>
+        /// <returns>曲目匹配程度</returns>
         public static MatchType CompareTrack(TrackMultiArtistMetadata track, ISearchResult searchResult)
         {
             var trackMatch = CompareName(track.Title, searchResult.Title);
@@ -37,6 +49,9 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             };
         }
 
+        /// <summary>
+        /// 曲目匹配程度
+        /// </summary>
         public enum MatchType
         {
             Perfect = 100,

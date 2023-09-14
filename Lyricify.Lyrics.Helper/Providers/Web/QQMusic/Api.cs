@@ -8,7 +8,7 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
     {
         private static readonly DateTime _dtFrom = new(1970, 1, 1, 8, 0, 0, 0, DateTimeKind.Local);
 
-        protected override string HttpRefer() => "https://c.y.qq.com/";
+        protected override string HttpRefer => "https://c.y.qq.com/";
 
         private static readonly Dictionary<string, string> VerbatimXmlMappingDict = new()
         {

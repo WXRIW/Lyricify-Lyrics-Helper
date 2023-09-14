@@ -24,10 +24,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             _encSecKey = RSAEncode(_secretKey);
         }
 
-        protected override string HttpRefer()
-        {
-            return "https://music.163.com/";
-        }
+        protected override string HttpRefer => "https://music.163.com/";
 
         // 搜索类型
         public enum SearchTypeEnum

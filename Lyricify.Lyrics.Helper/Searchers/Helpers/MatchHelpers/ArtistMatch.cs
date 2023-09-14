@@ -62,6 +62,9 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             };
         }
 
+        /// <summary>
+        /// 艺人匹配程度
+        /// </summary>
         public enum ArtistMatchType
         {
             Perfect,

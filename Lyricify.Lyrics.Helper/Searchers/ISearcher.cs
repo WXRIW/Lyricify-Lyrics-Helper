@@ -3,6 +3,9 @@ using Lyricify.Lyrics.Searchers.Helpers;
 
 namespace Lyricify.Lyrics.Searchers
 {
+    /// <summary>
+    /// 搜索提供者接口
+    /// </summary>
     public interface ISearcher
     {
         /// <summary>

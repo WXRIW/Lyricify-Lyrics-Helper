@@ -5,17 +5,17 @@ namespace Lyricify.Lyrics.Helpers
     public static class TypeHelper
     {
         /// <summary>
-        /// Recognize the type of lyrics
+        /// 识别歌词的类型
         /// </summary>
-        /// <param name="lyrics">Lyrics string</param>
-        /// <returns><see cref="LyricsRawTypes"/>, <see cref="LyricsRawTypes.Unknown"/> if not recognized.</returns>
+        /// <param name="lyrics">歌词字符串</param>
+        /// <returns><see cref="LyricsRawTypes"/>, 如果没有识别成功则会返回 <see cref="LyricsRawTypes.Unknown"/>.</returns>
         public static LyricsRawTypes GetLyricsTypes(string lyrics)
         {
             return LyricsRawTypes.Unknown;
         }
 
         /// <summary>
-        /// Convert LyricsRawType into LyricsType
+        /// 将 LyricsRawType 转换为 LyricsType
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

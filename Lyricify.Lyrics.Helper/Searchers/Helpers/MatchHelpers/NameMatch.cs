@@ -71,6 +71,9 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             };
         }
 
+        /// <summary>
+        /// 名称匹配程度
+        /// </summary>
         public enum NameMatchType
         {
             Perfect,

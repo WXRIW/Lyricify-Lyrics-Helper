@@ -1,7 +1,7 @@
 ﻿namespace Lyricify.Lyrics.Searchers
 {
 	/// <summary>
-	/// Searchers 的静态帮助类
+	/// 搜索提供者的静态帮助类
 	/// </summary>
 	public static class SearchersHelper
 	{

@@ -15,6 +15,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public class SearchResultData
         {
             /* SearchType = SONG */
+
             public Song[] Songs { get; set; }
 
             public long SongCount { get; set; }

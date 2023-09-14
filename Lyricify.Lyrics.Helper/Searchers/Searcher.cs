@@ -3,6 +3,9 @@ using Lyricify.Lyrics.Searchers.Helpers;
 
 namespace Lyricify.Lyrics.Searchers
 {
+    /// <summary>
+    /// 搜索提供者抽象类，提供统一搜索方法
+    /// </summary>
     public abstract class Searcher : ISearcher
     {
         public abstract string Name { get; }

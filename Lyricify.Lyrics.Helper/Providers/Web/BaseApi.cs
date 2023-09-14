@@ -11,14 +11,14 @@ namespace Lyricify.Lyrics.Providers.Web
 
         public const string Cookie = "os=pc;osver=Microsoft-Windows-10-Professional-build-16299.125-64bit;appver=2.0.3.131777;channel=netease;__remember_me=true";
 
-        protected abstract string HttpRefer();
+        protected abstract string HttpRefer { get; }
 
         public async Task<string> PostAsync(string url, Dictionary<string, string> paramDict)
         {
             HttpClient.DefaultRequestHeaders.Clear();
 
             HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer());
+            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
             HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
 
             var content = new FormUrlEncodedContent(paramDict);
@@ -36,7 +36,7 @@ namespace Lyricify.Lyrics.Providers.Web
             HttpClient.DefaultRequestHeaders.Clear();
 
             HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer());
+            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
             HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
 
             var jsonContent = new StringContent(paramDict.ToJson(), Encoding.UTF8, "application/json");
@@ -54,7 +54,7 @@ namespace Lyricify.Lyrics.Providers.Web
             HttpClient.DefaultRequestHeaders.Clear();
 
             HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer());
+            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
             HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
 
             var jsonContent = new StringContent(param, Encoding.UTF8, "application/json");

@@ -1,7 +1,15 @@
 ﻿namespace Lyricify.Lyrics.Searchers.Helpers
 {
+    /// <summary>
+    /// 艺人帮助类 (用于艺人名中文化操作)
+    /// </summary>
     public static class ArtistHelper
     {
+        /// <summary>
+        /// 中文化艺人名字符串
+        /// </summary>
+        /// <param name="artist"></param>
+        /// <returns></returns>
         public static string ChineselizeArtist(string artist)
         {
             foreach (var item in ArtistNamePairs)
@@ -11,6 +19,10 @@
             return artist;
         }
 
+        /// <summary>
+        /// 中文化艺人名字符串列表
+        /// </summary>
+        /// <param name="artists"></param>
         public static void ChineselizeArtists(List<string> artists)
         {
             for (int i = 0; i < artists.Count; i++)
@@ -1452,6 +1464,7 @@
     }
 }
 
+// 用于 record 类编译不报错
 namespace System.Runtime.CompilerServices
 {
     class IsExternalInit { }
