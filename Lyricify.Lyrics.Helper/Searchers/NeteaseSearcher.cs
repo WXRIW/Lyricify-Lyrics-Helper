@@ -2,7 +2,7 @@
 
 namespace Lyricify.Lyrics.Searchers
 {
-    public class NeteaseSearcher : Searcher
+    public class NeteaseSearcher : Searcher, ISearcher
     {
         public override string Name => "Netease";
 

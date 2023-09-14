@@ -2,7 +2,7 @@
 
 namespace Lyricify.Lyrics.Searchers
 {
-    public class QQMusicSearcher : Searcher
+    public class QQMusicSearcher : Searcher, ISearcher
     {
         public override string Name => "QQ Music";
 

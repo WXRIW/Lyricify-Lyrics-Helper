@@ -1,6 +1,6 @@
 ﻿namespace Lyricify.Lyrics.Searchers
 {
-    public class KugouSearcher : Searcher
+    public class KugouSearcher : Searcher, ISearcher
     {
         public override string Name => "Kugou";
 
