@@ -7,7 +7,7 @@ namespace Lyricify.Lyrics.Helpers
     /// <summary>
     /// 搜索帮助类
     /// </summary>
-    public class SearchHelper
+    public static class SearchHelper
     {
         /// <summary>
         /// 搜索指定曲目的对应曲目
@@ -15,7 +15,7 @@ namespace Lyricify.Lyrics.Helpers
         /// <param name="track">指定曲目</param>
         /// <param name="searcher">搜索提供者</param>
         /// <returns>对应曲目</returns>
-        public async Task<ISearchResult?> Search(ITrackMetadata track, Searchers.Searchers searcher)
+        public static async Task<ISearchResult?> Search(ITrackMetadata track, Searchers.Searchers searcher)
             => await Search(track, searcher.GetSearcher());
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Lyricify.Lyrics.Helpers
         /// <param name="searcher">搜索提供者</param>
         /// <param name="minimumMatch">最低匹配要求</param>
         /// <returns>对应曲目</returns>
-        public async Task<ISearchResult?> Search(ITrackMetadata track, Searchers.Searchers searcher, CompareHelper.MatchType minimumMatch)
+        public static async Task<ISearchResult?> Search(ITrackMetadata track, Searchers.Searchers searcher, CompareHelper.MatchType minimumMatch)
             => await Search(track, searcher.GetSearcher(), minimumMatch);
 
         /// <summary>
@@ -34,7 +34,7 @@ namespace Lyricify.Lyrics.Helpers
         /// <param name="track">指定曲目</param>
         /// <param name="searcher">搜索提供者</param>
         /// <returns>对应曲目</returns>
-        public async Task<ISearchResult?> Search(ITrackMetadata track, ISearcher searcher)
+        public static async Task<ISearchResult?> Search(ITrackMetadata track, ISearcher searcher)
             => await searcher.SearchForResult(track);
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Lyricify.Lyrics.Helpers
         /// <param name="searcher">搜索提供者</param>
         /// <param name="minimumMatch">最低匹配要求</param>
         /// <returns>对应曲目</returns>
-        public async Task<ISearchResult?> Search(ITrackMetadata track, ISearcher searcher, CompareHelper.MatchType minimumMatch)
+        public static async Task<ISearchResult?> Search(ITrackMetadata track, ISearcher searcher, CompareHelper.MatchType minimumMatch)
             => await searcher.SearchForResult(track, minimumMatch);
     }
 }

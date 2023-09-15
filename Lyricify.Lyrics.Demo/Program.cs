@@ -63,6 +63,16 @@ namespace Lyricify.Lyrics.Demo
         {
             /* Search Demo */
 
+            var search = SearchHelper.Search(new TrackMultiArtistMetadata()
+            {
+                Album = "RUNAWAY",
+                AlbumArtists = new() { "OneRepublic" },
+                Artists = new() { "OneRepublic" },
+                DurationMs = 143264,
+                Title = "RUNAWAY",
+            }, Searchers.Searchers.QQMusic, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
+
             var qqSearch = new Searchers.QQMusicSearcher();
             var result = qqSearch.SearchForResult(new TrackMultiArtistMetadata()
             {
