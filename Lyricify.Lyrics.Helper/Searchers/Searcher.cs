@@ -62,10 +62,9 @@ namespace Lyricify.Lyrics.Searchers
             {
                 var results = await SearchForResults(searchString);
                 if (results is { Count: > 0 })
-                {
                     searchResults.AddRange(results);
-                }
-                if (results is not { Count: > 0 } || fullSearch)
+
+                if (fullSearch || results is not { Count: > 0 })
                 {
                     var newSearchString = level switch
                     {
@@ -74,13 +73,9 @@ namespace Lyricify.Lyrics.Searchers
                         _ => string.Empty,
                     };
                     if (newSearchString != searchString)
-                    {
                         searchString = newSearchString;
-                    }
                     else
-                    {
                         break;
-                    }
                 }
                 else
                 {
@@ -89,17 +84,10 @@ namespace Lyricify.Lyrics.Searchers
 
             } while (++level < 3);
 
-
             foreach (var result in searchResults)
-            {
                 result.SetMatchType(CompareHelper.CompareTrack(track, result));
-            }
 
-            try
-            {
-                searchResults.Sort((x, y) => -((int)x.MatchType!).CompareTo((int)y.MatchType!));
-            }
-            catch { }
+            searchResults.Sort((x, y) => -((int)x.MatchType!).CompareTo((int)y.MatchType!));
 
             return searchResults;
         }

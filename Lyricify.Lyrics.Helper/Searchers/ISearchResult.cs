@@ -8,7 +8,7 @@ namespace Lyricify.Lyrics.Searchers
     public interface ISearchResult
     {
         /// <summary>
-        /// 搜索者
+        /// 搜索提供者
         /// </summary>
         public ISearcher Searcher { get; }
 

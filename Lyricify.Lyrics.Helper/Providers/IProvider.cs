@@ -1,6 +1,9 @@
 ﻿namespace Lyricify.Lyrics.Providers
 {
-    internal interface IProvider
+    /// <summary>
+    /// 歌词提供者接口
+    /// </summary>
+    public interface IProvider
     {
 
     }
