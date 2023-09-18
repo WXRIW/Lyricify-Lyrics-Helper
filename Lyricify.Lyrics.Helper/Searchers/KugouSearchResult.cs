@@ -1,21 +1,44 @@
-﻿using Lyricify.Lyrics.Searchers.Helpers;
+﻿using Lyricify.Lyrics.Providers.Web.Kugou;
+using Lyricify.Lyrics.Searchers.Helpers;
 
 namespace Lyricify.Lyrics.Searchers
 {
     public class KugouSearchResult : ISearchResult
     {
-        public ISearcher Searcher => throw new NotImplementedException();
+        public ISearcher Searcher => new KugouSearcher();
 
-        public string Title => throw new NotImplementedException();
+        public KugouSearchResult(string title, string[] artists, string album, string[]? albumArtists, int durationMs, string hash)
+        {
+            Title = title;
+            Artists = artists;
+            Album = album;
+            AlbumArtists = albumArtists;
+            DurationMs = durationMs;
+            Hash = hash;
+        }
 
-        public string[] Artists => throw new NotImplementedException();
+        public KugouSearchResult(SearchSongResponse.DataItem.InfoItem song) : this(
+            song.SongName,
+            song.SingerName.Split('、'),
+            song.AlbumName, // 很可能会包含中文译名
+            null,
+            song.Duration * 1000,
+            song.Hash
+            )
+        { }
 
-        public string Album => throw new NotImplementedException();
+        public string Title { get; }
 
-        public string[]? AlbumArtists => throw new NotImplementedException();
+        public string[] Artists { get; }
 
-        public int? DurationMs => throw new NotImplementedException();
+        public string Album { get; }
 
-        public CompareHelper.MatchType? MatchType { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public string Hash { get; }
+
+        public string[]? AlbumArtists { get; }
+
+        public int? DurationMs { get; }
+
+        public CompareHelper.MatchType? MatchType { get; set; }
     }
 }

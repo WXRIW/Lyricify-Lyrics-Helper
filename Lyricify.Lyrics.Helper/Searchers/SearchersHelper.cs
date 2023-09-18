@@ -1,55 +1,55 @@
 ﻿namespace Lyricify.Lyrics.Searchers
 {
-	/// <summary>
-	/// 搜索提供者的静态帮助类
-	/// </summary>
-	public static class SearchersHelper
-	{
-		/// <summary>
-		/// 获取枚举的对应类实例
-		/// </summary>
-		/// <param name="searcher"></param>
-		/// <returns></returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public static ISearcher GetSearcher(this Searchers searcher)
-		{
-			return searcher switch
-			{
-				Searchers.QQMusic => SearcherHelper.QQMusicSearcher,
-				Searchers.Netease => SearcherHelper.NeteaseSearcher,
-				Searchers.Kugou => SearcherHelper.KugouSearcher,
-				_ => throw new NotImplementedException(),
-			};
-		}
-
-		/// <summary>
-		/// 获取枚举的对应类新实例
-		/// </summary>
-		/// <param name="searcher"></param>
-		/// <returns></returns>
-		/// <exception cref="NotImplementedException"></exception>
-		public static ISearcher GetNewSearcher(this Searchers searcher)
-		{
-			return searcher switch
-			{
-				Searchers.QQMusic => new QQMusicSearcher(),
-				Searchers.Netease => new NeteaseSearcher(),
-				Searchers.Kugou => new KugouSearcher(),
-				_ => throw new NotImplementedException(),
-			};
-		}
-
-		/// <summary>
-		/// 获取搜索类的对应枚举
-		/// </summary>
-		/// <param name="searcher"></param>
-		/// <returns></returns>
-		public static Searchers? GetSearchers(this ISearcher searcher)
+    /// <summary>
+    /// 搜索提供者的静态帮助类
+    /// </summary>
+    public static class SearchersHelper
+    {
+        /// <summary>
+        /// 获取枚举的对应类实例
+        /// </summary>
+        /// <param name="searcher"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static ISearcher GetSearcher(this Searchers searcher)
         {
-			if (searcher is QQMusicSearcher) return Searchers.QQMusic;
-			if (searcher is NeteaseSearcher) return Searchers.Netease;
-			if (searcher is KugouSearcher) return Searchers.Kugou;
-			return null;
+            return searcher switch
+            {
+                Searchers.QQMusic => SearcherHelper.QQMusicSearcher,
+                Searchers.Netease => SearcherHelper.NeteaseSearcher,
+                Searchers.Kugou => SearcherHelper.KugouSearcher,
+                _ => throw new NotImplementedException(),
+            };
         }
-	}
+
+        /// <summary>
+        /// 获取枚举的对应类新实例
+        /// </summary>
+        /// <param name="searcher"></param>
+        /// <returns></returns>
+        /// <exception cref="NotImplementedException"></exception>
+        public static ISearcher GetNewSearcher(this Searchers searcher)
+        {
+            return searcher switch
+            {
+                Searchers.QQMusic => new QQMusicSearcher(),
+                Searchers.Netease => new NeteaseSearcher(),
+                Searchers.Kugou => new KugouSearcher(),
+                _ => throw new NotImplementedException(),
+            };
+        }
+
+        /// <summary>
+        /// 获取搜索类的对应枚举
+        /// </summary>
+        /// <param name="searcher"></param>
+        /// <returns></returns>
+        public static Searchers? GetSearchers(this ISearcher searcher)
+        {
+            if (searcher is QQMusicSearcher) return Searchers.QQMusic;
+            if (searcher is NeteaseSearcher) return Searchers.Netease;
+            if (searcher is KugouSearcher) return Searchers.Kugou;
+            return null;
+        }
+    }
 }

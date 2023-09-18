@@ -9,5 +9,9 @@
         private static Netease.Api? _neteaseApi;
 
         public static Netease.Api NeteaseApi => _neteaseApi ??= new();
+
+        private static Kugou.Api? _kugouApi;
+
+        public static Kugou.Api KugouApi => _kugouApi ??= new();
     }
 }

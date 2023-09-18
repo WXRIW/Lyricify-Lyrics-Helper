@@ -6,9 +6,33 @@
 
         public override string DisplayName => "Kugou Music";
 
-        public override Task<List<ISearchResult>?> SearchForResults(string searchString)
+        public override async Task<List<ISearchResult>?> SearchForResults(string searchString)
         {
-            throw new NotImplementedException();
+            var search = new List<ISearchResult>();
+
+            try
+            {
+                var result = await Providers.Web.Providers.KugouApi.GetSearchSong(searchString);
+                var results = result?.Data?.Info;
+                if (results == null) return null;
+                foreach (var track in results)
+                {
+                    search.Add(new KugouSearchResult(track));
+                    if (track.Group is { Count: > 0 })
+                    {
+                        foreach (var subTrack in results)
+                        {
+                            search.Add(new KugouSearchResult(subTrack));
+                        }
+                    }
+                }
+            }
+            catch
+            {
+                return null;
+            }
+
+            return search;
         }
     }
 }
