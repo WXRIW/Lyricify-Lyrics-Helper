@@ -20,6 +20,13 @@ namespace Lyricify.Lyrics.Searchers
                 foreach (var track in results)
                 {
                     search.Add(new QQMusicSearchResult(track));
+                    if (track.Group is { Count: > 0 } group)
+                    {
+                        foreach (var subTrack in group)
+                        {
+                            search.Add(new QQMusicSearchResult(subTrack));
+                        }
+                    }
                 }
             }
             catch

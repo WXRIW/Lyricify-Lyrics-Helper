@@ -18,9 +18,9 @@
                 foreach (var track in results)
                 {
                     search.Add(new KugouSearchResult(track));
-                    if (track.Group is { Count: > 0 })
+                    if (track.Group is { Count: > 0 } group)
                     {
-                        foreach (var subTrack in results)
+                        foreach (var subTrack in group)
                         {
                             search.Add(new KugouSearchResult(subTrack));
                         }

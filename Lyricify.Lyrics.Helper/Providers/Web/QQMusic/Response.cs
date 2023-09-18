@@ -423,6 +423,12 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
 
             public string Subtitle { get; set; }
         }
+
+        /// <summary>
+        /// 同版本的曲目
+        /// </summary>
+        [JsonProperty("grp")]
+        public List<Song> Group { get; set; }
     }
 
     public class AlbumInfo

@@ -73,45 +73,45 @@ namespace Lyricify.Lyrics.Demo
             }, Searchers.Searchers.QQMusic, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
 
-            var qqSearch = new Searchers.QQMusicSearcher();
-            var result = qqSearch.SearchForResult(new TrackMultiArtistMetadata()
-            {
-                Album = "GUTS",
-                AlbumArtists = new() { "Olivia Rodrigo" },
-                Artists = new() { "Olivia Rodrigo" },
-                DurationMs = 211141,
-                Title = "get him back!",
-            }).Result;
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
-            var _result = qqSearch.SearchForResults(new TrackMultiArtistMetadata()
-            {
-                Album = "RUNAWAY",
-                AlbumArtists = new() { "OneRepublic" },
-                Artists = new() { "OneRepublic" },
-                DurationMs = 143264,
-                Title = "RUNAWAY",
-            }).Result;
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(_result, Newtonsoft.Json.Formatting.Indented));
+            //var qqSearch = new Searchers.QQMusicSearcher();
+            //var result = qqSearch.SearchForResult(new TrackMultiArtistMetadata()
+            //{
+            //    Album = "GUTS",
+            //    AlbumArtists = new() { "Olivia Rodrigo" },
+            //    Artists = new() { "Olivia Rodrigo" },
+            //    DurationMs = 211141,
+            //    Title = "get him back!",
+            //}).Result;
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
+            //var _result = qqSearch.SearchForResults(new TrackMultiArtistMetadata()
+            //{
+            //    Album = "RUNAWAY",
+            //    AlbumArtists = new() { "OneRepublic" },
+            //    Artists = new() { "OneRepublic" },
+            //    DurationMs = 143264,
+            //    Title = "RUNAWAY",
+            //}).Result;
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(_result, Newtonsoft.Json.Formatting.Indented));
 
-            var neteaseSearch = new Searchers.NeteaseSearcher();
-            result = neteaseSearch.SearchForResult(new TrackMultiArtistMetadata()
-            {
-                Album = "GUTS",
-                AlbumArtists = new() { "Olivia Rodrigo" },
-                Artists = new() { "Olivia Rodrigo" },
-                DurationMs = 211141,
-                Title = "get him back!",
-            }).Result;
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
-            _result = neteaseSearch.SearchForResults(new TrackMultiArtistMetadata()
-            {
-                Album = "RUNAWAY",
-                AlbumArtists = new() { "OneRepublic" },
-                Artists = new() { "OneRepublic" },
-                DurationMs = 143264,
-                Title = "RUNAWAY",
-            }).Result;
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(_result, Newtonsoft.Json.Formatting.Indented));
+            //var neteaseSearch = new Searchers.NeteaseSearcher();
+            //result = neteaseSearch.SearchForResult(new TrackMultiArtistMetadata()
+            //{
+            //    Album = "GUTS",
+            //    AlbumArtists = new() { "Olivia Rodrigo" },
+            //    Artists = new() { "Olivia Rodrigo" },
+            //    DurationMs = 211141,
+            //    Title = "get him back!",
+            //}).Result;
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
+            //_result = neteaseSearch.SearchForResults(new TrackMultiArtistMetadata()
+            //{
+            //    Album = "RUNAWAY",
+            //    AlbumArtists = new() { "OneRepublic" },
+            //    Artists = new() { "OneRepublic" },
+            //    DurationMs = 143264,
+            //    Title = "RUNAWAY",
+            //}).Result;
+            //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(_result, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }
