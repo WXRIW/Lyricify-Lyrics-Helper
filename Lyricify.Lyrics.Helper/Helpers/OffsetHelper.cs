@@ -2,7 +2,7 @@
 
 namespace Lyricify.Lyrics.Helpers
 {
-    public class OffsetHelper
+    public static class OffsetHelper
     {
         public static void AddOffset(List<ILineInfo> lines, int offset)
         {

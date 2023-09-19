@@ -2,7 +2,7 @@
 
 namespace Lyricify.Lyrics.Helpers.Types
 {
-    public class Lrc
+    public static class Lrc
     {
         public static bool IsLrc(string input)
         {

@@ -1,6 +1,6 @@
 ﻿namespace Lyricify.Lyrics.Helpers.Optimization
 {
-    public class Explicit
+    public static class Explicit
     {
         /// <summary>
         /// 处理字符串中的 Explicit 内容
