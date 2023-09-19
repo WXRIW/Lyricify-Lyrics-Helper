@@ -11,18 +11,13 @@ namespace Lyricify.Lyrics.Providers.Web
 
         public const string Cookie = "os=pc;osver=Microsoft-Windows-10-Professional-build-16299.125-64bit;appver=2.0.3.131777;channel=netease;__remember_me=true";
 
-        protected abstract string HttpRefer { get; }
+        protected abstract string? HttpRefer { get; }
 
         public async Task<string> PostAsync(string url, Dictionary<string, string> paramDict)
         {
-            HttpClient.DefaultRequestHeaders.Clear();
-
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
-            HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
+            SetRequestHeaders();
 
             var content = new FormUrlEncodedContent(paramDict);
-
             var response = await HttpClient.PostAsync(url, content);
 
             response.EnsureSuccessStatusCode();
@@ -33,14 +28,9 @@ namespace Lyricify.Lyrics.Providers.Web
 
         public async Task<string> PostAsync(string url, Dictionary<string, object> paramDict)
         {
-            HttpClient.DefaultRequestHeaders.Clear();
-
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
-            HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
+            SetRequestHeaders();
 
             var jsonContent = new StringContent(paramDict.ToJson(), Encoding.UTF8, "application/json");
-
             var response = await HttpClient.PostAsync(url, jsonContent);
 
             response.EnsureSuccessStatusCode();
@@ -51,20 +41,27 @@ namespace Lyricify.Lyrics.Providers.Web
 
         public async Task<string> PostAsync(string url, string param)
         {
-            HttpClient.DefaultRequestHeaders.Clear();
-
-            HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
-            HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
-            HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
+            SetRequestHeaders();
 
             var jsonContent = new StringContent(param, Encoding.UTF8, "application/json");
-
             var response = await HttpClient.PostAsync(url, jsonContent);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
 
             return result;
+        }
+
+        private void SetRequestHeaders()
+        {
+            HttpClient.DefaultRequestHeaders.Clear();
+
+            if (!string.IsNullOrEmpty(UserAgent))
+                HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+            if (!string.IsNullOrEmpty(HttpRefer))
+                HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
+            if (!string.IsNullOrEmpty(Cookie))
+                HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
         }
     }
 

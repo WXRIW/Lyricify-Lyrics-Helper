@@ -4,7 +4,7 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
 {
     public class Api : BaseApi
     {
-        protected override string HttpRefer => "http://kugou.com/"; // 没用，后面都是直接用 Client 发送请求
+        protected override string? HttpRefer => null;
 
         public async Task<SearchSongResponse?> GetSearchSong(string keywords)
         {
