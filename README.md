@@ -34,8 +34,8 @@
 ## 项目架构
 ### Lyricify.Lyrics.Helper
 - Decrypter // 歌词解密相关
-  - KRC
-  - QRC
+  - Krc
+  - Qrc
 - Helpers // 帮助静态类
   - General // 内嵌通用帮助
     - ChineseHelper // 中文帮助
@@ -66,7 +66,7 @@
   - SearchDemo // 歌曲搜索演示
 
 ## 感谢与支持
-特别感谢 [@cnblurfire](https://github.com/cnbluefire), [@Raspberry Kan](https://github.com/Raspberry-Monster) 提供的帮助和支持。  
+特别感谢 [@cnbluefire](https://github.com/cnbluefire), [@Raspberry Kan](https://github.com/Raspberry-Monster) 提供的帮助和支持。  
 #### 感谢以下第三方代码
 - LyricParser (MIT License): https://github.com/HyPlayer/LyricParser
 - 163MusicLyrics (Apache-2.0 License): https://github.com/jitwxs/163MusicLyrics
