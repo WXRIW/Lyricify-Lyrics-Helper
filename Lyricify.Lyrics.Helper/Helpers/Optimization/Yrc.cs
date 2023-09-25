@@ -44,7 +44,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 // 合并单独的空格
                 if (list[i].Text == " ")
                 {
-                    ((SyllableInfo)list[i - 1]).Text += list[i].Text;
+                    if (i - 1 >= 0) ((SyllableInfo)list[i - 1]).Text += list[i].Text;
 
                     list.RemoveAt(i);
                     i--; continue;
@@ -56,7 +56,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                     || list[i].Text[0] == '?' || list[i].Text[0] == '!'
                     || list[i].Text[0] == '\"'))
                 {
-                    ((SyllableInfo)list[i - 1]).Text += list[i].Text;
+                    if (i - 1 >= 0) ((SyllableInfo)list[i - 1]).Text += list[i].Text;
 
                     list.RemoveAt(i);
                     i--; continue;
