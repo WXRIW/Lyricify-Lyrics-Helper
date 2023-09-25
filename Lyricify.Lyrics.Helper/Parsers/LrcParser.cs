@@ -39,7 +39,7 @@ namespace Lyricify.Lyrics.Parsers
                             {
                                 if (curTimestamps[j] == -1) break;
                                 lines.Add(new LineInfo(
-                                    input.Slice(curStateStartPosition + 1, i - curStateStartPosition - 1).ToString(),
+                                    input.Slice(curStateStartPosition + 1, i - curStateStartPosition - 1).ToString().Trim(),
                                     curTimestamps[j] - offset));
                             }
                             if (input[i + 1] == '\n' || input[i + 1] == '\r') i++;
@@ -64,7 +64,7 @@ namespace Lyricify.Lyrics.Parsers
                     {
                         if (curTimestamps[j] == -1) break;
                         lines.Add(new LineInfo(
-                            input.Slice(curStateStartPosition + 1, i - curStateStartPosition - (lastCharacterIsLineBreak ? 1 : 0)).ToString(),
+                            input.Slice(curStateStartPosition + 1, i - curStateStartPosition - (lastCharacterIsLineBreak ? 1 : 0)).ToString().Trim(),
                             curTimestamps[j] - offset));
                     }
                     continue;
@@ -288,7 +288,7 @@ namespace Lyricify.Lyrics.Parsers
                             {
                                 if (curTimestamps[j] == -1) break;
                                 lines.Add(new LineInfo(
-                                    input.Slice(curStateStartPosition + 1, i - curStateStartPosition - 1).ToString(),
+                                    input.Slice(curStateStartPosition + 1, i - curStateStartPosition - 1).ToString().Trim(),
                                     curTimestamps[j]));
                             }
                             if (input[i + 1] == '\n' || input[i + 1] == '\r') i++;
@@ -313,8 +313,8 @@ namespace Lyricify.Lyrics.Parsers
                     {
                         if (curTimestamps[j] == -1) break;
                         lines.Add(new LineInfo(
-                            input.Slice(curStateStartPosition + 1, i - curStateStartPosition - (lastCharacterIsLineBreak ? 1 : 0)).ToString(),
-                            curTimestamps[j])); ;
+                            input.Slice(curStateStartPosition + 1, i - curStateStartPosition - (lastCharacterIsLineBreak ? 1 : 0)).ToString().Trim(),
+                            curTimestamps[j]));
                     }
                     continue;
                 }
