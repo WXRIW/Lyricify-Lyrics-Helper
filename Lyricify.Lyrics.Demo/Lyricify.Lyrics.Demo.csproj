@@ -46,6 +46,9 @@
     <None Update="RawLyrics\SpotifyUnsyncedDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="RawLyrics\MusixmatchDemo.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="RawLyrics\YrcDemo.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

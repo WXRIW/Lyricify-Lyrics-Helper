@@ -1,0 +1,256 @@
+{
+    "message": {
+        "header": {
+            "status_code": 200,
+            "execute_time": 0.057,
+            "pid": 60,
+            "surrogate_key_list": []
+        },
+        "body": {
+            "macro_calls": {
+                "track.lyrics.get": {
+                    "message": {
+                        "header": {
+                            "status_code": 200,
+                            "execute_time": 0.015897035598755
+                        },
+                        "body": {
+                            "lyrics": {
+                                "lyrics_id": 15918908,
+                                "can_edit": 0,
+                                "locked": 0,
+                                "published_status": 4,
+                                "action_requested": "",
+                                "verified": 0,
+                                "restricted": 0,
+                                "instrumental": 0,
+                                "explicit": 0,
+                                "lyrics_body": "When, when we came home\nWorn to the bones\nI told myself, this could get rough\nAnd when, when I was off, which happened a lot\nYou came to me and said, that's enough\n\nOh, I know that this love is pain\nBut we can't cut it from out these veins, no\n\nSo I'll hit the lights and you lock the doors\nWe ain't leaving this room 'til we both feel more\nDon't walk away, don't roll your eyes\nThey say love is pain, well darling, let's hurt tonight\nAh-ooh-ooh, ah-ooh-ooh\n\nWhen, when you came home\nWorn to the bones\nI told myself, this could get rough\n\nOh, I know you're feeling insane\nTell me something that I can explain, oh\n\nI'll hit the lights and you lock the doors\nTell me all of the things that you couldn't before\nDon't walk away, don't roll your eyes\nThey say love is pain, well darling, let's hurt tonight\nIf this love is pain, well darling, let's hurt, oh tonight\nAh-ooh-ooh, ah-ooh-ooh\n\nSo you hit the lights and I'll lock the doors\nLet's say all of the things that we couldn't before\nI won't walk away, won't roll my eyes\nThey say love is pain, well darling, let's hurt tonight\nIf this love is pain, then honey let's love tonight",
+                                "lyrics_language": "en",
+                                "lyrics_language_description": "English",
+                                "script_tracking_url": "https://tracking.musixmatch.com/t1.0/m_js/e_0/sn_0/l_15918908/su_0/rs_0/tr_3vUCAF_ZtFL9sVAjbZKmJpiL-ykH0lmpJMF68nUWRzjDucVNhEZkmt7QsF2xuuFWkCL4wz2DwqFOBlzJCduWKfGcExoKm7a-ntgJYJk6ItvkSmjPsFR6nmbTNplQkKwQzhntuupOmrV10pU9SO7QGt6sIYR5O4tj07RJxn3OEx6eqcbZqR4iVWnR3j69KKIi_HRlLN9hqYhMntSFpdIgDaRqGBKEqxPMMhiNtyS518-BNIxVz3YrUniyRWdlB1YWCcWzq5adMHmBLm7njynesU3qovPyh2kikapsJejUWuscorP8hEMP9gmD2PBQM4qIU1EZQEytzzxIz5TZdQJQ4MDgIW4NwBwtRr-GC_T_yRU2bQZX2Vh8lFt4PD_K6zq545lv1WFZnXV7rUIznl-lKJdiGi7iRYira8znuwwJ7RQ9w5PpiyZQHxakAU5pCkeDrZeVrBASfXAqAVlzvHM-c8L323z00wXsGSAArUYWv5bNeFMPheeuYW9CrT5-BbvlEFiod7O6kego-46MdDTdMUelzuj-KQ/",
+                                "pixel_tracking_url": "https://tracking.musixmatch.com/t1.0/m_img/e_0/sn_0/l_15918908/su_0/rs_0/tr_3vUCAI0yg9nXDSgXsaQoRkiLOKpNgbKS3kk4GZ7iy0AtZFvevjBsNoKzDVYVKDyrep5kaCDzeS3VGMcqLLfSTvR02VOqzntSZxbGIDOcwgEgzmSh8CVC8hzPdvd8tz0wMtg3sXoopgkhy39tGw_enq1fq5Je1wXVwR7MlfOlZgg4G90-7-9Y9yZC4_zRVgG_fFcoW5HJrcMFT3Rj3qFyQMa38yt1Nzbg7UvfDf_0ZM86-6TEZD9Ge5FTfdBX2-VmNBhHPPlK42g-sC9w5WJRs4mwn764Jg5U88vattCUzpGhbTChkN55q8U24BZNJsYoiG2iQpLaAqL7cPbFyGhQZBownW-6m2iadfhh2mGSaek9da4dsidQEf5JTmK6TVbTr27r5MXlbFilRvjzfQEylKsq-_DN30kePK31R62wmiMoV-Hy_SJ7wpcYDxHagXnhMXR0utXjHZJ1ooQfGJI3bbGzG97ZX-yfcBYXzYdGHeWGW6aZkLGMi_pJe6oGpCRGBNRKq1YUCYKt7F4x6JqjQQxwtAqNeQ/",
+                                "html_tracking_url": "https://tracking.musixmatch.com/t1.0/m_html/e_0/sn_0/l_15918908/su_0/rs_0/tr_3vUCAGeCP43suAids-zm5kGnTcuo_tD7Qwyc62Ipy4syEq1urBFnEtZnrzuc6rW9m6qUyAQ9HwCdp1v-6Hw-3siX4yNVT5zqiIpAwFUrb8wq0LeUmTHepCrwOCyvnzc8ZLPHv1P1AJ5UDXKIk0ccDtKIiBC_2DNWW4yXrVM5rNfdgvj7y3pZjoSEpKxOQKNmKZ-CK6hIFtW1x_-6u4Np2bvUZvQJfH2Yt3MbCV6Sp4i2JicI1wOYgDddeMj_lCTqwAm1rkCeeIAa9rJb4Cs2RPkxOfa2uCP7-x-d2imiq-fAZNO3kBzow9B9gc5I4MZ1TGtpEYIxhHkqJyJhbkgFkwR7VWsIy7uJ9QgHl2jteECzChREkTq-6NfTK9pFUomRA7mb4nY3EQCbYKeeLN6AL6ypdCWQMBik-XM2QB-9_JL66lqdJaIVw9VWPZd5TeIeZ3dOnNi0me4oqt4hanGzPeQezC7NeLVQ1_1cmsEfg_RZ2keo514tJcNsOWNsmVdGGf3yw4-SN_jZ1E0DMgeu0LF4vc_nuw/",
+                                "lyrics_copyright": "Writer(s): Ryan Tedder, Noel Zancanella\nCopyright: Midnite Miracle Music, Sony/atv Pop Music Publishing, Songs Of Patriot Games, Blastronaut Publishing\n",
+                                "writer_list": [],
+                                "publisher_list": [],
+                                "backlink_url": "https://www.musixmatch.com/lyrics/OneRepublic/Let-s-Hurt-Tonight?utm_source=application&utm_campaign=api&utm_medium=musixmatch%3A1409612667678",
+                                "updated_time": "2021-09-29T15:39:14Z"
+                            }
+                        }
+                    }
+                },
+                "track.snippet.get": {
+                    "message": {
+                        "header": {
+                            "status_code": 200,
+                            "execute_time": 0.016808986663818
+                        },
+                        "body": {
+                            "snippet": {
+                                "snippet_id": 15918908,
+                                "snippet_language": "en",
+                                "restricted": 0,
+                                "instrumental": 0,
+                                "snippet_body": "They say love is pain, well darling, let's hurt tonight",
+                                "script_tracking_url": "https://tracking.musixmatch.com/t1.0/m_js/e_0/sn_1/l_15918908/su_0/rs_0/tr_3vUCAFgBs91xOtNdwZ8O0Ou1mwXxmjTX7DPgnEYHstxTBrs6YKiRkynxwB64wyc15bKZOe-PJYmQNeg93rX19JkgAMN4iai9U-jBnAaN8wilLkU2_kG5t2XUXFLOryDsFCBS7D0QfiCMhr6joY8QkWWCKPW1T9beeLlCRdT_ewekb9KkvtQPc--dqFTbNcg-s9hdSCRdA4oMCIWqwfxujdfX74BDX0iEe3UGrijqBm9KzZ3Ddpoivz5BPVPY8zwJUsLDJ6GaBzZnVYXq2b3e6vWiIn3WCdcHNccEyGLVIjfmlDj84EDhGxOW3cpvXBdGrA2XwRu6wIT3IJ6HHApLB06kRMlrwh05JYLilhcu4_C4Uq2SBal018v7U9ShLQVt1IEzVQgpZOI1HXmefJaFYpk5c1IHz69zNU_KG5trouKKsv02Tv6uDDl8n6vuebzJfdrCh1pzDKrJE1UfJkvp0hL7PzZgyIrq_Sd3LXlREKxX9WzkssnP9WnEmU2dvk13qRyOszg84qKdhrSzmmwhtlsjte98mw/",
+                                "pixel_tracking_url": "https://tracking.musixmatch.com/t1.0/m_img/e_0/sn_1/l_15918908/su_0/rs_0/tr_3vUCAIbUshV6Y66qh9oqBQ0PhJDLShbtHdiJPgzc8Cx3RuNgauP8B7UkbtMA6-po5tkNUj_Jewdpf86jpmlUidsrhfg9aBIjAve4KetUMS4GhCMrlHvN33YZHRz4fuKT0Z6pP_A5mFaTWNCGV1uyY7lAIDKA8nfgZMyFlu231lOO5vONOZcGhuqL3WS5_DEc1PBEVnJWGmepgxy_qTmkLg8F9-Rsk4cxP-eNBgz4Lgm5yF98N4n2TURIqYoEkALjTmcYMcJmPyEtSXOZmtfaXWKDvmzS3Xa4FfOARd82cRP4_q3V61nDo7MjikEKSPg5Wzvz-eqjRKV-uktGcb8soLn9aMnPGNFUZOaFBV068xlKyib373nJ8yuS42FcUp3mCiW4Kc8xQXQIfbb7KzvyLMXcAyhxNZAq5J9hU56UQ1b3D5ffiHU1fiDQDB20Lvs9_bIlw2B88ELOXiel5fuOeYUgIXOGzzBMMoWWiCbqDyA7lHNPwiXzd84lrUmu1BupCjuvL4Ux-Qg_7IAYsE-p9u0PUKgozA/",
+                                "html_tracking_url": "https://tracking.musixmatch.com/t1.0/m_html/e_0/sn_1/l_15918908/su_0/rs_0/tr_3vUCAOpumH8ROqepVMTd0yusS_bvt3fknW-ImP7U8Ewlzhq-b4WeJrMvm0b8GC7fHxuiFlOXJzkix4VZMj5kucEO6-_-FzmN8Xe0kJny5zufMyzbtFHtQ0guiU8ADj6-22V-ac50e0auDFBpDrajO1boshJlGH-U6pSo7Tjih4PaSx8h_JOwb5bhn8H-8u-qrG0eV-F8pIVIP5RquGB_G9TulwSegpHeK0hrMaYothPY20V1AxpaIce7jGl9MyZzbD0_uy5FxD74pMn2uEbdHN5cI5BWNggva6nWcW9LZgTCk7kNIUSzvtJtuslTAopExr-Ckaz6yUp1mTEttj8wF86jclg1J6MbcAlskpyCxje2GZxn8mIi8n1sIjRtE-xaq-0qAiK2bpDsPMcrdUlpWzBXcZgKc7KHraw8Lq0fs4tdzUkZb3atXK9dAPuCU8lZ3cSEGGRqwSjVKUH4ZtSO6ezU9TFtthdgv_LYONqoU9hZ-sKuMrEx71z37hp1G16jSyuYvQshiB0fJFaljSIwVsvGUDefUg/",
+                                "updated_time": "2021-09-29T15:39:14Z"
+                            }
+                        }
+                    }
+                },
+                "track.subtitles.get": {
+                    "message": {
+                        "header": {
+                            "status_code": 200,
+                            "available": 13,
+                            "execute_time": 0.013487100601196,
+                            "instrumental": 0
+                        },
+                        "body": {
+                            "subtitle_list": [
+                                {
+                                    "subtitle": {
+                                        "subtitle_id": 33084524,
+                                        "restricted": 0,
+                                        "published_status": 5,
+                                        "subtitle_body": "[00:07.78] When, when we came home\n[00:13.73] Worn to the bones\n[00:17.56] I told myself, this could get rough\n[00:22.20] And when, when I was off, which happened a lot\n[00:32.07] You came to me and said, that's enough\n[00:37.08] Oh, I know that this love is pain\n[00:43.71] But we can't cut it from out these veins, no\n[00:51.77] So I'll hit the lights and you lock the doors\n[00:57.70] We ain't leaving this room 'til we both feel more\n[01:04.75] Don't walk away, don't roll your eyes\n[01:10.34] They say love is pain, well darling, let's hurt tonight\n[01:16.95] Ah-ooh-ooh, ah-ooh-ooh\n[01:25.07] When, when you came home\n[01:31.37] Worn to the bones\n[01:34.94] I told myself, this could get rough\n[01:39.77] Oh, I know you're feeling insane\n[01:46.67] Tell me something that I can explain, oh\n[01:54.58] I'll hit the lights and you lock the doors\n[02:00.43] Tell me all of the things that you couldn't before\n[02:07.43] Don't walk away, don't roll your eyes\n[02:13.18] They say love is pain, well darling, let's hurt tonight\n[02:19.67] If this love is pain, well darling, let's hurt, oh tonight\n[02:28.57] \n[02:32.22] Ah-ooh-ooh, ah-ooh-ooh\n[02:40.98] So you hit the lights and I'll lock the doors\n[02:46.52] Let's say all of the things that we couldn't before\n[02:53.76] I won't walk away, won't roll my eyes\n[02:59.20] They say love is pain, well darling, let's hurt tonight\n[03:05.77] If this love is pain, then honey let's love tonight\n[03:10.86] ",
+                                        "subtitle_avg_count": 19,
+                                        "lyrics_copyright": "Writer(s): Ryan Tedder, Noel Zancanella\nCopyright: Midnite Miracle Music, Sony/atv Pop Music Publishing, Songs Of Patriot Games, Blastronaut Publishing\n",
+                                        "subtitle_length": 194,
+                                        "subtitle_language": "en",
+                                        "subtitle_language_description": "English",
+                                        "script_tracking_url": "https://tracking.musixmatch.com/t1.0/m_js/e_0/sn_0/l_0/su_33084524/rs_0/tr_3vUCAOijyzShv1cdbBWn9NsWQPI5FCn4NNZASqOBMdrr0kkKRPMnP60tSakqivoWumkZ1quXCHgTYEyTZ98RAa9NYapiDCLykWJ6hQhd8532ih_REzbc9dSKwcTshwZikeStUCrx9kVaHvSrr46THqghkBwUqBwh8Z3AK90c6ao-mq1-k0a-tgpbWEHbY4AMyaHJNvH81uE6CsBONl7otMIzlEQ8XUzJui2mWnfngHkPKa4qdRp5qbjOtwgHcFy6i3ktmB7GmldXsFRlHtAxUZrn3D5Z6z1eOShzkO_grMGxtMXPOKRkSe1v5vGXnSoqc_hPPQN6wm1rIBnCzZEvALs7di2JiO27mBck2OuqKLKtv4X9TaZy-ZURYw1k11R7LOpDNoCmOij1qXDInjYAgXlMD92kAQR3tXXDDbNULsM0F_FzYbvqSUhECJa4yGYtXLXtNp7cy0_5U7Rdhm8YYzu7tltEfvQRo30NTBlCgfxXTRa3NzkBYxVOaHvbKaBONKAcBrxR0lNZHXkZ0MRxtmpaqLZFSQ/",
+                                        "pixel_tracking_url": "https://tracking.musixmatch.com/t1.0/m_img/e_0/sn_0/l_0/su_33084524/rs_0/tr_3vUCAKNMF6F5TyenynUNK5iFQL9uTwDIZGJs3m81ey2afU4nE_bb0d-muqwiy1W2CXXYlIwmcSzJcXFVIhQlgvjmpUpUqg5tcYb5Xq_pbEsmG9zXDVWUNQDL241mRU4cFFBsn8qXkE6EvadEPcIO6uPwUcR9UP3R9vvD2oX6Jhz1PgiQqibEs6588Xol0huWNqBLjXtRDgz02J7K2wwsaIm_7lUEpfXB99ewterDL9-9CG-b64-Hb7xgrT5KCLxliHrNC_RvsaKqROYE9wEVSJHQfxnr5l1iHiOEy_tNthT2aM_WoHb6NSVhHu8EZ3i-z37aBr7IenfVzrfzwHCS1fQmHTl203CMJVwMM7FkDEl0jhwft_MlEgl6QNCMdhf3Z1tHw56KdUQ7Cyzsn3mPvNHfsMZXLp4_YPouTmVitmQ7_IfLqeg80BMJGb28TalGMmZAegyux0b-RI3DkizlU5gQ736ncC54Ee4SEYFj6P002vOr4Qt5mKxdfUEZqoQNs-ySI1cAOD18EUZEKPPeaTjnhDuAug/",
+                                        "html_tracking_url": "https://tracking.musixmatch.com/t1.0/m_html/e_0/sn_0/l_0/su_33084524/rs_0/tr_3vUCADzAr9dsr_hyCX_yX9R6o8vx08bgJ5jBiJgjGiQQ_lZnzE42xAWNPA6V563ENDWUm4hEbfB5ZCHq5BSdyBnbr7yEwTsEfu0io2n0uWqAAMCMMQQk_I75oKaLmtr9b5NdmNLgFoIs9fmTgg55hhiS7l0ID7iqR4J4Nyz2an0ajXiSUW-OOUsFYh3tZISSpabFI1YBnmKYBk9ohjD07iUY6NfowQRgzTmLNGa5a7foiFLu9E7xVvoCH9y45WEUBl4vRKS4-MvF05e2FFk6e9q1rC3vDX9FdForL9ziHT73H5mOxrIawShMcIq07o3T5gqOoFFgh90kaQ7s3BKnevwxewB2O0cg1otj6PbEFp2WSFMy65AbtEZ7yQzqenWeAjTlKKDVZHSwYXm-NDr47L4USsVGdg34FOnB2GHtmGVRtaswiKl90YgkZ65KJBNmA_DhXmtDXQszdFLm0W7Tsp0YpEykgkkZgDrF4ZZwBV4shucQ_1B9L_j5zY5GD6RdjK-WndA514BY-Ph957FCwi16-WT6Ng/",
+                                        "writer_list": [],
+                                        "publisher_list": [],
+                                        "updated_time": "2021-11-12T22:05:48Z"
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                },
+                "userblob.get": {
+                    "message": {
+                        "header": {
+                            "status_code": 404
+                        }
+                    },
+                    "meta": {
+                        "status_code": 404,
+                        "last_updated": "2023-09-25T10:02:48.952Z"
+                    }
+                },
+                "matcher.track.get": {
+                    "message": {
+                        "header": {
+                            "status_code": 200,
+                            "execute_time": 0.010424137115479,
+                            "confidence": 1000,
+                            "mode": "search",
+                            "cached": 1
+                        },
+                        "body": {
+                            "track": {
+                                "track_id": 123529964,
+                                "track_mbid": "",
+                                "track_isrc": "USUM71608414",
+                                "commontrack_isrcs": [
+                                    [
+                                        "USUM71608414"
+                                    ]
+                                ],
+                                "track_spotify_id": "67Gy4zadxP1s1vZqKaKAwY",
+                                "commontrack_spotify_ids": [
+                                    "67Gy4zadxP1s1vZqKaKAwY",
+                                    "2iZXMKa6Q4GBngBuRWtUtm",
+                                    "4lxFoXyxFnPEkguzM9rmox",
+                                    "05sCp83gcMm1iecYydKJS3",
+                                    "1oc4kHthIpfa2jQnIL33GE",
+                                    "5I6nGuq5U7s3jOHkKVjtBA",
+                                    "7HzkP8a7ea646Sehi1PEus",
+                                    "5105En43omhNCi9fh0jZxt"
+                                ],
+                                "track_soundcloud_id": 298893711,
+                                "track_xboxmusic_id": "",
+                                "track_name": "Let's Hurt Tonight",
+                                "track_name_translation_list": [
+                                    {
+                                        "track_name_translation": {
+                                            "language": "JA",
+                                            "translation": "レッツ・ハート・トゥナイト"
+                                        }
+                                    }
+                                ],
+                                "track_rating": 72,
+                                "track_length": 195,
+                                "commontrack_id": 63145624,
+                                "instrumental": 0,
+                                "explicit": 0,
+                                "has_lyrics": 1,
+                                "has_lyrics_crowd": 0,
+                                "has_subtitles": 1,
+                                "has_richsync": 1,
+                                "has_track_structure": 1,
+                                "num_favourite": 2838,
+                                "lyrics_id": 15918908,
+                                "subtitle_id": 33084524,
+                                "album_id": 25214173,
+                                "album_name": "Oh My My",
+                                "album_vanity_id": "OneRepublic/Oh-My-My-2",
+                                "artist_id": 269346,
+                                "artist_mbid": "c33c2065-b1c3-4406-b066-d33a9e2ea71a",
+                                "artist_name": "OneRepublic",
+                                "album_coverart_100x100": "https://s.mxmcdn.net/images-storage/albums4/1/8/1/7/8/3/36387181.jpg",
+                                "album_coverart_350x350": "https://s.mxmcdn.net/images-storage/albums4/1/8/1/7/8/3/36387181_350_350.jpg",
+                                "album_coverart_500x500": "https://s.mxmcdn.net/images-storage/albums4/1/8/1/7/8/3/36387181_500_500.jpg",
+                                "album_coverart_800x800": "https://s.mxmcdn.net/images-storage/albums4/1/8/1/7/8/3/36387181_800_800.jpg",
+                                "track_share_url": "https://www.musixmatch.com/lyrics/OneRepublic/Let-s-Hurt-Tonight?utm_source=application&utm_campaign=api&utm_medium=musixmatch%3A1409612667678",
+                                "track_edit_url": "https://www.musixmatch.com/lyrics/OneRepublic/Let-s-Hurt-Tonight/edit?utm_source=application&utm_campaign=api&utm_medium=musixmatch%3A1409612667678",
+                                "commontrack_vanity_id": "OneRepublic/Let-s-Hurt-Tonight",
+                                "restricted": 0,
+                                "first_release_date": "2016-10-07T00:00:00Z",
+                                "updated_time": "2016-09-30T18:22:22Z",
+                                "primary_genres": {
+                                    "music_genre_list": [
+                                        {
+                                            "music_genre": {
+                                                "music_genre_id": 14,
+                                                "music_genre_parent_id": 34,
+                                                "music_genre_name": "Pop",
+                                                "music_genre_name_extended": "Pop",
+                                                "music_genre_vanity": "Pop"
+                                            }
+                                        }
+                                    ]
+                                },
+                                "secondary_genres": {
+                                    "music_genre_list": [
+                                        {
+                                            "music_genre": {
+                                                "music_genre_id": 1133,
+                                                "music_genre_parent_id": 14,
+                                                "music_genre_name": "Pop/Rock",
+                                                "music_genre_name_extended": "Pop / Pop/Rock",
+                                                "music_genre_vanity": "Pop-Pop-Rock"
+                                            }
+                                        },
+                                        {
+                                            "music_genre": {
+                                                "music_genre_id": 1144,
+                                                "music_genre_parent_id": 21,
+                                                "music_genre_name": "Adult Alternative",
+                                                "music_genre_name_extended": "Rock / Adult Alternative",
+                                                "music_genre_vanity": "Rock-Adult-Alternative"
+                                            }
+                                        },
+                                        {
+                                            "music_genre": {
+                                                "music_genre_id": 21,
+                                                "music_genre_parent_id": 34,
+                                                "music_genre_name": "Rock",
+                                                "music_genre_name_extended": "Rock",
+                                                "music_genre_vanity": "Rock"
+                                            }
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    }
+                },
+                "track.richsync.get": {
+                    "message": {
+                        "header": {
+                            "status_code": 200,
+                            "available": 11,
+                            "execute_time": 0.029949188232422
+                        },
+                        "body": {
+                            "richsync": {
+                                "richsync_id": 3391350,
+                                "restricted": 0,
+                                "richsync_body": "[{\"ts\":7.78,\"te\":12.304,\"l\":[{\"c\":\"When,\",\"o\":0},{\"c\":\" \",\"o\":1.838},{\"c\":\"when\",\"o\":2.838},{\"c\":\" \",\"o\":3.164},{\"c\":\"we\",\"o\":3.258},{\"c\":\" \",\"o\":3.437},{\"c\":\"came\",\"o\":3.487},{\"c\":\" \",\"o\":3.755},{\"c\":\"home\",\"o\":3.854}],\"x\":\"When, when we came home\"},{\"ts\":13.73,\"te\":15.36,\"l\":[{\"c\":\"Worn\",\"o\":0},{\"c\":\" \",\"o\":0.552},{\"c\":\"to\",\"o\":0.762},{\"c\":\" \",\"o\":0.879},{\"c\":\"the\",\"o\":0.934},{\"c\":\" \",\"o\":1.072},{\"c\":\"bones\",\"o\":1.1258}],\"x\":\"Worn to the bones\"},{\"ts\":17.56,\"te\":21.753,\"l\":[{\"c\":\"I\",\"o\":0},{\"c\":\" \",\"o\":0.015},{\"c\":\"told\",\"o\":0.307},{\"c\":\" \",\"o\":0.5699},{\"c\":\"myself,\",\"o\":0.665},{\"c\":\" \",\"o\":2.072},{\"c\":\"this\",\"o\":2.658},{\"c\":\" \",\"o\":2.84},{\"c\":\"could\",\"o\":2.8969},{\"c\":\" \",\"o\":3.188},{\"c\":\"get\",\"o\":3.254},{\"c\":\" \",\"o\":3.499},{\"c\":\"rough\",\"o\":3.785}],\"x\":\"I told myself, this could get rough\"},{\"ts\":22.2,\"te\":30.025,\"l\":[{\"c\":\"And\",\"o\":0},{\"c\":\" \",\"o\":0.279},{\"c\":\"when,\",\"o\":0.313},{\"c\":\" \",\"o\":1.725},{\"c\":\"when\",\"o\":2.702},{\"c\":\" \",\"o\":2.9009},{\"c\":\"I\",\"o\":3.1629},{\"c\":\" \",\"o\":3.235},{\"c\":\"was\",\"o\":3.317},{\"c\":\" \",\"o\":3.577},{\"c\":\"off,\",\"o\":3.664},{\"c\":\" \",\"o\":5.231},{\"c\":\"which\",\"o\":6.29},{\"c\":\" \",\"o\":6.587},{\"c\":\"happened\",\"o\":6.64},{\"c\":\" \",\"o\":7.157},{\"c\":\"a\",\"o\":7.254},{\"c\":\" \",\"o\":7.3},{\"c\":\"lot\",\"o\":7.328}],\"x\":\"And when, when I was off, which happened a lot\"},{\"ts\":32.07,\"te\":36.31,\"l\":[{\"c\":\"You\",\"o\":0},{\"c\":\" \",\"o\":0.361},{\"c\":\"came\",\"o\":0.4089},{\"c\":\" \",\"o\":0.821},{\"c\":\"to\",\"o\":0.941},{\"c\":\" \",\"o\":1.05},{\"c\":\"me\",\"o\":1.116},{\"c\":\" \",\"o\":1.325},{\"c\":\"and\",\"o\":2.277},{\"c\":\" \",\"o\":2.753},{\"c\":\"said,\",\"o\":3.158},{\"c\":\" \",\"o\":3.525},{\"c\":\"that's\",\"o\":3.57},{\"c\":\" \",\"o\":3.865},{\"c\":\"enough\",\"o\":3.943}],\"x\":\"You came to me and said, that's enough\"},{\"ts\":37.08,\"te\":41.476,\"l\":[{\"c\":\"Oh,\",\"o\":0},{\"c\":\" \",\"o\":0.699},{\"c\":\"I\",\"o\":1.439},{\"c\":\" \",\"o\":1.667},{\"c\":\"know\",\"o\":1.783},{\"c\":\" \",\"o\":2.262},{\"c\":\"that\",\"o\":2.359},{\"c\":\" \",\"o\":2.606},{\"c\":\"this\",\"o\":2.703},{\"c\":\" \",\"o\":2.983},{\"c\":\"love\",\"o\":3.071},{\"c\":\" \",\"o\":3.453},{\"c\":\"is\",\"o\":3.571},{\"c\":\" \",\"o\":3.664},{\"c\":\"pain\",\"o\":3.726}],\"x\":\"Oh, I know that this love is pain\"},{\"ts\":43.71,\"te\":50.25,\"l\":[{\"c\":\"But\",\"o\":0},{\"c\":\" \",\"o\":0.22},{\"c\":\"we\",\"o\":0.292},{\"c\":\" \",\"o\":0.37},{\"c\":\"can't\",\"o\":0.412},{\"c\":\" \",\"o\":1.292},{\"c\":\"cut\",\"o\":1.909},{\"c\":\" \",\"o\":2.664},{\"c\":\"it\",\"o\":2.7799},{\"c\":\" \",\"o\":3.113},{\"c\":\"from\",\"o\":3.2},{\"c\":\" \",\"o\":3.491},{\"c\":\"out\",\"o\":3.57},{\"c\":\" \",\"o\":3.944},{\"c\":\"these\",\"o\":4.0279},{\"c\":\" \",\"o\":4.431},{\"c\":\"veins,\",\"o\":4.596},{\"c\":\" \",\"o\":5.483},{\"c\":\"no\",\"o\":5.852}],\"x\":\"But we can't cut it from out these veins, no\"},{\"ts\":51.77,\"te\":55.474,\"l\":[{\"c\":\"So\",\"o\":0},{\"c\":\" \",\"o\":0.154},{\"c\":\"I'll\",\"o\":0.233},{\"c\":\" \",\"o\":0.513},{\"c\":\"hit\",\"o\":0.592},{\"c\":\" \",\"o\":0.839},{\"c\":\"the\",\"o\":0.899},{\"c\":\" \",\"o\":1.018},{\"c\":\"lights\",\"o\":1.066},{\"c\":\" \",\"o\":1.55},{\"c\":\"and\",\"o\":1.598},{\"c\":\" \",\"o\":1.83},{\"c\":\"you\",\"o\":1.89},{\"c\":\" \",\"o\":2.106},{\"c\":\"lock\",\"o\":2.198},{\"c\":\" \",\"o\":2.554},{\"c\":\"the\",\"o\":2.62},{\"c\":\" \",\"o\":2.731},{\"c\":\"doors\",\"o\":2.77}],\"x\":\"So I'll hit the lights and you lock the doors\"},{\"ts\":57.7,\"te\":62.133,\"l\":[{\"c\":\"We\",\"o\":0},{\"c\":\" \",\"o\":0.315},{\"c\":\"ain't\",\"o\":0.366},{\"c\":\" \",\"o\":0.5719},{\"c\":\"leaving\",\"o\":0.632},{\"c\":\" \",\"o\":1.206},{\"c\":\"this\",\"o\":1.339},{\"c\":\" \",\"o\":1.5028},{\"c\":\"room\",\"o\":1.566},{\"c\":\" \",\"o\":2.004},{\"c\":\"'til\",\"o\":2.064},{\"c\":\" \",\"o\":2.215},{\"c\":\"we\",\"o\":2.281},{\"c\":\" \",\"o\":2.3969},{\"c\":\"both\",\"o\":2.456},{\"c\":\" \",\"o\":2.713},{\"c\":\"feel\",\"o\":2.8769},{\"c\":\" \",\"o\":3.048},{\"c\":\"more\",\"o\":3.092}],\"x\":\"We ain't leaving this room 'til we both feel more\"},{\"ts\":64.75,\"te\":68.729,\"l\":[{\"c\":\"Don't\",\"o\":0},{\"c\":\" \",\"o\":0.3479},{\"c\":\"walk\",\"o\":0.4089},{\"c\":\" \",\"o\":0.647},{\"c\":\"away,\",\"o\":0.723},{\"c\":\" \",\"o\":1.3899},{\"c\":\"don't\",\"o\":1.771},{\"c\":\" \",\"o\":2.047},{\"c\":\"roll\",\"o\":2.115},{\"c\":\" \",\"o\":2.4049},{\"c\":\"your\",\"o\":2.476},{\"c\":\" \",\"o\":2.724},{\"c\":\"eyes\",\"o\":2.79}],\"x\":\"Don't walk away, don't roll your eyes\"},{\"ts\":70.34,\"te\":74.922,\"l\":[{\"c\":\"They\",\"o\":0},{\"c\":\" \",\"o\":0.291},{\"c\":\"say\",\"o\":0.339},{\"c\":\" \",\"o\":0.473},{\"c\":\"love\",\"o\":0.535},{\"c\":\" \",\"o\":0.6959},{\"c\":\"is\",\"o\":0.768},{\"c\":\" \",\"o\":0.907},{\"c\":\"pain,\",\"o\":0.975},{\"c\":\" \",\"o\":1.408},{\"c\":\"well\",\"o\":1.5129},{\"c\":\" \",\"o\":1.733},{\"c\":\"darling,\",\"o\":1.78},{\"c\":\" \",\"o\":2.202},{\"c\":\"let's\",\"o\":2.324},{\"c\":\" \",\"o\":2.549},{\"c\":\"hurt\",\"o\":2.623},{\"c\":\" \",\"o\":2.816},{\"c\":\"tonight\",\"o\":2.94}],\"x\":\"They say love is pain, well darling, let's hurt tonight\"},{\"ts\":76.95,\"te\":82.269,\"l\":[{\"c\":\"Ah-\",\"o\":0},{\"c\":\"ooh-\",\"o\":0.639},{\"c\":\"ooh,\",\"o\":1.16},{\"c\":\" \",\"o\":2.595},{\"c\":\"ah-\",\"o\":3.632},{\"c\":\"ooh-\",\"o\":3.946},{\"c\":\"ooh\",\"o\":4.551}],\"x\":\"Ah-ooh-ooh, ah-ooh-ooh\"},{\"ts\":85.0699,\"te\":89.763,\"l\":[{\"c\":\"When,\",\"o\":0},{\"c\":\" \",\"o\":1.476},{\"c\":\"when\",\"o\":2.633},{\"c\":\" \",\"o\":3.031},{\"c\":\"you\",\"o\":3.149},{\"c\":\" \",\"o\":3.419},{\"c\":\"came\",\"o\":3.539},{\"c\":\" \",\"o\":3.836},{\"c\":\"home\",\"o\":3.9}],\"x\":\"When, when you came home\"},{\"ts\":91.37,\"te\":93.307,\"l\":[{\"c\":\"Worn\",\"o\":0},{\"c\":\" \",\"o\":0.517},{\"c\":\"to\",\"o\":0.8149},{\"c\":\" \",\"o\":0.957},{\"c\":\"the\",\"o\":1.033},{\"c\":\" \",\"o\":1.182},{\"c\":\"bones\",\"o\":1.24}],\"x\":\"Worn to the bones\"},{\"ts\":94.94,\"te\":99.143,\"l\":[{\"c\":\"I\",\"o\":0},{\"c\":\" \",\"o\":0.015},{\"c\":\"told\",\"o\":0.183},{\"c\":\" \",\"o\":0.415},{\"c\":\"myself,\",\"o\":0.713},{\"c\":\" \",\"o\":1.899},{\"c\":\"this\",\"o\":2.782},{\"c\":\" \",\"o\":2.975},{\"c\":\"could\",\"o\":3.052},{\"c\":\" \",\"o\":3.389},{\"c\":\"get\",\"o\":3.463},{\"c\":\" \",\"o\":3.652},{\"c\":\"rough\",\"o\":3.766}],\"x\":\"I told myself, this could get rough\"},{\"ts\":99.77,\"te\":104.316,\"l\":[{\"c\":\"Oh,\",\"o\":0},{\"c\":\" \",\"o\":0.793},{\"c\":\"I\",\"o\":1.302},{\"c\":\" \",\"o\":1.371},{\"c\":\"know\",\"o\":1.5},{\"c\":\" \",\"o\":1.844},{\"c\":\"you're\",\"o\":2.023},{\"c\":\" \",\"o\":2.466},{\"c\":\"feeling\",\"o\":2.536},{\"c\":\" \",\"o\":3.203},{\"c\":\"insane\",\"o\":3.286}],\"x\":\"Oh, I know you're feeling insane\"},{\"ts\":106.67,\"te\":113.084,\"l\":[{\"c\":\"Tell\",\"o\":0},{\"c\":\" \",\"o\":0.212},{\"c\":\"me\",\"o\":0.255},{\"c\":\" \",\"o\":0.325},{\"c\":\"something\",\"o\":0.38},{\"c\":\" \",\"o\":1.672},{\"c\":\"that\",\"o\":2.32},{\"c\":\" \",\"o\":2.634},{\"c\":\"I\",\"o\":2.83},{\"c\":\" \",\"o\":2.904},{\"c\":\"can\",\"o\":3.021},{\"c\":\" \",\"o\":3.298},{\"c\":\"explain,\",\"o\":3.547},{\"c\":\" \",\"o\":5.18},{\"c\":\"oh\",\"o\":5.287}],\"x\":\"Tell me something that I can explain, oh\"},{\"ts\":114.58,\"te\":119.239,\"l\":[{\"c\":\"I'll\",\"o\":0},{\"c\":\" \",\"o\":0.386},{\"c\":\"hit\",\"o\":0.598},{\"c\":\" \",\"o\":0.763},{\"c\":\"the\",\"o\":0.825},{\"c\":\" \",\"o\":0.987},{\"c\":\"lights\",\"o\":1.037},{\"c\":\" \",\"o\":1.741},{\"c\":\"and\",\"o\":1.845},{\"c\":\" \",\"o\":2.02},{\"c\":\"you\",\"o\":2.096},{\"c\":\" \",\"o\":2.294},{\"c\":\"lock\",\"o\":2.372},{\"c\":\" \",\"o\":2.583},{\"c\":\"the\",\"o\":2.637},{\"c\":\" \",\"o\":2.9049},{\"c\":\"doors\",\"o\":2.958}],\"x\":\"I'll hit the lights and you lock the doors\"},{\"ts\":120.43,\"te\":125.133,\"l\":[{\"c\":\"Tell\",\"o\":0},{\"c\":\" \",\"o\":0.293},{\"c\":\"me\",\"o\":0.397},{\"c\":\" \",\"o\":0.546},{\"c\":\"all\",\"o\":0.633},{\"c\":\" \",\"o\":0.947},{\"c\":\"of\",\"o\":1.114},{\"c\":\" \",\"o\":1.24},{\"c\":\"the\",\"o\":1.338},{\"c\":\" \",\"o\":1.584},{\"c\":\"things\",\"o\":1.664},{\"c\":\" \",\"o\":2.101},{\"c\":\"that\",\"o\":2.191},{\"c\":\" \",\"o\":2.438},{\"c\":\"you\",\"o\":2.5179},{\"c\":\" \",\"o\":2.687},{\"c\":\"couldn't\",\"o\":2.7599},{\"c\":\" \",\"o\":3.328},{\"c\":\"before\",\"o\":3.388}],\"x\":\"Tell me all of the things that you couldn't before\"},{\"ts\":127.43,\"te\":131.386,\"l\":[{\"c\":\"Don't\",\"o\":0},{\"c\":\" \",\"o\":0.392},{\"c\":\"walk\",\"o\":0.443},{\"c\":\" \",\"o\":0.655},{\"c\":\"away,\",\"o\":0.739},{\"c\":\" \",\"o\":1.235},{\"c\":\"don't\",\"o\":1.482},{\"c\":\" \",\"o\":1.897},{\"c\":\"roll\",\"o\":1.96},{\"c\":\" \",\"o\":2.263},{\"c\":\"your\",\"o\":2.3809},{\"c\":\" \",\"o\":2.624},{\"c\":\"eyes\",\"o\":2.734}],\"x\":\"Don't walk away, don't roll your eyes\"},{\"ts\":133.18,\"te\":137.358,\"l\":[{\"c\":\"They\",\"o\":0},{\"c\":\" \",\"o\":0.1729},{\"c\":\"say\",\"o\":0.22},{\"c\":\" \",\"o\":0.364},{\"c\":\"love\",\"o\":0.429},{\"c\":\" \",\"o\":0.591},{\"c\":\"is\",\"o\":0.644},{\"c\":\" \",\"o\":0.78},{\"c\":\"pain,\",\"o\":0.834},{\"c\":\" \",\"o\":1.195},{\"c\":\"well\",\"o\":1.367},{\"c\":\" \",\"o\":1.567},{\"c\":\"darling,\",\"o\":1.643},{\"c\":\" \",\"o\":2.228},{\"c\":\"let's\",\"o\":2.304},{\"c\":\" \",\"o\":2.5099},{\"c\":\"hurt\",\"o\":2.565},{\"c\":\" \",\"o\":2.87},{\"c\":\"tonight\",\"o\":3.039}],\"x\":\"They say love is pain, well darling, let's hurt tonight\"},{\"ts\":139.6699,\"te\":146.566,\"l\":[{\"c\":\"If\",\"o\":0},{\"c\":\" \",\"o\":0.29},{\"c\":\"this\",\"o\":0.343},{\"c\":\" \",\"o\":0.529},{\"c\":\"love\",\"o\":0.591},{\"c\":\" \",\"o\":0.77},{\"c\":\"is\",\"o\":0.809},{\"c\":\" \",\"o\":0.866},{\"c\":\"pain,\",\"o\":0.917},{\"c\":\" \",\"o\":1.397},{\"c\":\"well\",\"o\":1.568},{\"c\":\" \",\"o\":1.69},{\"c\":\"darling,\",\"o\":1.771},{\"c\":\" \",\"o\":2.213},{\"c\":\"let's\",\"o\":2.505},{\"c\":\" \",\"o\":2.726},{\"c\":\"hurt,\",\"o\":2.832},{\"c\":\" \",\"o\":4.6769},{\"c\":\"oh\",\"o\":5.658},{\"c\":\" \",\"o\":5.789},{\"c\":\"tonight\",\"o\":6.205}],\"x\":\"If this love is pain, well darling, let's hurt, oh tonight\"},{\"ts\":152.22,\"te\":158.287,\"l\":[{\"c\":\"Ah-\",\"o\":0},{\"c\":\"ooh-\",\"o\":0.647},{\"c\":\"ooh,\",\"o\":1.181},{\"c\":\" \",\"o\":3.0179},{\"c\":\"ah-\",\"o\":4.055},{\"c\":\"ooh-\",\"o\":4.397},{\"c\":\"ooh\",\"o\":5.119}],\"x\":\"Ah-ooh-ooh, ah-ooh-ooh\"},{\"ts\":160.98,\"te\":164.773,\"l\":[{\"c\":\"So\",\"o\":0},{\"c\":\" \",\"o\":0.243},{\"c\":\"you\",\"o\":0.301},{\"c\":\" \",\"o\":0.466},{\"c\":\"hit\",\"o\":0.526},{\"c\":\" \",\"o\":0.675},{\"c\":\"the\",\"o\":0.827},{\"c\":\" \",\"o\":1.043},{\"c\":\"lights\",\"o\":1.102},{\"c\":\" \",\"o\":1.481},{\"c\":\"and\",\"o\":1.614},{\"c\":\" \",\"o\":1.774},{\"c\":\"I'll\",\"o\":1.833},{\"c\":\" \",\"o\":2.126},{\"c\":\"lock\",\"o\":2.186},{\"c\":\" \",\"o\":2.444},{\"c\":\"the\",\"o\":2.532},{\"c\":\" \",\"o\":2.679},{\"c\":\"doors\",\"o\":2.729}],\"x\":\"So you hit the lights and I'll lock the doors\"},{\"ts\":166.52,\"te\":170.975,\"l\":[{\"c\":\"Let's\",\"o\":0},{\"c\":\" \",\"o\":0.351},{\"c\":\"say\",\"o\":0.438},{\"c\":\" \",\"o\":0.6},{\"c\":\"all\",\"o\":0.666},{\"c\":\" \",\"o\":0.807},{\"c\":\"of\",\"o\":0.898},{\"c\":\" \",\"o\":1.172},{\"c\":\"the\",\"o\":1.236},{\"c\":\" \",\"o\":1.3899},{\"c\":\"things\",\"o\":1.432},{\"c\":\" \",\"o\":1.859},{\"c\":\"that\",\"o\":1.917},{\"c\":\" \",\"o\":2.105},{\"c\":\"we\",\"o\":2.1589},{\"c\":\" \",\"o\":2.36},{\"c\":\"couldn't\",\"o\":2.455},{\"c\":\" \",\"o\":2.903},{\"c\":\"before\",\"o\":3.08}],\"x\":\"Let's say all of the things that we couldn't before\"},{\"ts\":173.76,\"te\":177.409,\"l\":[{\"c\":\"I\",\"o\":0},{\"c\":\" \",\"o\":0.01},{\"c\":\"won't\",\"o\":0.358},{\"c\":\" \",\"o\":0.617},{\"c\":\"walk\",\"o\":0.666},{\"c\":\" \",\"o\":0.88},{\"c\":\"away,\",\"o\":0.948},{\"c\":\" \",\"o\":1.665},{\"c\":\"won't\",\"o\":1.748},{\"c\":\" \",\"o\":1.982},{\"c\":\"roll\",\"o\":2.07},{\"c\":\" \",\"o\":2.352},{\"c\":\"my\",\"o\":2.456},{\"c\":\" \",\"o\":2.675},{\"c\":\"eyes\",\"o\":2.782}],\"x\":\"I won't walk away, won't roll my eyes\"},{\"ts\":179.2,\"te\":183.387,\"l\":[{\"c\":\"They\",\"o\":0},{\"c\":\" \",\"o\":0.297},{\"c\":\"say\",\"o\":0.356},{\"c\":\" \",\"o\":0.529},{\"c\":\"love\",\"o\":0.582},{\"c\":\" \",\"o\":0.788},{\"c\":\"is\",\"o\":0.835},{\"c\":\" \",\"o\":0.9},{\"c\":\"pain,\",\"o\":0.995},{\"c\":\" \",\"o\":1.367},{\"c\":\"well\",\"o\":1.469},{\"c\":\" \",\"o\":1.78},{\"c\":\"darling,\",\"o\":1.829},{\"c\":\" \",\"o\":2.359},{\"c\":\"let's\",\"o\":2.453},{\"c\":\" \",\"o\":2.753},{\"c\":\"hurt\",\"o\":2.82},{\"c\":\" \",\"o\":3.223},{\"c\":\"tonight\",\"o\":3.348}],\"x\":\"They say love is pain, well darling, let's hurt tonight\"},{\"ts\":185.77,\"te\":190.858,\"l\":[{\"c\":\"If\",\"o\":0},{\"c\":\" \",\"o\":0.3479},{\"c\":\"this\",\"o\":0.405},{\"c\":\" \",\"o\":0.61},{\"c\":\"love\",\"o\":0.652},{\"c\":\" \",\"o\":0.883},{\"c\":\"is\",\"o\":0.945},{\"c\":\" \",\"o\":1.035},{\"c\":\"pain,\",\"o\":1.091},{\"c\":\" \",\"o\":1.608},{\"c\":\"then\",\"o\":1.777},{\"c\":\" \",\"o\":1.938},{\"c\":\"honey\",\"o\":1.992},{\"c\":\" \",\"o\":2.437},{\"c\":\"let's\",\"o\":2.679},{\"c\":\" \",\"o\":2.945},{\"c\":\"love\",\"o\":3.0099},{\"c\":\" \",\"o\":3.633},{\"c\":\"tonight\",\"o\":4.366}],\"x\":\"If this love is pain, then honey let's love tonight\"}]",
+                                "lyrics_copyright": "Writer(s): Ryan Tedder, Noel Zancanella\nCopyright: Midnite Miracle Music, Sony/atv Pop Music Publishing, Songs Of Patriot Games, Blastronaut Publishing\n",
+                                "richsync_length": 194,
+                                "richssync_language": "en",
+                                "richsync_language_description": "english",
+                                "richsync_avg_count": 3,
+                                "script_tracking_url": "https://tracking.musixmatch.com/t1.0/m_js/e_0/sn_0/l_0/su_0/rs_3391350/tr_3vUCAHHiGIEJhU1Gr-2iAkJEe3HE0laLGOjEqo28mx2jWjMXNees-KJ797uIAkYgvWG7hW-KqpiDUXCMt64QF3if1LZUAa2eNP2qSvKhrVvSQ4wJzJhwqjo7aQpc00hVkTV83Hk-vQF5mZeMeWlLqrfCfTW2HMRBVFBj4w-XL0LbJyFavLTujeWZ5xyk5qQGzvKokJFL7qHQ2gW3jHhgSpiYuc8ITlpGV9Zy1evItsEcYlk5GQcghC6944KLYx0N-0aeuAIJQtY-p1VP4xLrW_HNoOdPpxLN3nufGLz8EWvucdYbsQ8zCkVPRAe_PmUnRbe0ziMJJujCkmz62w28esfl6adQqzt5zsHgBrRSMmppzKCX26PSnFx5w8FnRMkdXN9PTx5tWc1j2aS3jNqh9PgsOFJ4FsNn6Fc5Z87HwK57z1brs4fzwQQo-bRXGpfTEGzE_uIhte3h40ik8_vuqI_zkHKTYpugVgSPJuDE7GDdu2ZeIqLmlTIOMhNggHq-hPzXW5uy1Lyz6QUInNGmdUVYj5s01g/",
+                                "pixel_tracking_url": "https://tracking.musixmatch.com/t1.0/m_img/e_0/sn_0/l_0/su_0/rs_3391350/tr_3vUCAMcazimMw_LslcEoKgs5eYo9g6al7YVeMa5jJnraVaF7Zz5qOj6-QWWHRvSLV_vC8luTV5YEa1YvqkwLjiilP1oCCDR5qNaZfbCE4zCYYuCDgRmaYucB8gVsFryC7-0WpqXv6HrPsbfol8Tw_NwDJUs78xUQQMej7B2kyWp6VfAaXwt87jh4zby1nagWUC4lGFJ-iwx_J0avrr2LKrk6QPAESJB2r45fOrRLYtYY7CEs3qXANq4-o7HZXSxC3ydp60lQD7kSdQ2kxvganPYrn0hdDtwl4vJEwVnbeYJR99GiUXBiMIPBjBTQy2-FV6tqp9OCMWNZllr0GL9U7goG9lmowGy8HybvtRAGjTTmHimBOkUHlW0cK04JU0cfO-2aqqxi26DditOx3vCIJLaz_nID_TeDcEGvVoVYUUNDqRbtmZOz3V6beOeyL_uMPNV75e8GaJ7LXMXmc7Zhk_2HxZUL2red4Q8_-X5IKt6MyUuZdR5AYEioRaCRW2sG3h5Nde_Gm1U5Dyzjka830C1oTE40SQ/",
+                                "html_tracking_url": "https://tracking.musixmatch.com/t1.0/m_html/e_0/sn_0/l_0/su_0/rs_3391350/tr_3vUCAKZKzlGDmXCatx1Ar-uewIpGqKQpposhvVEkEUWmRdsHFjU2X5t1_aSgrqxUHAVzfGEljdfzedwWz6DYB-bouTkZ3LFga7jYq4MxwCqmGfbqxoNL072NO9MFXZfCvn50Wd0brQF0qYBIZsD-wya-qTtAdYx_tL-UWb2Hd7mASxKs8Jf92XH33mLGapgTZDhXysk0ats3bQxoH7gfNPaHa44XCmQYDFj2qSXtlk_pvH3g5ZlaHH8Ij6O0zV11IMnroY7CgGigkRX3qWAi6Tn-E69StlgN0WIp8zUxWySOGwUQKlaN9d8jsyXTDCNcc54jifdJtje57DgjoY0yMVKim9TYkbErdobaVW4Wt4PSB3zu5TisVDhMxjKq5fJLZ6XdsbfdRM0vKilFeGZPAgpDP3hwKmpV6_ddxgXMgHVcG07XLyPx7eof8hteL3A7aGWH45JbcExtsQrhx8cgyOC-FqvnddzSB_WAto0F9jbj3iU3qP1juH1aRrAN6bXqlfmrmrLFkqXuYnVa8_20BAtFwjPGUQ/",
+                                "writer_list": [],
+                                "publisher_list": [],
+                                "updated_time": "2023-09-13T15:18:40Z"
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

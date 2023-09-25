@@ -49,6 +49,9 @@ namespace Lyricify.Lyrics.Demo
 
             lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/SpotifyUnsyncedDemo.txt"), LyricsRawTypes.Spotify);
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
+            
+            lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/MusixmatchDemo.txt"), LyricsRawTypes.Musixmatch);
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
         }
 
         static void TypeDetectorDemo()
