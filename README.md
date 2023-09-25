@@ -11,8 +11,8 @@
   - KRC
   - YRC
   - TTML (暂不支持)
-  - Spotify Lyrics (原始 JSON) (暂不支持)
-  - Musixmatch (原始 JSON) (暂不支持)
+  - Spotify Lyrics (原始 JSON)
+  - Musixmatch (原始 JSON)
 - 歌词歌曲搜索
   - QQ 音乐
   - 网易云音乐
@@ -43,6 +43,7 @@
   - Optimization // 歌词处理优化
     - Explicit // Explicit 歌词处理及修复
     - Yrc // YRC 歌词优化
+    - Musixmatch // Musixmatch 歌词优化
   - Types // 歌词类型
     - Lrc // LRC 歌词类型特性
   - OffsetHelper // 偏移帮助 (用于对歌词添加 Offset 偏移)
