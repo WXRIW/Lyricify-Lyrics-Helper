@@ -41,9 +41,48 @@ namespace Lyricify.Lyrics.Parsers
                                 .Where(t => t != "/")
                                 .ToList();
                         }
-
                     }
                     i = endIndex;
+                }
+                else if (input[i] == '\n' || input[i] == '\r')
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            int j = input.Length - 1;
+            while (input[j] == '\n' || input[j] == '\r') j--;
+            var endCredits = new List<ILineInfo>();
+            for (; j >= 0; j--)
+            {
+                if (input[j] == '}')
+                {
+                    var endIndex = input.LastIndexOf('\n', j);
+                    var jsonLine = input[(endIndex + 1)..(j + 1)];
+                    var credits = JsonConvert.DeserializeObject<CreditsInfo>(jsonLine);
+                    if (credits != null)
+                    {
+                        endCredits.Add(new LineInfo(string.Concat(credits.Credits.Select(c => c.Text)), credits.Timestamp));
+                        lyricsData.File.SyncTypes = SyncTypes.MixedSynced; // 有信息行，说明是混合同步
+
+                        if (credits.Credits is { Count: > 0 } && credits.Credits[0].Text.StartsWith("作词"))
+                        {
+                            lyricsData.Writers = credits.Credits
+                                .GetRange(1, credits.Credits.Count - 1)
+                                .Select(c => c.Text)
+                                .Where(t => t != "/")
+                                .ToList();
+                        }
+                    }
+                    j = endIndex;
+                }
+                else if (input[j] == '\n' || input[j] == '\r')
+                {
+                    continue;
                 }
                 else
                 {
@@ -55,6 +94,8 @@ namespace Lyricify.Lyrics.Parsers
             var lyricsList = ParseOnlyLyrics(input, i);
 
             lines.AddRange(lyricsList);
+            endCredits.Reverse();
+            lines.AddRange(endCredits);
 
             lyricsData.Lines = lines;
             return lyricsData;

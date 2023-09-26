@@ -98,3 +98,5 @@
 [250830,930](250830,360,0)Watch (251190,150,0)it (251340,420,0)burn
 [251760,930](251760,510,0)Sink (252270,120,0)in (252390,60,0)the (252450,240,0)river
 [252690,2250](252690,120,0)The (252810,420,0)lessons (253230,240,0)I've (253470,1470,0)learned
+{"t":253690,"c":[{"tx":"作词: "},{"tx":"Brent Kutzle"},{"tx":"/"},{"tx":"Tyler Spry"},{"tx":"/"},{"tx":"Steven Mudd"},{"tx":"/"},{"tx":"Ryan Tedder","li":"http://p1.music.126.net/S06CeorJXg0Rgb6KhTB9pQ==/18969874114079440.jpg","or":"orpheus://nm/artist/home?id=42602&type=artist"},{"tx":"/"},{"tx":"Josh Varnadore"}]}
+{"t":254690,"c":[{"tx":"作曲: "},{"tx":"Brent Kutzle"},{"tx":"/"},{"tx":"Tyler Spry"},{"tx":"/"},{"tx":"Steven Mudd"},{"tx":"/"},{"tx":"Ryan Tedder","li":"http://p1.music.126.net/S06CeorJXg0Rgb6KhTB9pQ==/18969874114079440.jpg","or":"orpheus://nm/artist/home?id=42602&type=artist"},{"tx":"/"},{"tx":"Josh Varnadore"}]}
