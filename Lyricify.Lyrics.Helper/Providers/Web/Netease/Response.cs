@@ -252,36 +252,13 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
     {
         public string Name { get; set; }
         public string Id { get; set; }
-        public long Pst { get; set; }
-        public long T { get; set; }
-        public List<Ar> Ar { get; set; }
-        public List<object> Alia { get; set; }
-        public long Pop { get; set; }
-        public long St { get; set; }
-        public string Rt { get; set; }
-        public long Fee { get; set; }
-        public long V { get; set; }
-        public object Crbt { get; set; }
-        public string Cf { get; set; }
-        public Al Al { get; set; }
+        public List<Ar> Artists { get; set; }
+        public List<object> Alias { get; set; }
+        public Al Album { get; set; }
         /// <summary>
         /// 时长，单位ms
         /// </summary>
-        public long Dt { get; set; }
-        public H H { get; set; }
-        public H M { get; set; }
-        public H L { get; set; }
-        public object A { get; set; }
-        public string Cd { get; set; }
-        public long No { get; set; }
-        public object RtUrl { get; set; }
-        public long Ftype { get; set; }
-        public List<object> RtUrls { get; set; }
-        public object Rurl { get; set; }
-        public long Rtype { get; set; }
-        public long Mst { get; set; }
-        public long Cp { get; set; }
-        public long Mv { get; set; }
+        public long Duration { get; set; }
         /// <summary>
         /// 时间戳，eg 1657900800000
         /// </summary>
@@ -418,13 +395,5 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public string Name { get; set; }
         public List<object> Tns { get; set; }
         public List<object> Alias { get; set; }
-    }
-
-    public class H
-    {
-        public long Br { get; set; }
-        public long Fid { get; set; }
-        public long Size { get; set; }
-        public double Vd { get; set; }
     }
 }

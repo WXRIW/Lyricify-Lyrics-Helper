@@ -13,6 +13,18 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected abstract string? HttpRefer { get; }
 
+        public async Task<string> GetAsync(string url)
+        {
+            SetRequestHeaders();
+
+            var response = await HttpClient.GetAsync(url);
+
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+
+            return result;
+        }
+
         public async Task<string> PostAsync(string url, Dictionary<string, string> paramDict)
         {
             SetRequestHeaders();

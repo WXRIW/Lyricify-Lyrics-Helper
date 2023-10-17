@@ -9,7 +9,7 @@ namespace Lyricify.Lyrics.Demo
         {
             // ParsersDemo();
             // TypeDetectorDemo();
-            // SearchDemo();
+            SearchDemo();
         }
 
         static void ParsersDemo()
@@ -75,7 +75,7 @@ namespace Lyricify.Lyrics.Demo
                 Artists = new() { "OneRepublic" },
                 DurationMs = 143264,
                 Title = "RUNAWAY",
-            }, Searchers.Searchers.QQMusic, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
+            }, Searchers.Searchers.Netease, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
 
             //var qqSearch = new Searchers.QQMusicSearcher();

@@ -19,10 +19,10 @@ namespace Lyricify.Lyrics.Searchers
 
         public NeteaseSearchResult(Song song) : this(
             song.Name,
-            song.Ar.Select(s => s.Name).ToArray(),
-            song.Al.Name,
+            song.Artists.Select(s => s.Name).ToArray(),
+            song.Album.Name,
             null,
-            (int)song.Dt,
+            (int)song.Duration,
             int.Parse(song.Id)
             )
         { }

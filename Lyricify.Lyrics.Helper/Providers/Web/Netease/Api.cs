@@ -36,8 +36,6 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
         public async Task<SearchResult?> Search(string keyword, SearchTypeEnum searchType)
         {
-            const string url = "https://music.163.com/weapi/cloudsearch/get/web";
-
             // 1: 单曲, 10: 专辑, 100: 歌手, 1000: 歌单, 1002: 用户, 1004: MV, 1006: 歌词, 1009: 电台, 1014: 视频, 1018:综合, 2000:声音
             string type = searchType switch
             {
@@ -46,16 +44,10 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 SearchTypeEnum.PLAYLIST_ID => "1000",
                 _ => "1",
             };
-            var data = new Dictionary<string, string>
-            {
-                { "csrf_token", string.Empty },
-                { "s", keyword },
-                { "type", type },
-                { "limit", "20" },
-                { "offset", "0" }
-            };
 
-            var res = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
+            string url = $"http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={Uri.EscapeDataString(keyword)}&type={type}&offset=0&total=true&limit=20";
+
+            var res = await GetAsync(url);
 
             return JsonConvert.DeserializeObject<SearchResult>(res);
         }
