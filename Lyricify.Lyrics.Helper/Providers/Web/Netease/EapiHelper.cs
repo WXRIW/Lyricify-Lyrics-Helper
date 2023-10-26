@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -30,7 +29,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 ["osver"] = "",
                 ["requestId"] = $"{GetCurrentTotalMilliseconds()}_{Math.Floor(new Random().NextDouble() * 1000).ToString().PadLeft(4, '0')}",
                 ["versioncode"] = "140",
-                ["MUSIC_U"]= "",
+                ["MUSIC_U"] = "",
             };
             headers["Cookie"] = string.Join("; ", header.Select(t => t.Key + "=" + t.Value));
             data["header"] = JsonConvert.SerializeObject(header);
@@ -38,7 +37,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             url = Regex.Replace(url, @"\w*api", "eapi");
 
             httpClient.DefaultRequestHeaders.Clear();
-            foreach(var h in headers)
+            foreach (var h in headers)
             {
                 httpClient.DefaultRequestHeaders.Add(h.Key, h.Value);
             }

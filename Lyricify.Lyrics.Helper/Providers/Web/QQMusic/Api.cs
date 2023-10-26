@@ -1,6 +1,8 @@
-﻿using Lyricify.Lyrics.Helpers.General;
+﻿using Lyricify.Lyrics.Decrypter.Qrc;
+using Lyricify.Lyrics.Helpers.General;
 using System.ComponentModel;
 using System.Text;
+using System.Xml;
 
 namespace Lyricify.Lyrics.Providers.Web.QQMusic
 {
@@ -160,92 +162,91 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             return result?.Decode();
         }
 
-        //public async Task<LyricResult> GetVerbatimLyric(string songId)
-        //{
-        //    try
-        //    {
-        //        var resp = await PostAsync("https://c.y.qq.com/qqmusic/fcgi-bin/lyric_download.fcg", new Dictionary<string, string>
-        //        {
-        //            { "version", "15" },
-        //            { "miniversion", "82" },
-        //            { "lrctype", "4" },
-        //            { "musicid", songId },
-        //        });
-        //        // qq music 返回的内容需要去除注释
-        //        resp = resp.Replace("<!--", "").Replace("-->", "");
+        /// <summary>
+        /// 通过 ID 获取解密后的歌词
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<QqLyricsResponse?> GetLyricsAsync(string id)
+        {
+            var resp = await PostAsync("https://c.y.qq.com/qqmusic/fcgi-bin/lyric_download.fcg", new Dictionary<string, string>
+                {
+                    { "version", "15" },
+                    { "miniversion", "82" },
+                    { "lrctype", "4" },
+                    { "musicid", id },
+                });
 
-        //        var dict = new Dictionary<string, XmlNode>();
+            resp = resp.Replace("<!--", "").Replace("-->", "");
 
-        //        XmlUtils.RecursionFindElement(XmlUtils.Create(resp), VerbatimXmlMappingDict, dict);
+            var dict = new Dictionary<string, XmlNode>();
 
-        //        var result = new LyricResult
-        //        {
-        //            Code = 0,
-        //            Lyric = "",
-        //            Trans = ""
-        //        };
+            XmlUtils.RecursionFindElement(XmlUtils.Create(resp), VerbatimXmlMappingDict, dict);
 
-        //        foreach (var pair in dict)
-        //        {
-        //            var text = pair.Value.InnerText;
+            var result = new QqLyricsResponse
+            {
+                Lyrics = "",
+                Trans = ""
+            };
 
-        //            if (string.IsNullOrWhiteSpace(text))
-        //            {
-        //                continue;
-        //            }
+            foreach (var pair in dict)
+            {
+                var text = pair.Value.InnerText;
 
-        //            string decompressText;
-        //            try
-        //            {
-        //                decompressText = Decrypter.Qrc.Decrypter.DecryptLyrics(text);
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                LogHelper.NewLog(ex);
-        //                continue;
-        //            }
+                if (string.IsNullOrWhiteSpace(text))
+                {
+                    continue;
+                }
 
-        //            var s = "";
-        //            if (decompressText.Contains("<?xml"))
-        //            {
-        //                var doc = XmlUtils.Create(decompressText);
+                string decompressText;
+                try
+                {
+                    decompressText = Decrypter.Qrc.Decrypter.DecryptLyrics(text) ?? "";
+                }
+                catch
+                {
+                    continue;
+                }
 
-        //                var subDict = new Dictionary<string, XmlNode>();
+                var s = "";
+                if (decompressText.Contains("<?xml"))
+                {
+                    var doc = XmlUtils.Create(decompressText);
 
-        //                XmlUtils.RecursionFindElement(doc, VerbatimXmlMappingDict, subDict);
+                    var subDict = new Dictionary<string, XmlNode>();
 
-        //                if (subDict.TryGetValue("lyric", out var d))
-        //                {
-        //                    s = d.Attributes["LyricContent"].InnerText;
-        //                }
-        //            }
-        //            else
-        //            {
-        //                s = decompressText;
-        //            }
+                    XmlUtils.RecursionFindElement(doc, VerbatimXmlMappingDict, subDict);
 
-        //            if (!string.IsNullOrWhiteSpace(s))
-        //            {
-        //                switch (pair.Key)
-        //                {
-        //                    case "orig":
-        //                        result.Lyric = s;// LyricUtils.DealVerbatimLyric(s, SearchSourceEnum.QQ_MUSIC);
-        //                        break;
-        //                    case "ts":
-        //                        result.Trans = s;// LyricUtils.DealVerbatimLyric(s, SearchSourceEnum.QQ_MUSIC);
-        //                        break;
-        //                }
-        //            }
-        //        }
+                    if (subDict.TryGetValue("lyric", out var d))
+                    {
+                        s = d.Attributes?["LyricContent"]?.InnerText;
+                    }
+                }
+                else
+                {
+                    s = decompressText;
+                }
 
-        //        return result;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        LogHelper.NewLyricsLog(ex);
-        //        return null;
-        //    }
-        //}
+                if (!string.IsNullOrWhiteSpace(s))
+                {
+                    switch (pair.Key)
+                    {
+                        case "orig":
+                            result.Lyrics = s;
+                            break;
+                        case "ts":
+                            result.Trans = s;
+                            break;
+                    }
+                }
+            }
+
+            if (result.Lyrics == "" && result.Trans == "")
+            {
+                return null;
+            }
+            return result;
+        }
 
         public async Task<string> GetSongLink(string songMid)
         {
