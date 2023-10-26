@@ -171,6 +171,36 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         }
 
         /// <summary>
+        /// 获得新版歌词结果（含逐字）
+        /// </summary>
+        /// <param name="songId">音乐ID</param>
+        /// <exception cref="WebException"></exception>
+        /// <returns>一个
+        /// <see cref="LyricResult"/></returns>
+        public async Task<LyricResult?> GetLyricNew(string songId)
+        {
+            const string url = "https://interface3.music.163.com/eapi/song/lyric/v1";
+
+            var data = new Dictionary<string, string>
+            {
+                { "id", songId },
+                { "cp", "false" },
+                { "lv", "0" },
+                { "kv", "0" },
+                { "tv", "0" },
+                { "rv", "0" },
+                { "yv", "0" },
+                { "ytv", "0" },
+                { "yrv", "0" },
+                { "csrf_token", string.Empty }
+            };
+
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+
+            return JsonConvert.DeserializeObject<LyricResult>(raw);
+        }
+
+        /// <summary>
         /// 
         /// </summary>
         /// <param name="songId"></param>

@@ -9,7 +9,7 @@ namespace Lyricify.Lyrics.Demo
         {
             // ParsersDemo();
             // TypeDetectorDemo();
-            SearchDemo();
+            // SearchDemo();
         }
 
         static void ParsersDemo()

@@ -67,9 +67,13 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public bool Uncollected { get; set; }
         public LyricUser TransUser { get; set; }
         public LyricUser LyricUser { get; set; }
-        public Lrc Lrc { get; set; }
-        public Klyric Klyric { get; set; }
-        public Lrc Tlyric { get; set; }
+        public Lyrics Lrc { get; set; }
+        public Lyrics Klyric { get; set; }
+        public Lyrics Tlyric { get; set; }
+        public Lyrics Romalrc { get; set; }
+        public Lyrics Yrc { get; set; }
+        public Lyrics Ytlrc { get; set; }
+        public Lyrics Yromalrc { get; set; }
         public long Code { get; set; }
     }
 
@@ -83,13 +87,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public long Uptime { get; set; }
     }
 
-    public class Klyric
-    {
-        public long Version { get; set; }
-        public string Lyric { get; set; }
-    }
-
-    public class Lrc
+    public class Lyrics
     {
         public long Version { get; set; }
         public string Lyric { get; set; }
