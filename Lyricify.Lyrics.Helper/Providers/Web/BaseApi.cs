@@ -38,6 +38,20 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
+        public async Task<string> PostJsonAsync(string url, object param)
+        {
+            SetRequestHeaders();
+
+            var content = new StringContent(JsonConvert.SerializeObject(param), Encoding.UTF8, "application/json");
+
+            var response = await HttpClient.PostAsync(url, content);
+
+            response.EnsureSuccessStatusCode();
+            var result = await response.Content.ReadAsStringAsync();
+
+            return result;
+        }
+
         public async Task<string> PostAsync(string url, Dictionary<string, object> paramDict)
         {
             SetRequestHeaders();

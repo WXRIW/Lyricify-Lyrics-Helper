@@ -404,6 +404,8 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         /// </summary>
         public string Title { get; set; }
 
+        public string Subtitle { get; set; }
+
         /// <summary>
         /// 发布时间，eg: 2005-07-08
         /// </summary>
@@ -429,6 +431,8 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         /// </summary>
         [JsonProperty("grp")]
         public List<Song> Group { get; set; }
+        public int Language { get; set; }
+        public int Genre { get; set; }
     }
 
     public class AlbumInfo
@@ -500,7 +504,444 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         public string Title { get; set; }
 
         public int Type { get; set; }
+    }
 
-        public long Uin { get; set; }
+    public class SingerSongResult
+    {
+        public int Code { get; set; }
+        public long Ts { get; set; }
+        public long Start_Ts { get; set; }
+        public string Traceid { get; set; }
+        public SingerData Singer { get; set; }
+
+        public class SingerData
+        {
+            public int Code { get; set; }
+            public SingerInfo Data { get; set; }
+        }
+
+        public class SingerInfo
+        {
+            public List<SongInfo> Songlist { get; set; }
+            public string Singer_brief { get; set; }
+            public List<object> Music_grp { get; set; }
+            public int Total_album { get; set; }
+            public int Total_mv { get; set; }
+            public int Total_song { get; set; }
+            public string Yinyueren { get; set; }
+            public bool Show_singer_desc { get; set; }
+        }
+
+        public class SongInfo
+        {
+            public int Id { get; set; }
+            public int Type { get; set; }
+            public string Mid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public string Subtitle { get; set; }
+            public List<SingerInfo> Singer { get; set; }
+            public Album Album { get; set; }
+            public Mv Mv { get; set; }
+            public int Interval { get; set; }
+            public int Isonly { get; set; }
+            public int Language { get; set; }
+            public int Genre { get; set; }
+            public int Index_cd { get; set; }
+            public int Index_album { get; set; }
+            public string Time_public { get; set; }
+            public int Status { get; set; }
+            public int Fnote { get; set; }
+            public File File { get; set; }
+            public Pay Pay { get; set; }
+            public Action Action { get; set; }
+            public Ksong Ksong { get; set; }
+            public Volume Volume { get; set; }
+            public string Label { get; set; }
+            public string Url { get; set; }
+            public int Bpm { get; set; }
+            public int Version { get; set; }
+            public string Trace { get; set; }
+            public int Data_type { get; set; }
+            public int Modify_stamp { get; set; }
+            public string Pingpong { get; set; }
+            public string Ppurl { get; set; }
+            public int Tid { get; set; }
+            public int Ov { get; set; }
+
+            public class SingerInfo
+            {
+                public int Id { get; set; }
+                public string Mid { get; set; }
+                public string Name { get; set; }
+                public string Title { get; set; }
+                public int Type { get; set; }
+            }
+        }
+
+        public class Album
+        {
+            public int Id { get; set; }
+            public string Mid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public string Subtitle { get; set; }
+            public string Time_public { get; set; }
+            public string Pmid { get; set; }
+        }
+
+        public class Mv
+        {
+            public int Id { get; set; }
+            public string Vid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public int Vt { get; set; }
+        }
+
+        public class File
+        {
+            public string Media_mid { get; set; }
+            public int Size_24aac { get; set; }
+            public int Size_48aac { get; set; }
+            public int Size_96aac { get; set; }
+            public int Size_192ogg { get; set; }
+            public int Size_192aac { get; set; }
+            public int Size_128mp3 { get; set; }
+            public int Size_320mp3 { get; set; }
+            public int Size_ape { get; set; }
+            public int Size_flac { get; set; }
+            public int Size_dts { get; set; }
+            public int Size_try { get; set; }
+            public int Try_begin { get; set; }
+            public int Try_end { get; set; }
+            public string Url { get; set; }
+            public int Size_hires { get; set; }
+            public int Hires_sample { get; set; }
+            public int Hires_bitdepth { get; set; }
+            public int B_30s { get; set; }
+            public int E_30s { get; set; }
+            public int Size_96ogg { get; set; }
+        }
+
+        public class Pay
+        {
+            public int Pay_month { get; set; }
+            public int Price_track { get; set; }
+            public int Price_album { get; set; }
+            public int Pay_play { get; set; }
+            public int Pay_down { get; set; }
+            public int Pay_status { get; set; }
+            public int Time_free { get; set; }
+        }
+
+        public class Action
+        {
+            public int Switch { get; set; }
+            public int Msgid { get; set; }
+            public int Alert { get; set; }
+            public int Icons { get; set; }
+            public int Msgshare { get; set; }
+            public int Msgfav { get; set; }
+            public int Msgdown { get; set; }
+            public int Msgpay { get; set; }
+        }
+
+        public class Ksong
+        {
+            public int Id { get; set; }
+            public string Mid { get; set; }
+        }
+
+        public class Volume
+        {
+            public float Gain { get; set; }
+            public float Peak { get; set; }
+            public float Lra { get; set; }
+        }
+    }
+
+    public class ToplistResult
+    {
+        public int Code { get; set; }
+        public long Ts { get; set; }
+        public long Start_Ts { get; set; }
+        public string Traceid { get; set; }
+        public DetailData Detail { get; set; }
+
+        public class DetailData
+        {
+            public int Code { get; set; }
+            public ToplistData Data { get; set; }
+        }
+
+        public class ToplistData
+        {
+            public ToplistInfo Data { get; set; }
+            public List<object> SongInfoList { get; set; }
+            public List<object> ExtInfoList { get; set; }
+            public object SongTagInfoList { get; set; }
+            public object IndexInfoList { get; set; }
+        }
+
+        public class ToplistInfo
+        {
+            public int TopId { get; set; }
+            public int RecType { get; set; }
+            public int TopType { get; set; }
+            public int UpdateType { get; set; }
+            public string Title { get; set; }
+            public string TitleDetail { get; set; }
+            public string TitleShare { get; set; }
+            public string TitleSub { get; set; }
+            public string Intro { get; set; }
+            public int CornerMark { get; set; }
+            public string Period { get; set; }
+            public string UpdateTime { get; set; }
+            public HistoryData History { get; set; }
+            public int ListenNum { get; set; }
+            public int TotalNum { get; set; }
+            public List<SongData> Song { get; set; }
+            public string HeadPicUrl { get; set; }
+            public string FrontPicUrl { get; set; }
+            public string MbFrontPicUrl { get; set; }
+            public string MbHeadPicUrl { get; set; }
+            public List<object> PcSubTopIds { get; set; }
+            public List<object> PcSubTopTitles { get; set; }
+            public List<object> SubTopIds { get; set; }
+            public string AdJumpUrl { get; set; }
+            public string H5JumpUrl { get; set; }
+            public string Url_Key { get; set; }
+            public string Url_Params { get; set; }
+            public string Tjreport { get; set; }
+            public int Rt { get; set; }
+            public string UpdateTips { get; set; }
+            public string BannerText { get; set; }
+            public string AdShareContent { get; set; }
+            public string Abt { get; set; }
+            public int CityId { get; set; }
+            public int ProvId { get; set; }
+            public int SinceCV { get; set; }
+            public string MusichallTitle { get; set; }
+            public string MusichallSubtitle { get; set; }
+            public string MusichallPicUrl { get; set; }
+            public string SpecialScheme { get; set; }
+            public string MbFrontLogoUrl { get; set; }
+            public string MbHeadLogoUrl { get; set; }
+            public string CityName { get; set; }
+            public MagicColor MagicColor { get; set; }
+            public string TopAlbumURL { get; set; }
+            public int GroupType { get; set; }
+            public int Icon { get; set; }
+            public int AdID { get; set; }
+            public string MbIntroWebUrl { get; set; }
+            public string MbLogoUrl { get; set; }
+        }
+
+        public class HistoryData
+        {
+            public List<object> Year { get; set; }
+            public List<object> SubPeriod { get; set; }
+        }
+
+        public class SongData
+        {
+            public int Rank { get; set; }
+            public int RankType { get; set; }
+            public string RankValue { get; set; }
+            public int RecType { get; set; }
+            public int SongId { get; set; }
+            public string Vid { get; set; }
+            public string AlbumMid { get; set; }
+            public string Title { get; set; }
+            public string SingerName { get; set; }
+            public string SingerMid { get; set; }
+            public int SongType { get; set; }
+            public int UuidCnt { get; set; }
+            public string Cover { get; set; }
+            public int Mvid { get; set; }
+        }
+
+        public class MagicColor
+        {
+            public int R { get; set; }
+            public int G { get; set; }
+            public int B { get; set; }
+        }
+    }
+
+    public class AlbumSongListResult
+    {
+        public int Code { get; set; }
+        public long Ts { get; set; }
+        public long Start_ts { get; set; }
+        public string TraceId { get; set; }
+        public AlbumSonglistInfo AlbumSonglist { get; set; }
+
+        public class AlbumSonglistInfo
+        {
+            public int Code { get; set; }
+            public DataInfo Data { get; set; }
+        }
+
+        public class DataInfo
+        {
+            public string AlbumMid { get; set; }
+            public int TotalNum { get; set; }
+            public List<SongItem> SongList { get; set; }
+            public List<object> ClassicList { get; set; }
+            public int Sort { get; set; }
+            public string AlbumTips { get; set; }
+            public int Index { get; set; }
+            public int ScheduleStatus { get; set; }
+            public int CurBegin { get; set; }
+            public int CdNewStyle { get; set; }
+            public object CdNameMap { get; set; }
+        }
+
+        public class SongItem
+        {
+            public SongInfo SongInfo { get; set; }
+            public int ListenCount { get; set; }
+            public string UploadTime { get; set; }
+            public int IsThemeSong { get; set; }
+            public string TeamStr { get; set; }
+        }
+
+        public class SongInfo
+        {
+            public int Id { get; set; }
+            public int Type { get; set; }
+            public string Mid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public string Subtitle { get; set; }
+            public List<Singer> Singer { get; set; }
+            public Album Album { get; set; }
+            public MV MV { get; set; }
+            public int Interval { get; set; }
+            public int IsOnly { get; set; }
+            public int Language { get; set; }
+            public int Genre { get; set; }
+            public int Index_cd { get; set; }
+            public int Index_album { get; set; }
+            public string Time_public { get; set; }
+            public int Status { get; set; }
+            public int Fnote { get; set; }
+            public File File { get; set; }
+            public Pay Pay { get; set; }
+            public Action Action { get; set; }
+            public KSong KSong { get; set; }
+            public Volume Volume { get; set; }
+            public int Label { get; set; }
+            public string Url { get; set; }
+            public int Bpm { get; set; }
+            public int Version { get; set; }
+            public string Trace { get; set; }
+            public int Data_Type { get; set; }
+            public int Modify_stamp { get; set; }
+            public string PingPong { get; set; }
+            public int Aid { get; set; }
+            public string PpUrl { get; set; }
+            public int Tid { get; set; }
+            public int Ov { get; set; }
+            public int Sa { get; set; }
+            public string Es { get; set; }
+            public List<string> Vs { get; set; }
+            public List<int> Vi { get; set; }
+            public string KTag { get; set; }
+        }
+
+        public class Singer
+        {
+            public int Id { get; set; }
+            public string Mid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public int Type { get; set; }
+            public string Pmid { get; set; }
+        }
+
+        public class Album
+        {
+            public int Id { get; set; }
+            public string Mid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public string Subtitle { get; set; }
+            public string Time_public { get; set; }
+            public string Pmid { get; set; }
+        }
+
+        public class MV
+        {
+            public int Id { get; set; }
+            public string Vid { get; set; }
+            public string Name { get; set; }
+            public string Title { get; set; }
+            public int Vt { get; set; }
+        }
+        public class File
+        {
+            public string Media_mid { get; set; }
+            public int Size_24aac { get; set; }
+            public int Size_48aac { get; set; }
+            public int Size_96aac { get; set; }
+            public int Size_192ogg { get; set; }
+            public int Size_192aac { get; set; }
+            public int Size_128mp3 { get; set; }
+            public int Size_320mp3 { get; set; }
+            public int Size_ape { get; set; }
+            public int Size_flac { get; set; }
+            public int Size_dts { get; set; }
+            public int Size_try { get; set; }
+            public int Try_begin { get; set; }
+            public int Try_end { get; set; }
+            public string Url { get; set; }
+            public int Size_hires { get; set; }
+            public int Hires_sample { get; set; }
+            public int Hires_bitdepth { get; set; }
+            public int B_30s { get; set; }
+            public int E_30s { get; set; }
+            public int Size_96ogg { get; set; }
+        }
+
+        public class Pay
+        {
+            public int Pay_month { get; set; }
+            public int Price_track { get; set; }
+            public int Price_album { get; set; }
+            public int Pay_play { get; set; }
+            public int Pay_down { get; set; }
+            public int Pay_status { get; set; }
+            public int Time_free { get; set; }
+        }
+
+        public class Action
+        {
+            public int Switch { get; set; }
+            public int MsgId { get; set; }
+            public int Alert { get; set; }
+            public int Icons { get; set; }
+            public int MsgShare { get; set; }
+            public int MsgFav { get; set; }
+            public int MsgDown { get; set; }
+            public int MsgPay { get; set; }
+            public int Switch2 { get; set; }
+            public int Icon2 { get; set; }
+        }
+
+        public class KSong
+        {
+            public int Id { get; set; }
+            public string Mid { get; set; }
+        }
+
+        public class Volume
+        {
+            public double Gain { get; set; }
+            public double Peak { get; set; }
+            public double Lra { get; set; }
+        }
     }
 }

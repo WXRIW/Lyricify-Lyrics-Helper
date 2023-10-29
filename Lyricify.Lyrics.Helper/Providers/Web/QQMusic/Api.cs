@@ -84,6 +84,98 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             return resp.ToEntity<AlbumResult>();
         }
 
+        public async Task<AlbumSongListResult?> GetAlbumSongList(string mid, int page = 1, int pageSize = 1000)
+        {
+            var data = new
+            {
+                comm = new
+                {
+                    ct = 24,
+                    cv = 10000
+                },
+                albumSonglist = new
+                {
+                    method = "GetAlbumSongList",
+                    param = new
+                    {
+                        albumMid = mid,
+                        albumID = 0,
+                        begin = (page - 1) * pageSize,
+                        num = pageSize,
+                        order = 2
+                    },
+                    module = "music.musichallAlbum.AlbumSongList"
+                }
+            };
+
+            var resp = await PostJsonAsync("https://u.y.qq.com/cgi-bin/musicu.fcg?g_tk=5381&format=json&inCharset=utf8&outCharset=utf-8", data);
+
+            return resp.ToEntity<AlbumSongListResult>();
+        }
+
+        public async Task<SingerSongResult?> GetSingerSongs(string singerMid, int page = 1, int pageSize = 20)
+        {
+            var data = new
+            {
+                comm = new
+                {
+                    ct = 24,
+                    cv = 0
+                },
+                singer = new
+                {
+                    method = "get_singer_detail_info",
+                    param = new
+                    {
+                        sort = 5,
+                        singermid = singerMid,
+                        sin = (page - 1) * pageSize,
+                        num = pageSize
+                    },
+                    module = "music.web_singer_info_svr"
+                }
+            };
+
+            var resp = await PostJsonAsync("http://u.y.qq.com/cgi-bin/musicu.fcg", data);
+
+            return resp.ToEntity<SingerSongResult>();
+        }
+
+        public async Task<ToplistResult?> GetToplist(int id = 4, int page = 1, int pageSize = 100, string? period = null)
+        {
+            string timeType = id switch
+            {
+                4 or 27 or 62 => "yyyy-MM-dd",
+                _ => "yyyy-W",
+            };
+            string postPeriod = period ?? DateTime.Now.ToString(timeType);
+
+            var data = new
+            {
+                detail = new
+                {
+                    module = "musicToplist.ToplistInfoServer",
+                    method = "GetDetail",
+                    param = new
+                    {
+                        topId = id,
+                        offset = (page - 1) * pageSize,
+                        num = pageSize,
+                        period = postPeriod,
+                    },
+                },
+                comm = new
+                {
+                    ct = 24,
+                    cv = 0
+                }
+            };
+
+            var resp = await PostJsonAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
+
+            return resp.ToEntity<ToplistResult>();
+        }
+
         public async Task<PlaylistResult?> GetPlaylist(string playlistId)
         {
             var data = new Dictionary<string, string>
