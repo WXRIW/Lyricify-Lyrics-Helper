@@ -376,7 +376,7 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         /// <summary>
         /// 所属专辑
         /// </summary>
-        public SongAlbum Album { get; set; }
+        public Album Album { get; set; }
 
         public string Id { get; set; }
 
@@ -410,21 +410,6 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         /// 发布时间，eg: 2005-07-08
         /// </summary>
         public string Time_public { get; set; }
-
-        public class SongAlbum
-        {
-            public long Id { get; set; }
-
-            public string Mid { get; set; }
-
-            public string Pmid { get; set; }
-
-            public string Name { get; set; }
-
-            public string Title { get; set; }
-
-            public string Subtitle { get; set; }
-        }
 
         /// <summary>
         /// 同版本的曲目
@@ -491,21 +476,6 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         }
     }
 
-    public class Singer
-    {
-        public long Id { get; set; }
-
-        public string Mid { get; set; }
-
-        public string Name { get; set; }
-
-        public string Pmid { get; set; }
-
-        public string Title { get; set; }
-
-        public int Type { get; set; }
-    }
-
     public class SingerSongResult
     {
         public int Code { get; set; }
@@ -530,134 +500,6 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             public int Total_song { get; set; }
             public string Yinyueren { get; set; }
             public bool Show_singer_desc { get; set; }
-        }
-
-        public class SongInfo
-        {
-            public int Id { get; set; }
-            public int Type { get; set; }
-            public string Mid { get; set; }
-            public string Name { get; set; }
-            public string Title { get; set; }
-            public string Subtitle { get; set; }
-            public List<SingerInfo> Singer { get; set; }
-            public Album Album { get; set; }
-            public Mv Mv { get; set; }
-            public int Interval { get; set; }
-            public int Isonly { get; set; }
-            public int Language { get; set; }
-            public int Genre { get; set; }
-            public int Index_cd { get; set; }
-            public int Index_album { get; set; }
-            public string Time_public { get; set; }
-            public int Status { get; set; }
-            public int Fnote { get; set; }
-            public File File { get; set; }
-            public Pay Pay { get; set; }
-            public Action Action { get; set; }
-            public Ksong Ksong { get; set; }
-            public Volume Volume { get; set; }
-            public string Label { get; set; }
-            public string Url { get; set; }
-            public int Bpm { get; set; }
-            public int Version { get; set; }
-            public string Trace { get; set; }
-            public int Data_type { get; set; }
-            public int Modify_stamp { get; set; }
-            public string Pingpong { get; set; }
-            public string Ppurl { get; set; }
-            public int Tid { get; set; }
-            public int Ov { get; set; }
-
-            public class SingerInfo
-            {
-                public int Id { get; set; }
-                public string Mid { get; set; }
-                public string Name { get; set; }
-                public string Title { get; set; }
-                public int Type { get; set; }
-            }
-        }
-
-        public class Album
-        {
-            public int Id { get; set; }
-            public string Mid { get; set; }
-            public string Name { get; set; }
-            public string Title { get; set; }
-            public string Subtitle { get; set; }
-            public string Time_public { get; set; }
-            public string Pmid { get; set; }
-        }
-
-        public class Mv
-        {
-            public int Id { get; set; }
-            public string Vid { get; set; }
-            public string Name { get; set; }
-            public string Title { get; set; }
-            public int Vt { get; set; }
-        }
-
-        public class File
-        {
-            public string Media_mid { get; set; }
-            public int Size_24aac { get; set; }
-            public int Size_48aac { get; set; }
-            public int Size_96aac { get; set; }
-            public int Size_192ogg { get; set; }
-            public int Size_192aac { get; set; }
-            public int Size_128mp3 { get; set; }
-            public int Size_320mp3 { get; set; }
-            public int Size_ape { get; set; }
-            public int Size_flac { get; set; }
-            public int Size_dts { get; set; }
-            public int Size_try { get; set; }
-            public int Try_begin { get; set; }
-            public int Try_end { get; set; }
-            public string Url { get; set; }
-            public int Size_hires { get; set; }
-            public int Hires_sample { get; set; }
-            public int Hires_bitdepth { get; set; }
-            public int B_30s { get; set; }
-            public int E_30s { get; set; }
-            public int Size_96ogg { get; set; }
-        }
-
-        public class Pay
-        {
-            public int Pay_month { get; set; }
-            public int Price_track { get; set; }
-            public int Price_album { get; set; }
-            public int Pay_play { get; set; }
-            public int Pay_down { get; set; }
-            public int Pay_status { get; set; }
-            public int Time_free { get; set; }
-        }
-
-        public class Action
-        {
-            public int Switch { get; set; }
-            public int Msgid { get; set; }
-            public int Alert { get; set; }
-            public int Icons { get; set; }
-            public int Msgshare { get; set; }
-            public int Msgfav { get; set; }
-            public int Msgdown { get; set; }
-            public int Msgpay { get; set; }
-        }
-
-        public class Ksong
-        {
-            public int Id { get; set; }
-            public string Mid { get; set; }
-        }
-
-        public class Volume
-        {
-            public float Gain { get; set; }
-            public float Peak { get; set; }
-            public float Lra { get; set; }
         }
     }
 
@@ -818,7 +660,7 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             public string Subtitle { get; set; }
             public List<Singer> Singer { get; set; }
             public Album Album { get; set; }
-            public MV MV { get; set; }
+            public Mv MV { get; set; }
             public int Interval { get; set; }
             public int IsOnly { get; set; }
             public int Language { get; set; }
@@ -828,10 +670,10 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             public string Time_public { get; set; }
             public int Status { get; set; }
             public int Fnote { get; set; }
-            public File File { get; set; }
+            public FileInfo File { get; set; }
             public Pay Pay { get; set; }
             public Action Action { get; set; }
-            public KSong KSong { get; set; }
+            public Ksong KSong { get; set; }
             public Volume Volume { get; set; }
             public int Label { get; set; }
             public string Url { get; set; }
@@ -851,97 +693,134 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             public List<int> Vi { get; set; }
             public string KTag { get; set; }
         }
+    }
 
-        public class Singer
-        {
-            public int Id { get; set; }
-            public string Mid { get; set; }
-            public string Name { get; set; }
-            public string Title { get; set; }
-            public int Type { get; set; }
-            public string Pmid { get; set; }
-        }
+    public class SongInfo
+    {
+        public int Id { get; set; }
+        public int Type { get; set; }
+        public string Mid { get; set; }
+        public string Name { get; set; }
+        public string Title { get; set; }
+        public string Subtitle { get; set; }
+        public List<Singer> Singer { get; set; }
+        public Album Album { get; set; }
+        public Mv Mv { get; set; }
+        public int Interval { get; set; }
+        public int Isonly { get; set; }
+        public int Language { get; set; }
+        public int Genre { get; set; }
+        public int Index_cd { get; set; }
+        public int Index_album { get; set; }
+        public string Time_public { get; set; }
+        public int Status { get; set; }
+        public int Fnote { get; set; }
+        public FileInfo File { get; set; }
+        public Pay Pay { get; set; }
+        public Action Action { get; set; }
+        public Ksong Ksong { get; set; }
+        public Volume Volume { get; set; }
+        public string Label { get; set; }
+        public string Url { get; set; }
+        public int Bpm { get; set; }
+        public int Version { get; set; }
+        public string Trace { get; set; }
+        public int Data_type { get; set; }
+        public int Modify_stamp { get; set; }
+        public string Pingpong { get; set; }
+        public string Ppurl { get; set; }
+        public int Tid { get; set; }
+        public int Ov { get; set; }
+    }
 
-        public class Album
-        {
-            public int Id { get; set; }
-            public string Mid { get; set; }
-            public string Name { get; set; }
-            public string Title { get; set; }
-            public string Subtitle { get; set; }
-            public string Time_public { get; set; }
-            public string Pmid { get; set; }
-        }
+    public class Singer
+    {
+        public long Id { get; set; }
+        public string Mid { get; set; }
+        public string Name { get; set; }
+        public string Pmid { get; set; }
+        public string Title { get; set; }
+        public int Type { get; set; }
+    }
 
-        public class MV
-        {
-            public int Id { get; set; }
-            public string Vid { get; set; }
-            public string Name { get; set; }
-            public string Title { get; set; }
-            public int Vt { get; set; }
-        }
-        public class File
-        {
-            public string Media_mid { get; set; }
-            public int Size_24aac { get; set; }
-            public int Size_48aac { get; set; }
-            public int Size_96aac { get; set; }
-            public int Size_192ogg { get; set; }
-            public int Size_192aac { get; set; }
-            public int Size_128mp3 { get; set; }
-            public int Size_320mp3 { get; set; }
-            public int Size_ape { get; set; }
-            public int Size_flac { get; set; }
-            public int Size_dts { get; set; }
-            public int Size_try { get; set; }
-            public int Try_begin { get; set; }
-            public int Try_end { get; set; }
-            public string Url { get; set; }
-            public int Size_hires { get; set; }
-            public int Hires_sample { get; set; }
-            public int Hires_bitdepth { get; set; }
-            public int B_30s { get; set; }
-            public int E_30s { get; set; }
-            public int Size_96ogg { get; set; }
-        }
+    public class Album
+    {
+        public int Id { get; set; }
+        public string Mid { get; set; }
+        public string Name { get; set; }
+        public string Title { get; set; }
+        public string Subtitle { get; set; }
+        public string Time_public { get; set; }
+        public string Pmid { get; set; }
+    }
 
-        public class Pay
-        {
-            public int Pay_month { get; set; }
-            public int Price_track { get; set; }
-            public int Price_album { get; set; }
-            public int Pay_play { get; set; }
-            public int Pay_down { get; set; }
-            public int Pay_status { get; set; }
-            public int Time_free { get; set; }
-        }
+    public class Mv
+    {
+        public int Id { get; set; }
+        public string Vid { get; set; }
+        public string Name { get; set; }
+        public string Title { get; set; }
+        public int Vt { get; set; }
+    }
 
-        public class Action
-        {
-            public int Switch { get; set; }
-            public int MsgId { get; set; }
-            public int Alert { get; set; }
-            public int Icons { get; set; }
-            public int MsgShare { get; set; }
-            public int MsgFav { get; set; }
-            public int MsgDown { get; set; }
-            public int MsgPay { get; set; }
-            public int Switch2 { get; set; }
-            public int Icon2 { get; set; }
-        }
+    public class FileInfo
+    {
+        public string Media_mid { get; set; }
+        public int Size_24aac { get; set; }
+        public int Size_48aac { get; set; }
+        public int Size_96aac { get; set; }
+        public int Size_192ogg { get; set; }
+        public int Size_192aac { get; set; }
+        public int Size_128mp3 { get; set; }
+        public int Size_320mp3 { get; set; }
+        public int Size_ape { get; set; }
+        public int Size_flac { get; set; }
+        public int Size_dts { get; set; }
+        public int Size_try { get; set; }
+        public int Try_begin { get; set; }
+        public int Try_end { get; set; }
+        public string Url { get; set; }
+        public int Size_hires { get; set; }
+        public int Hires_sample { get; set; }
+        public int Hires_bitdepth { get; set; }
+        public int B_30s { get; set; }
+        public int E_30s { get; set; }
+        public int Size_96ogg { get; set; }
+    }
 
-        public class KSong
-        {
-            public int Id { get; set; }
-            public string Mid { get; set; }
-        }
+    public class Pay
+    {
+        public int Pay_month { get; set; }
+        public int Price_track { get; set; }
+        public int Price_album { get; set; }
+        public int Pay_play { get; set; }
+        public int Pay_down { get; set; }
+        public int Pay_status { get; set; }
+        public int Time_free { get; set; }
+    }
 
-        public class Volume
-        {
-            public double Gain { get; set; }
-            public double Peak { get; set; }
-            public double Lra { get; set; }
-        }
+    public class Action
+    {
+        public int Switch { get; set; }
+        public int Msgid { get; set; }
+        public int Alert { get; set; }
+        public int Icons { get; set; }
+        public int Msgshare { get; set; }
+        public int Msgfav { get; set; }
+        public int Msgdown { get; set; }
+        public int Msgpay { get; set; }
+    }
+
+    public class Ksong
+    {
+        public int Id { get; set; }
+        public string Mid { get; set; }
+    }
+
+    public class Volume
+    {
+        public float Gain { get; set; }
+        public float Peak { get; set; }
+        public float Lra { get; set; }
     }
 }
