@@ -13,7 +13,7 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected abstract string? HttpRefer { get; }
 
-        public async Task<string> GetAsync(string url)
+        protected async Task<string> GetAsync(string url)
         {
             SetRequestHeaders();
 
@@ -25,7 +25,7 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
-        public async Task<string> PostAsync(string url, Dictionary<string, string> paramDict)
+        protected async Task<string> PostAsync(string url, Dictionary<string, string> paramDict)
         {
             SetRequestHeaders();
 
@@ -38,7 +38,7 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
-        public async Task<string> PostJsonAsync(string url, object param)
+        protected async Task<string> PostJsonAsync(string url, object param)
         {
             SetRequestHeaders();
 
@@ -52,7 +52,7 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
-        public async Task<string> PostAsync(string url, Dictionary<string, object> paramDict)
+        protected async Task<string> PostAsync(string url, Dictionary<string, object> paramDict)
         {
             SetRequestHeaders();
 
@@ -65,7 +65,7 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
-        public async Task<string> PostAsync(string url, string param)
+        protected async Task<string> PostAsync(string url, string param)
         {
             SetRequestHeaders();
 

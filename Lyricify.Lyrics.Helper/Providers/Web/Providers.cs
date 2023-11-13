@@ -1,6 +1,6 @@
 ﻿namespace Lyricify.Lyrics.Providers.Web
 {
-    internal static class Providers
+    public static class Providers
     {
         private static QQMusic.Api? _qqMusicApi;
 
@@ -13,5 +13,9 @@
         private static Kugou.Api? _kugouApi;
 
         public static Kugou.Api KugouApi => _kugouApi ??= new();
+
+        private static Musixmatch.Api? _musixmatchApi;
+
+        public static Musixmatch.Api MusixmatchApi => _musixmatchApi ??= new();
     }
 }
