@@ -3,7 +3,7 @@
     /// <summary>
     /// 生成帮助类
     /// </summary>
-    public static class GeneratorHelper
+    public static class GenerateHelper
     {
         /// <summary>
         /// 生成歌词字符串
@@ -16,6 +16,7 @@
             var result = lyricsType switch
             {
                 Models.LyricsTypes.LyricifySyllable => Generators.LyricifySyllableGenerator.Generate(lyrics),
+                Models.LyricsTypes.LyricifyLines => Generators.LyricifyLinesGenerator.Generate(lyrics),
                 Models.LyricsTypes.Lrc => Generators.LrcGenerator.Generate(lyrics),
                 Models.LyricsTypes.Qrc => Generators.QrcGenerator.Generate(lyrics),
                 Models.LyricsTypes.Krc => Generators.KrcGenerator.Generate(lyrics),

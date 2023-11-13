@@ -8,6 +8,7 @@ namespace Lyricify.Lyrics.Demo
         static void Main(string[] args)
         {
             // ParsersDemo();
+            // GeneratorsDemo();
             // TypeDetectorDemo();
             // SearchDemo();
         }
@@ -54,6 +55,36 @@ namespace Lyricify.Lyrics.Demo
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
             Helpers.Optimization.Musixmatch.StandardizeMusixmatchLyrics(lyricsData!.Lines!); // 优化 Musixmatch 歌词
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
+        }
+
+        static void GeneratorsDemo()
+        {
+            /* Generators Demo */
+
+            // 读取歌词数据供后期生成使用
+            LyricsData? lyricsData;
+            lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/LyricifySyllableDemo.txt"), LyricsRawTypes.LyricifySyllable);
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
+
+            string? lyrics;
+
+            lyrics = GenerateHelper.GenerateString(lyricsData!, LyricsTypes.LyricifySyllable);
+            Console.WriteLine(lyrics);
+
+            lyrics = GenerateHelper.GenerateString(lyricsData!, LyricsTypes.LyricifyLines);
+            Console.WriteLine(lyrics);
+
+            lyrics = GenerateHelper.GenerateString(lyricsData!, LyricsTypes.Lrc);
+            Console.WriteLine(lyrics);
+
+            lyrics = GenerateHelper.GenerateString(lyricsData!, LyricsTypes.Qrc);
+            Console.WriteLine(lyrics);
+
+            lyrics = GenerateHelper.GenerateString(lyricsData!, LyricsTypes.Krc);
+            Console.WriteLine(lyrics);
+
+            lyrics = GenerateHelper.GenerateString(lyricsData!, LyricsTypes.Yrc);
+            Console.WriteLine(lyrics);
         }
 
         static void TypeDetectorDemo()
