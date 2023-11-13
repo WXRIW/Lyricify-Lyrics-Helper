@@ -22,7 +22,7 @@ namespace Lyricify.Lyrics.Generators
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
-                if(subLinesOutputType == SubLinesOutputType.InDiffLine)
+                if (subLinesOutputType == SubLinesOutputType.InDiffLine)
                 {
                     AppendLine(sb, line);
                     if (line.EndTime > 0)

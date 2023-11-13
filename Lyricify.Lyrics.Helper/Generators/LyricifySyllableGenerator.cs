@@ -48,7 +48,7 @@ namespace Lyricify.Lyrics.Generators
                 sb.Append(']');
 
                 // 添加音节信息
-                foreach(var syllable in line.Syllables)
+                foreach (var syllable in line.Syllables)
                 {
                     if (syllable is SyllableInfo syllableInfo)
                     {
