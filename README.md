@@ -13,6 +13,13 @@
   - TTML (暂不支持)
   - Spotify Lyrics (原始 JSON)
   - Musixmatch (原始 JSON)
+- 歌词生成
+  - Lyricify Syllable
+  - Lyricify Lines
+  - LRC
+  - QRC
+  - KRC
+  - YRC
 - 歌词歌曲搜索
   - QQ 音乐
   - 网易云音乐
@@ -30,12 +37,14 @@
 - 内嵌通用帮助类
   - 中文帮助类 (简繁转换等)
   - 字符串帮助类
+  - 数学帮助类
 
 ## 项目架构
 ### Lyricify.Lyrics.Helper
 - Decrypter // 歌词解密相关
   - Krc
   - Qrc
+- Generators // 歌词生成
 - Helpers // 帮助静态类
   - General // 内嵌通用帮助
     - ChineseHelper // 中文帮助
@@ -46,6 +55,7 @@
     - Musixmatch // Musixmatch 歌词优化
   - Types // 歌词类型
     - Lrc // LRC 歌词类型特性
+  - GeneratorHelper // 生成帮助
   - OffsetHelper // 偏移帮助 (用于对歌词添加 Offset 偏移)
   - ParserHelper // 解析帮助
   - SearchHelper // 搜索帮助
@@ -63,6 +73,7 @@
 ### Lyricify.Lyrics.Demo
 - Program
   - ParsersDemo // 歌词解析演示
+  - GeneratorsDemo // 歌词生成演示
   - TypeDetectorDemo // 歌词类型判断演示
   - SearchDemo // 歌曲搜索演示
 
