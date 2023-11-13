@@ -461,13 +461,14 @@ namespace Lyricify.Lyrics.Helpers.General
         }
 
         /// <summary>
-        /// 判断字符串是否为单个汉字
+        /// 判断字符串是否包含中文汉字
         /// </summary>
         /// <param name="str"></param>
         /// <returns></returns>
-        public static bool IsChinese(this string str)
+        public static bool HasChinese(this string str)
         {
-            return Regex.IsMatch(str, "^[\\u4e00-\\u9fa5]$");
+            if (str == null) return false;
+            return Regex.IsMatch(str, "^[\\u4e00-\\u9fff]$");
         }
 
         /// <summary>
@@ -497,7 +498,7 @@ namespace Lyricify.Lyrics.Helpers.General
             string sc = text.ToSC();
             for (int i = 0; i < text.Length; i++)
             {
-                if (text[i].ToString().IsChinese())
+                if (text[i].IsChinese())
                 {
                     total++;
                     if (text[i] != sc[i])

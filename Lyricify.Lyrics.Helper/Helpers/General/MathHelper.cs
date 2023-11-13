@@ -29,5 +29,95 @@
             if (val2.HasValue) return val2.Value;
             return null;
         }
+
+        /// <summary>
+        /// Returns x if x is greater than zero, otherwise zero will be returned
+        /// </summary>
+        public static int GreaterThanZero(int x)
+        {
+            if (x < 0) return 0;
+            else return x;
+        }
+
+        /// <summary>
+        /// Returns x if x is greater than zero, otherwise zero will be returned
+        /// </summary>
+        public static double GreaterThanZero(double x)
+        {
+            if (x < 0) return 0;
+            else return x;
+        }
+
+        /// <summary>
+        /// Returns x if x is greater than zero, otherwise zero will be returned
+        /// </summary>
+        public static float GreaterThanZero(float x)
+        {
+            if (x < 0) return 0;
+            else return x;
+        }
+
+        /// <summary>
+        /// Returns whether x is between a and b
+        /// </summary>
+        /// <param name="containEdge">Contain a and b or not</param>
+        public static bool IsBetween(this int x, int a, int b, bool containEdge = true)
+        {
+            if (a > b) Swap(ref a, ref b);
+            if (!containEdge)
+            {
+                if (x < b && x > a) return true;
+                else return false;
+            }
+            if (x <= b && x >= a) return true;
+            else return false;
+        }
+
+        /// <summary>
+        /// Returns whether x is between a and b
+        /// </summary>
+        /// <param name="containEdge">Contain a and b or not</param>
+        public static bool IsBetween(this double x, double a, double b, bool containEdge = true)
+        {
+            if (a > b) Swap(ref a, ref b);
+            if (!containEdge)
+            {
+                if (x < b && x > a) return true;
+                else return false;
+            }
+            if (x <= b && x >= a) return true;
+            else return false;
+        }
+
+        /// <summary>
+        /// Returns whether x is between a and b
+        /// </summary>
+        /// <param name="containEdge">Contain a and b or not</param>
+        public static bool IsBetween(this float x, float a, float b, bool containEdge = true)
+        {
+            if (a > b) Swap(ref a, ref b);
+            if (!containEdge)
+            {
+                if (x < b && x > a) return true;
+                else return false;
+            }
+            if (x <= b && x >= a) return true;
+            else return false;
+        }
+
+        public static void Swap(ref int a, ref int b)
+        {
+            (b, a) = (a, b);
+        }
+
+        public static void Swap(ref double a, ref double b)
+        {
+            (b, a) = (a, b);
+        }
+
+        public static void Swap(ref float a, ref float b)
+        {
+            (b, a) = (a, b);
+        }
     }
 }

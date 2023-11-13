@@ -13,7 +13,7 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
             return resp;
         }
 
-        public async Task<SearchLyricsResponse?> GetSearchLyrics(string keywords, int? duration = null, string? hash = null)
+        public async Task<SearchLyricsResponse?> GetSearchLyrics(string? keywords = null, int? duration = null, string? hash = null)
         {
             string durationPara = string.Empty;
             if (duration != null)
