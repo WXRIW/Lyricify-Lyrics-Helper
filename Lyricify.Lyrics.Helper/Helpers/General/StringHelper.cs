@@ -343,6 +343,16 @@ namespace Lyricify.Lyrics.Helpers.General
             return str;
         }
 
+        public static string RemoveFrontBackBrackets(this string str)
+        {
+            if (str == null) return null;
+
+            str = str.Trim();
+            if (str[0] == '(' || str[0] == '（') str = str[1..];
+            if (str[^1] == ')' || str[^1] == '）') str = str[..^1];
+            return str.Trim();
+        }
+
         #endregion
 
         #region Determine

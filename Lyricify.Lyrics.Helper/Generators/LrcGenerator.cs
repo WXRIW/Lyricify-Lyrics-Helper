@@ -6,8 +6,14 @@ namespace Lyricify.Lyrics.Generators
 {
     public static class LrcGenerator
     {
-        // TODO: 本方法未经测试
-        public static string Generate(LyricsData lyricsData, EndTimeOutputType endTimeOutputType = EndTimeOutputType.Huge)
+        /// <summary>
+        /// 生成 LRC 字符串
+        /// </summary>
+        /// <param name="lyricsData">用于生成的源歌词数据</param>
+        /// <param name="endTimeOutputType">作为行末时间的空行的输出类型</param>
+        /// <param name="subLinesOutputType">子行的输出方式</param>
+        /// <returns>生成出的 LRC 字符串</returns>
+        public static string Generate(LyricsData lyricsData, EndTimeOutputType endTimeOutputType = EndTimeOutputType.Huge, SubLinesOutputType subLinesOutputType = SubLinesOutputType.InMainLine)
         {
             if (lyricsData?.Lines is not { Count: > 0 }) return string.Empty;
 
@@ -16,13 +22,34 @@ namespace Lyricify.Lyrics.Generators
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
-                AppendLine(sb, line);
-                if (line.EndTime.HasValue && line.EndTime > 0)
-                    if (endTimeOutputType == EndTimeOutputType.All
-                        || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTime - line.EndTime > 5000))
-                        sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.EndTime.Value)}]{line.Text}");
-                if (line.SubLine is not null)
-                    AppendLine(sb, line.SubLine);
+                if(subLinesOutputType == SubLinesOutputType.InDiffLine)
+                {
+                    AppendLine(sb, line);
+                    if (line.EndTime > 0)
+                        if (endTimeOutputType == EndTimeOutputType.All
+                            || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTime - line.EndTime > 5000))
+                            sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.EndTime.Value)}]");
+                    if (line.SubLine is not null)
+                    {
+                        AppendLine(sb, line.SubLine);
+                        if (line.SubLine.EndTime > 0)
+                            if (endTimeOutputType == EndTimeOutputType.All
+                                || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTimeWithSubLine - line.SubLine.EndTime > 5000))
+                                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.SubLine.EndTime.Value)}]");
+                    }
+                }
+                else
+                {
+                    if (line.StartTimeWithSubLine.HasValue)
+                    {
+                        sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.StartTimeWithSubLine.Value)}]{line.FullText}");
+                        if (line.EndTimeWithSubLine > 0)
+                            if (endTimeOutputType == EndTimeOutputType.All
+                                || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTime - line.EndTimeWithSubLine > 5000))
+                                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.EndTimeWithSubLine.Value)}]");
+                    }
+                }
+
             }
 
             return sb.ToString();
@@ -55,6 +82,22 @@ namespace Lyricify.Lyrics.Generators
             /// 输出所有行末时间空行
             /// </summary>
             All,
+        }
+
+        /// <summary>
+        /// 子行的输出方式
+        /// </summary>
+        public enum SubLinesOutputType
+        {
+            /// <summary>
+            /// 通过括号嵌在主行中
+            /// </summary>
+            InMainLine,
+
+            /// <summary>
+            /// 子行单独成行
+            /// </summary>
+            InDiffLine,
         }
     }
 }

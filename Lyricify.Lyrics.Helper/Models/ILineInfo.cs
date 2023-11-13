@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using Lyricify.Lyrics.Helpers.General;
+using System.Text;
 
 namespace Lyricify.Lyrics.Models
 {
@@ -10,7 +11,13 @@ namespace Lyricify.Lyrics.Models
 
         public int? EndTime { get; }
 
-        public int? Duration => EndTime.HasValue ? EndTime - StartTime : null;
+        public int? Duration => EndTime - StartTime;
+
+        public int? StartTimeWithSubLine => MathHelper.Min(StartTime, SubLine?.StartTime);
+
+        public int? EndTimeWithSubLine => MathHelper.Min(EndTime, SubLine?.EndTime);
+
+        public int? DurationWithSubLine => EndTimeWithSubLine - StartTimeWithSubLine;
 
         public LyricsAlignment LyricsAlignment { get; }
 
@@ -33,15 +40,15 @@ namespace Lyricify.Lyrics.Models
                     if (SubLine.StartTime < StartTime)
                     {
                         sb.Append('(');
-                        sb.Append(SubLine.Text);
+                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
                         sb.Append(") ");
-                        sb.Append(Text);
+                        sb.Append(Text.Trim());
                     }
                     else
                     {
-                        sb.Append(SubLine.Text);
+                        sb.Append(Text.Trim());
                         sb.Append(" (");
-                        sb.Append(SubLine.Text);
+                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
                         sb.Append(')');
                     }
                     return sb.ToString();
