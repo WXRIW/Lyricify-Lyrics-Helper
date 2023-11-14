@@ -16,5 +16,9 @@
         private static KugouSearcher? _kugouSearcher;
 
         public static KugouSearcher KugouSearcher => _kugouSearcher ??= new();
+
+        private static MusixmatchSearcher? _musixmatchSearcher;
+
+        public static MusixmatchSearcher MusixmatchSearcher => _musixmatchSearcher ??= new();
     }
 }

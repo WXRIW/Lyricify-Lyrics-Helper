@@ -53,7 +53,7 @@ namespace Lyricify.Lyrics.Generators
                     return;
                 sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.StartTime.Value)}]{line.Text}");
             }
-            
+
             void AppendLineWithSub(ILineInfo line)
             {
                 if (!line.StartTimeWithSubLine.HasValue)

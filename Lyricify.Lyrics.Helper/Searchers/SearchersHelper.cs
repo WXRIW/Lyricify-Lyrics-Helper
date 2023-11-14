@@ -18,6 +18,7 @@
                 Searchers.QQMusic => SearcherHelper.QQMusicSearcher,
                 Searchers.Netease => SearcherHelper.NeteaseSearcher,
                 Searchers.Kugou => SearcherHelper.KugouSearcher,
+                Searchers.Musixmatch => SearcherHelper.MusixmatchSearcher,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -35,6 +36,7 @@
                 Searchers.QQMusic => new QQMusicSearcher(),
                 Searchers.Netease => new NeteaseSearcher(),
                 Searchers.Kugou => new KugouSearcher(),
+                Searchers.Musixmatch => new MusixmatchSearcher(),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -49,6 +51,7 @@
             if (searcher is QQMusicSearcher) return Searchers.QQMusic;
             if (searcher is NeteaseSearcher) return Searchers.Netease;
             if (searcher is KugouSearcher) return Searchers.Kugou;
+            if (searcher is MusixmatchSearcher) return Searchers.Musixmatch;
             return null;
         }
     }

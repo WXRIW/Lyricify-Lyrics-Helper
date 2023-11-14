@@ -8,5 +8,6 @@
         QQMusic,
         Netease,
         Kugou,
+        Musixmatch,
     }
 }
