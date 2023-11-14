@@ -15,7 +15,7 @@ namespace Lyricify.Lyrics.Models
 
         public int? StartTimeWithSubLine => MathHelper.Min(StartTime, SubLine?.StartTime);
 
-        public int? EndTimeWithSubLine => MathHelper.Min(EndTime, SubLine?.EndTime);
+        public int? EndTimeWithSubLine => MathHelper.Max(EndTime, SubLine?.EndTime);
 
         public int? DurationWithSubLine => EndTimeWithSubLine - StartTimeWithSubLine;
 

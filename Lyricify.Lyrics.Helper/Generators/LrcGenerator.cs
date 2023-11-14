@@ -19,47 +19,70 @@ namespace Lyricify.Lyrics.Generators
 
             var sb = new StringBuilder();
             var lines = lyricsData.Lines;
+
             for (int i = 0; i < lines.Count; i++)
             {
                 var line = lines[i];
                 if (subLinesOutputType == SubLinesOutputType.InDiffLine)
                 {
-                    AppendLine(sb, line);
-                    if (line.EndTime > 0)
-                        if (endTimeOutputType == EndTimeOutputType.All
-                            || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTime - line.EndTime > 5000))
-                            sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.EndTime.Value)}]");
+                    AppendLine(line);
+                    if (ShouldAddLine(line, false, i))
+                        AppendEmptyLine(line.EndTime!.Value);
+
                     if (line.SubLine is not null)
                     {
-                        AppendLine(sb, line.SubLine);
-                        if (line.SubLine.EndTime > 0)
-                            if (endTimeOutputType == EndTimeOutputType.All
-                                || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTimeWithSubLine - line.SubLine.EndTime > 5000))
-                                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.SubLine.EndTime.Value)}]");
+                        AppendLine(line.SubLine);
+                        if (ShouldAddLine(line.SubLine, false, i))
+                            AppendEmptyLine(line.SubLine.EndTime!.Value);
                     }
                 }
                 else
                 {
-                    if (line.StartTimeWithSubLine.HasValue)
-                    {
-                        sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.StartTimeWithSubLine.Value)}]{line.FullText}");
-                        if (line.EndTimeWithSubLine > 0)
-                            if (endTimeOutputType == EndTimeOutputType.All
-                                || endTimeOutputType == EndTimeOutputType.Huge && (i + 1 >= lines.Count || lines[i + 1].StartTime - line.EndTimeWithSubLine > 5000))
-                                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.EndTimeWithSubLine.Value)}]");
-                    }
+                    AppendLineWithSub(line);
+                    if (ShouldAddLine(line, true, i))
+                        AppendEmptyLine(line.EndTimeWithSubLine!.Value);
                 }
 
             }
 
             return sb.ToString();
 
-            static void AppendLine(StringBuilder sb, ILineInfo line)
+            void AppendLine(ILineInfo line)
             {
-                if (line.StartTime.HasValue)
+                if (!line.StartTime.HasValue)
+                    return;
+                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.StartTime.Value)}]{line.Text}");
+            }
+            
+            void AppendLineWithSub(ILineInfo line)
+            {
+                if (!line.StartTimeWithSubLine.HasValue)
+                    return;
+                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.StartTimeWithSubLine.Value)}]{line.FullText}");
+            }
+
+            void AppendEmptyLine(int timeStamp)
+            {
+                sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(timeStamp)}]");
+            }
+
+            bool ShouldAddLine(ILineInfo line, bool withSub, int index)
+            {
+                var endTime = withSub ? line.EndTimeWithSubLine : line.EndTime;
+                if (lines is null || endTime.HasValue == false)
+                    return false;
+                if (line.EndTime <= 0)
+                    return false;
+                if (endTimeOutputType == EndTimeOutputType.All)
+                    return true;
+                if (endTimeOutputType == EndTimeOutputType.Huge)
                 {
-                    sb.AppendLine($"[{StringHelper.FormatTimeMsToTimestampString(line.StartTime.Value)}]{line.Text}");
+                    if (index + 1 >= lines.Count)
+                        return true;
+                    if (lines[index + 1].StartTimeWithSubLine - endTime > 5000)
+                        return true;
                 }
+                return false;
             }
         }
 
