@@ -1,6 +1,6 @@
 ﻿namespace Lyricify.Lyrics.Providers.Web
 {
-    public static class Providers
+    internal static class Providers
     {
         private static QQMusic.Api? _qqMusicApi;
 
