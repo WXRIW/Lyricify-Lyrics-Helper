@@ -25,14 +25,30 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
         {
             await EnsureUserToken();
 
+            var response = await GetTrackRaw(track, artist, duration);
+            if (response == null) return null;
+            var resp = JsonConvert.DeserializeObject<GetTrackResponse>(response);
+            return resp;
+        }
+
+        /// <summary>
+        /// 获取曲目和歌词 (返回的原始字符串)
+        /// </summary>
+        /// <param name="track">曲目</param>
+        /// <param name="artist">艺人</param>
+        /// <param name="duration">曲目市场 (秒)</param>
+        /// <returns>接口返回的原始字符串，可直接用 MusixmatchParser 解析</returns>
+        public async Task<string?> GetTrackRaw(string track, string artist, int? duration = null)
+        {
+            await EnsureUserToken();
+
             var response = await HttpClient.GetStringAsync("https://apic-desktop.musixmatch.com/ws/1.1/matcher.track.get?format=json&namespace=lyrics_richsynched&optional_calls=track.richsync&subtitle_format=lrc" +
                 $"&q_track={track}" +
                 $"&q_artist={artist}" +
                 (duration.HasValue ? $"&f_subtitle_length={duration}&q_duration={duration}" : string.Empty) +
                 $"&usertoken={_userToken}" +
                 "&f_subtitle_length_max_deviation=40&app_id=web-desktop-app-v1.0&t=fdq");
-            var resp = JsonConvert.DeserializeObject<GetTrackResponse>(response);
-            return resp;
+            return response;
         }
 
         /// <summary>
