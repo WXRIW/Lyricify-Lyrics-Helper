@@ -363,6 +363,9 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
             [JsonProperty("cached")]
             public int Cached { get; set; }
+
+            [JsonProperty("hint")]
+            public string Hint { get; set; }
         }
 
         public class Body
@@ -570,15 +573,18 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
             [JsonProperty("execute_time")]
             public double ExecuteTime { get; set; }
+
+            [JsonProperty("hint")]
+            public string Hint { get; set; }
         }
 
         public class Body
         {
             [JsonProperty("translations_list")]
-            public TranslationsList[] TranslationsList { get; set; }
+            public TranslationsListItem[] TranslationsList { get; set; }
         }
 
-        public class TranslationsList
+        public class TranslationsListItem
         {
             [JsonProperty("translation")]
             public Translation Translation { get; set; }

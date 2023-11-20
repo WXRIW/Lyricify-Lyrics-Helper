@@ -8,9 +8,25 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
         private string? _userToken { get; set; } = null;
 
+        /// <summary>
+        /// 设置 UserToken (例如之前缓存的 Token)
+        /// </summary>
+        public void SetUserToken(string token)
+        {
+            _userToken = token;
+        }
+
+        /// <summary>
+        /// 获取当前的 UserToken (例如用于缓存)
+        /// </summary>
+        public string? GetUserToken()
+        {
+            return _userToken;
+        }
+
         public async Task<GetTokenResponse?> GetToken()
         {
-            var response = await HttpClient.GetStringAsync("https://apic-desktop.musixmatch.com/ws/1.1/token.get?app_id=web-desktop-app-v1.0&t=bmfm");
+            var response = await HttpClient.GetStringAsync("https://apic-desktop.musixmatch.com/ws/1.1/token.get?app_id=web-desktop-app-v1.0");
             var resp = JsonConvert.DeserializeObject<GetTokenResponse>(response);
             return resp;
         }
@@ -32,6 +48,12 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 $"&usertoken={_userToken}" +
                 "&f_subtitle_length_max_deviation=40&app_id=web-desktop-app-v1.0");
             var resp = JsonConvert.DeserializeObject<GetTrackResponse>(response);
+
+            if (resp?.Message.Header.StatusCode == 401 && resp?.Message.Header.Hint == "renew")
+            {
+                _userToken = null;
+                return await GetTrack(track, artist, duration);
+            }
             return resp;
         }
 
@@ -64,6 +86,13 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 $"&track_id={trackId}" +
                 $"&usertoken={_userToken}" +
                 "&f_subtitle_length_max_deviation=40&app_id=web-desktop-app-v1.0");
+
+            if (response?.Contains("\"status_code\":401") == true
+                && response?.Contains("\"hint\":\"renew\"") == true)
+            {
+                _userToken = null;
+                return await GetFullLyricsRaw(trackId);
+            }
             return response;
         }
 
@@ -84,6 +113,13 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 (duration.HasValue ? $"&f_subtitle_length={duration}&q_duration={duration}" : string.Empty) +
                 $"&usertoken={_userToken}" +
                 "&f_subtitle_length_max_deviation=40&app_id=web-desktop-app-v1.0");
+
+            if (response?.Contains("\"status_code\":401") == true
+                && response?.Contains("\"hint\":\"renew\"") == true)
+            {
+                _userToken = null;
+                return await GetFullLyricsRaw(track, artist, duration);
+            }
             return response;
         }
 
@@ -102,6 +138,12 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 $"&usertoken={_userToken}" +
                 "&comment_format=text&part=user&format=json&app_id=web-desktop-app-v1.0");
             var resp = JsonConvert.DeserializeObject<GetTranslationsResponse>(response);
+
+            if (resp?.Message.Header.StatusCode == 401 && resp?.Message.Header.Hint == "renew")
+            {
+                _userToken = null;
+                return await GetTranslations(trackId, language);
+            }
             return resp;
         }
 
@@ -121,10 +163,10 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
         public async Task RefreshUserToken(bool isEnsure = false)
         {
             var response = await GetToken();
-            int maxTry = 5;
+            int maxTry = 10;
             while (response?.Message.Header.StatusCode == 401 && response?.Message.Header.Hint == "captcha" && maxTry-- > 0)
             {
-                await Task.Delay(500);
+                await Task.Delay(1000);
                 if (isEnsure && !string.IsNullOrEmpty(_userToken)) return;
                 response = await GetToken();
             }

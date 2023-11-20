@@ -50,7 +50,7 @@ namespace Lyricify.Lyrics.Searchers
                 };
                 search.Add(r);
             }
-            catch
+            catch (Exception ex)
             {
                 return null;
             }
