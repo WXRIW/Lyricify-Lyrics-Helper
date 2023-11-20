@@ -54,7 +54,7 @@ namespace Lyricify.Lyrics.Searchers
 
         public async Task<List<ISearchResult>> SearchForResults(ITrackMetadata track, bool fullSearch)
         {
-            string searchString = $"{track.Title} {track.Artist} {track.Album}".Replace(" - ", " ").Trim();
+            string searchString = $"{track.Title} {track.Artist?.Replace(", ", " ")} {track.Album}".Replace(" - ", " ").Trim();
             var searchResults = new List<ISearchResult>();
 
             var level = 1;
@@ -64,12 +64,18 @@ namespace Lyricify.Lyrics.Searchers
                 if (results is { Count: > 0 })
                     searchResults.AddRange(results);
 
+                var newTitle = track.Title;
+                if (newTitle?.Contains("(feat.") == true)
+                    newTitle = newTitle[..newTitle.IndexOf("(feat.")].Trim();
+                if (newTitle?.Contains(" - feat.") == true)
+                    newTitle = newTitle[..newTitle.IndexOf(" - feat.")].Trim();
+
                 if (fullSearch || results is not { Count: > 0 })
                 {
                     var newSearchString = level switch
                     {
-                        1 => $"{track.Title} {track.Artist}".Replace(" - ", " ").Trim(),
-                        2 => $"{track.Title}".Replace(" - ", " ").Trim(),
+                        1 => $"{newTitle} {track.Artist?.Replace(", ", " ")}".Replace(" - ", " ").Trim(),
+                        2 => $"{newTitle}".Replace(" - ", " ").Trim(),
                         _ => string.Empty,
                     };
                     if (newSearchString != searchString)
