@@ -30,6 +30,9 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
             [JsonProperty("surrogate_key_list")]
             public object[] SurrogateKeyList { get; set; }
+
+            [JsonProperty("hint")]
+            public string Hint { get; set; }
         }
 
         public class Body

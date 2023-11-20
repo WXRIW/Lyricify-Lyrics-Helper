@@ -7,7 +7,7 @@ namespace Lyricify.Lyrics.Searchers
     {
         public ISearcher Searcher => new MusixmatchSearcher();
 
-        public MusixmatchSearchResult(string title, string[] artists, string album, string[]? albumArtists, int durationMs, int id, string isrc)
+        public MusixmatchSearchResult(string title, string[] artists, string album, string[]? albumArtists, int durationMs, int id, string isrc, string vanityId)
         {
             Title = title;
             Artists = artists;
@@ -16,6 +16,7 @@ namespace Lyricify.Lyrics.Searchers
             DurationMs = durationMs;
             Id = id;
             Isrc = isrc;
+            VanityId = vanityId;
         }
 
         public MusixmatchSearchResult(GetTrackResponse.Track track) : this(
@@ -25,7 +26,8 @@ namespace Lyricify.Lyrics.Searchers
             null,
             track.TrackLength * 1000,
             track.TrackId,
-            track.TrackIsrc
+            track.TrackIsrc,
+            track.CommontrackVanityId
             )
         { }
 
@@ -42,6 +44,8 @@ namespace Lyricify.Lyrics.Searchers
         public string[]? AlbumArtists { get; }
 
         public int? DurationMs { get; }
+
+        public string VanityId { get; set; }
 
         public CompareHelper.MatchType? MatchType { get; set; }
     }
