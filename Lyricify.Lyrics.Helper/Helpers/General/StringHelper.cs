@@ -468,7 +468,7 @@ namespace Lyricify.Lyrics.Helpers.General
         public static bool HasChinese(this string str)
         {
             if (str == null) return false;
-            return Regex.IsMatch(str, "^[\\u4e00-\\u9fff]$");
+            return Regex.IsMatch(str, "[\\u4e00-\\u9fff]$");
         }
 
         /// <summary>
