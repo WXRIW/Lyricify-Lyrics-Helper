@@ -6,6 +6,8 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
     {
         protected override string? HttpRefer => null;
 
+        protected override Dictionary<string, string>? AdditionalHeaders => null;
+
         public async Task<SearchSongResponse?> GetSearchSong(string keywords)
         {
             var response = await HttpClient.GetStringAsync($"http://mobilecdn.kugou.com/api/v3/search/song?format=json&keyword={keywords}&page=1&pagesize=20&showtype=1");

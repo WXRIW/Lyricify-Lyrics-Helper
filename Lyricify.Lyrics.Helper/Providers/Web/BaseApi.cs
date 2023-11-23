@@ -13,6 +13,8 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected abstract string? HttpRefer { get; }
 
+        protected abstract Dictionary<string,string>? AdditionalHeaders { get; }
+
         protected async Task<string> GetAsync(string url)
         {
             SetRequestHeaders();
@@ -88,6 +90,14 @@ namespace Lyricify.Lyrics.Providers.Web
                 HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
             if (!string.IsNullOrEmpty(Cookie))
                 HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
+
+            if (AdditionalHeaders is not null)
+            {
+                foreach (var pair in AdditionalHeaders)
+                {
+                    HttpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
+                }
+            }
         }
     }
 
