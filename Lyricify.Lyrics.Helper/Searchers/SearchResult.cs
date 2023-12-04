@@ -2,20 +2,26 @@
 
 namespace Lyricify.Lyrics.Searchers
 {
-    /// <summary>
-    /// 搜索结果接口
-    /// </summary>
-    public interface ISearchResult
+    public abstract class SearchResult : ISearchResult
     {
+        public SearchResult(string title, string[] artists, string album, string[]? albumArtists, int durationMs)
+        {
+            Title = title;
+            Artists = artists;
+            Album = album;
+            AlbumArtists = albumArtists;
+            DurationMs = durationMs;
+        }
+
         /// <summary>
         /// 搜索提供者
         /// </summary>
-        public ISearcher Searcher { get; }
+        public abstract ISearcher Searcher { get; }
 
         /// <summary>
         /// 曲目名
         /// </summary>
-        public string Title { get; }
+        public string Title { get; private set; }
 
         /// <summary>
         /// 艺人列表
@@ -25,7 +31,7 @@ namespace Lyricify.Lyrics.Searchers
         /// <summary>
         /// 艺人名
         /// </summary>
-        public string Artist { get; }
+        public string Artist => string.Join(", ", Artists);
 
         /// <summary>
         /// 专辑
@@ -40,7 +46,7 @@ namespace Lyricify.Lyrics.Searchers
         /// <summary>
         /// 专辑艺人名
         /// </summary>
-        public string? AlbumArtist { get; }
+        public string? AlbumArtist => string.Join(", ", AlbumArtists ?? new string[0]);
 
         /// <summary>
         /// 曲目时长
@@ -50,12 +56,15 @@ namespace Lyricify.Lyrics.Searchers
         /// <summary>
         /// 匹配程度
         /// </summary>
-        public CompareHelper.MatchType? MatchType { get; }
+        public CompareHelper.MatchType? MatchType { get; set; }
 
         /// <summary>
         /// 设置匹配程度
         /// </summary>
         /// <param name="matchType"></param>
-        internal void SetMatchType(CompareHelper.MatchType? matchType);
+        public void SetMatchType(CompareHelper.MatchType? matchType)
+        {
+            MatchType = matchType;
+        }
     }
 }

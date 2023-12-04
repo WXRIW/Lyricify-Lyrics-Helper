@@ -1,7 +1,4 @@
-﻿using Lyricify.Lyrics.Helpers.General;
-using System.Text;
-
-namespace Lyricify.Lyrics.Models
+﻿namespace Lyricify.Lyrics.Models
 {
     public interface ILineInfo : IComparable
     {
@@ -11,13 +8,13 @@ namespace Lyricify.Lyrics.Models
 
         public int? EndTime { get; }
 
-        public int? Duration => EndTime - StartTime;
+        public int? Duration { get; }
 
-        public int? StartTimeWithSubLine => MathHelper.Min(StartTime, SubLine?.StartTime);
+        public int? StartTimeWithSubLine { get; }
 
-        public int? EndTimeWithSubLine => MathHelper.Max(EndTime, SubLine?.EndTime);
+        public int? EndTimeWithSubLine { get; }
 
-        public int? DurationWithSubLine => EndTimeWithSubLine - StartTimeWithSubLine;
+        public int? DurationWithSubLine { get; }
 
         public LyricsAlignment LyricsAlignment { get; }
 
@@ -26,56 +23,14 @@ namespace Lyricify.Lyrics.Models
         /// <summary>
         /// <see cref="Text"/> if SubLine not exist, or full lyrics with bracketed subline lyrics
         /// </summary>
-        public string FullText
-        {
-            get
-            {
-                if (SubLine == null)
-                {
-                    return Text;
-                }
-                else
-                {
-                    var sb = new StringBuilder();
-                    if (SubLine.StartTime < StartTime)
-                    {
-                        sb.Append('(');
-                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
-                        sb.Append(") ");
-                        sb.Append(Text.Trim());
-                    }
-                    else
-                    {
-                        sb.Append(Text.Trim());
-                        sb.Append(" (");
-                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
-                        sb.Append(')');
-                    }
-                    return sb.ToString();
-                }
-            }
-        }
+        public string FullText { get; }
     }
 
     public interface IFullLineInfo : ILineInfo
     {
         public Dictionary<string, string> Translations { get; }
 
-        public string? ChineseTranslation
-        {
-            get => Translations.ContainsKey("zh") ? Translations["zh"] : null;
-            set
-            {
-                if (string.IsNullOrEmpty(value))
-                {
-                    Translations.Remove("zh");
-                }
-                else
-                {
-                    Translations["zh"] = value;
-                }
-            }
-        }
+        public string? ChineseTranslation { get; }
 
         public string? Pronunciation { get; }
     }

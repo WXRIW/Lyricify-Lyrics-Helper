@@ -91,7 +91,7 @@ namespace Lyricify.Lyrics.Searchers
             } while (++level < 3);
 
             foreach (var result in searchResults)
-                result.SetMatchType(CompareHelper.CompareTrack(track, result));
+                ((SearchResult)result).SetMatchType(CompareHelper.CompareTrack(track, result));
 
             searchResults.Sort((x, y) => -((int)x.MatchType!).CompareTo((int)y.MatchType!));
 

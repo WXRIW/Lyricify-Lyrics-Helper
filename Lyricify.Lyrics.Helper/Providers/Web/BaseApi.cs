@@ -13,7 +13,7 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected abstract string? HttpRefer { get; }
 
-        protected abstract Dictionary<string,string>? AdditionalHeaders { get; }
+        protected abstract Dictionary<string, string>? AdditionalHeaders { get; }
 
         protected async Task<string> GetAsync(string url)
         {

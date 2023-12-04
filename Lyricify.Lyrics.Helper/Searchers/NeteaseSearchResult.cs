@@ -1,19 +1,13 @@
 ﻿using Lyricify.Lyrics.Providers.Web.Netease;
-using Lyricify.Lyrics.Searchers.Helpers;
 
 namespace Lyricify.Lyrics.Searchers
 {
-    public class NeteaseSearchResult : ISearchResult
+    public class NeteaseSearchResult : SearchResult
     {
-        public ISearcher Searcher => new NeteaseSearcher();
+        public override ISearcher Searcher => new NeteaseSearcher();
 
-        public NeteaseSearchResult(string title, string[] artists, string album, string[]? albumArtists, int durationMs, int id)
+        public NeteaseSearchResult(string title, string[] artists, string album, string[]? albumArtists, int durationMs, int id) : base(title, artists, album, albumArtists, durationMs)
         {
-            Title = title;
-            Artists = artists;
-            Album = album;
-            AlbumArtists = albumArtists;
-            DurationMs = durationMs;
             Id = id;
         }
 
@@ -27,18 +21,6 @@ namespace Lyricify.Lyrics.Searchers
             )
         { }
 
-        public string Title { get; }
-
-        public string[] Artists { get; }
-
-        public string Album { get; }
-
         public int Id { get; }
-
-        public string[]? AlbumArtists { get; }
-
-        public int? DurationMs { get; }
-
-        public CompareHelper.MatchType? MatchType { get; set; }
     }
 }

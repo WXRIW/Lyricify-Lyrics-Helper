@@ -1,4 +1,7 @@
-﻿namespace Lyricify.Lyrics.Models
+﻿using Lyricify.Lyrics.Helpers.General;
+using System.Text;
+
+namespace Lyricify.Lyrics.Models
 {
     public class LineInfo : ILineInfo
     {
@@ -32,6 +35,46 @@
 
         public ILineInfo? SubLine { get; set; }
 
+        #region Common methods
+
+        public int? Duration => EndTime - StartTime;
+
+        public int? StartTimeWithSubLine => MathHelper.Min(StartTime, SubLine?.StartTime);
+
+        public int? EndTimeWithSubLine => MathHelper.Max(EndTime, SubLine?.EndTime);
+
+        public int? DurationWithSubLine => EndTimeWithSubLine - StartTimeWithSubLine;
+
+        public string FullText
+        {
+            get
+            {
+                if (SubLine == null)
+                {
+                    return Text;
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    if (SubLine.StartTime < StartTime)
+                    {
+                        sb.Append('(');
+                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
+                        sb.Append(") ");
+                        sb.Append(Text.Trim());
+                    }
+                    else
+                    {
+                        sb.Append(Text.Trim());
+                        sb.Append(" (");
+                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
+                        sb.Append(')');
+                    }
+                    return sb.ToString();
+                }
+            }
+        }
+
         public int CompareTo(object obj)
         {
             if (obj is ILineInfo line)
@@ -43,6 +86,8 @@
             }
             return 0;
         }
+
+        #endregion
     }
 
     public class SyllableLineInfo : ILineInfo
@@ -73,6 +118,46 @@
 
         public bool IsSyllable => Syllables is { Count: > 0 };
 
+        #region Common methods
+
+        public int? Duration => EndTime - StartTime;
+
+        public int? StartTimeWithSubLine => MathHelper.Min(StartTime, SubLine?.StartTime);
+
+        public int? EndTimeWithSubLine => MathHelper.Max(EndTime, SubLine?.EndTime);
+
+        public int? DurationWithSubLine => EndTimeWithSubLine - StartTimeWithSubLine;
+
+        public string FullText
+        {
+            get
+            {
+                if (SubLine == null)
+                {
+                    return Text;
+                }
+                else
+                {
+                    var sb = new StringBuilder();
+                    if (SubLine.StartTime < StartTime)
+                    {
+                        sb.Append('(');
+                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
+                        sb.Append(") ");
+                        sb.Append(Text.Trim());
+                    }
+                    else
+                    {
+                        sb.Append(Text.Trim());
+                        sb.Append(" (");
+                        sb.Append(SubLine.Text.RemoveFrontBackBrackets());
+                        sb.Append(')');
+                    }
+                    return sb.ToString();
+                }
+            }
+        }
+
         public int CompareTo(object obj)
         {
             if (obj is ILineInfo line)
@@ -84,6 +169,8 @@
             }
             return 0;
         }
+
+        #endregion
     }
 
     public class FullLineInfo : LineInfo, IFullLineInfo
@@ -102,6 +189,22 @@
         public Dictionary<string, string> Translations { get; set; } = new();
 
         public string? Pronunciation { get; set; }
+
+        public string? ChineseTranslation
+        {
+            get => Translations.ContainsKey("zh") ? Translations["zh"] : null;
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    Translations.Remove("zh");
+                }
+                else
+                {
+                    Translations["zh"] = value!;
+                }
+            }
+        }
     }
 
     public class FullSyllableLineInfo : SyllableLineInfo, IFullLineInfo
@@ -119,7 +222,7 @@
         {
             if (!string.IsNullOrEmpty(chineseTranslation))
             {
-                Translations["zh"] = chineseTranslation;
+                Translations["zh"] = chineseTranslation!;
             }
 
             if (!string.IsNullOrEmpty(pronunciation))
@@ -131,6 +234,22 @@
         public Dictionary<string, string> Translations { get; set; } = new();
 
         public string? Pronunciation { get; set; }
+
+        public string? ChineseTranslation
+        {
+            get => Translations.ContainsKey("zh") ? Translations["zh"] : null;
+            set
+            {
+                if (string.IsNullOrEmpty(value))
+                {
+                    Translations.Remove("zh");
+                }
+                else
+                {
+                    Translations["zh"] = value!;
+                }
+            }
+        }
     }
 
     public enum LyricsAlignment

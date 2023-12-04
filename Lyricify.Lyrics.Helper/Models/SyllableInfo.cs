@@ -18,6 +18,8 @@
         public int StartTime { get; set; }
 
         public int EndTime { get; set; }
+
+        public int Duration => EndTime - StartTime;
     }
 
     public class FullSyllableInfo : ISyllableInfo
@@ -39,6 +41,8 @@
 
         private int? _endTime = null;
         public int EndTime => _endTime ??= SubItems.Last().EndTime;
+
+        public int Duration => EndTime - StartTime;
 
         public List<SyllableInfo> SubItems { get; set; }
 

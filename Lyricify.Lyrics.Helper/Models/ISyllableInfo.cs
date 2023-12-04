@@ -8,6 +8,6 @@
 
         public int EndTime { get; }
 
-        public int Duration => EndTime - StartTime;
+        public int Duration { get; }
     }
 }
