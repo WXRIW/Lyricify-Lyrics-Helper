@@ -13,11 +13,23 @@
 		<Company>WXRIW</Company>
 		<Title>Lyricify Lyrics Helper</Title>
 		<PackageProjectUrl>https://github.com/WXRIW/Lyricify-Lyrics-Helper</PackageProjectUrl>
-		<Description>All around Lyricify</Description>
+		<Description>Lyrics toolset for Lyricify. With lyrics parsers, generators, decrypters, searchers and useful helpers.</Description>
 		<PublishRepositoryUrl>true</PublishRepositoryUrl>
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
+		<Version>0.1.3</Version>
+		<Copyright></Copyright>
+		<PackageIcon>icon.png</PackageIcon>
+		<RepositoryUrl>https://github.com/WXRIW/Lyricify-Lyrics-Helper/</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>lyrics;chinese;convert;search</PackageTags>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -26,7 +38,7 @@
 		<PackageReference Include="SharpZipLib" Version="1.4.2" />
 	</ItemGroup>
 
-	<PropertyGroup>
-		<AnalysisMode>AllEnabledByDefault</AnalysisMode>
-	</PropertyGroup>
+	<ItemGroup>
+		<None Include="Resources\icon.png" Pack="true" PackagePath="" />
+	</ItemGroup>
 </Project>
