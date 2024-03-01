@@ -36,7 +36,15 @@ namespace Lyricify.Lyrics.Decrypter.Qrc
                 }
             }
 
-            var unzip = SharpZipLibDecompress(data);
+            Span<byte> unzip = SharpZipLibDecompress(data);
+            
+            // 移除字符串头部的 BOM 标识 (如果有)
+            var utf8Bom = Encoding.UTF8.GetPreamble();
+            if (unzip[..utf8Bom.Length].SequenceEqual(utf8Bom))
+            {
+                unzip = unzip[utf8Bom.Length..];
+            }
+
             var result = Encoding.UTF8.GetString(unzip);
             return result;
         }
