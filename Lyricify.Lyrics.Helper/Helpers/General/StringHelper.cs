@@ -478,14 +478,19 @@ namespace Lyricify.Lyrics.Helpers.General
         public static double ChinesePercentage(this string text)
         {
             int count = 0;
+            int spareCount = 0;
             for (int i = 0; i < text.Length; i++)
             {
                 if (text[i].IsChinese())
                 {
                     count++;
                 }
+                else if (text[i] == '\n' || text[i] == '\r' || text[i] == '\t')
+                {
+                    spareCount++;
+                }
             }
-            return (double)count / text.Length;
+            return text.Length - spareCount > 0 ? (double)count / (text.Length - spareCount) : 0;
         }
 
         /// <summary>
