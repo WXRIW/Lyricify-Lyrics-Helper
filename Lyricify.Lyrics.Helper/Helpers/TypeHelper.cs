@@ -36,5 +36,39 @@ namespace Lyricify.Lyrics.Helpers
             LyricsRawTypes.Musixmatch => LyricsTypes.Musixmatch,
             _ => LyricsTypes.Unknown,
         };
+
+        /// <summary>
+        /// 字符串是否是指定的歌词类型
+        /// </summary>
+        /// <param name="lyrics">歌词字符串</param>
+        /// <param name="type">歌词类型</param>
+        public static bool IsLyricsType(string lyrics, LyricsTypes type)
+        {
+            return type switch
+            {
+                LyricsTypes.LyricifyLines => Types.LyricifyLines.IsLyricifyLines(lyrics),
+                LyricsTypes.Lrc => Types.Lrc.IsLrc(lyrics),
+                _ => false, // 暂不支持类型判断的，返回 false
+            };
+        }
+
+        /// <summary>
+        /// 字符串的歌词类型是否在指定类型列表中
+        /// </summary>
+        /// <param name="lyrics">歌词字符串</param>
+        /// <param name="types">歌词类型列表</param>
+        public static bool IsLyricsType(string lyrics, LyricsTypes[] types)
+        {
+            if (types.Length < 1) return false;
+
+            foreach (var type in types)
+            {
+                if (IsLyricsType(lyrics, type))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
     }
 }
