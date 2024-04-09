@@ -9,6 +9,12 @@ namespace Lyricify.Lyrics.Parsers
     {
         public static LyricsData? Parse(string rawJson)
         {
+            return Parse(rawJson, false);
+        }
+
+        /// <param name="ignoreSyllable">忽略逐字歌词</param>
+        public static LyricsData? Parse(string rawJson, bool ignoreSyllable)
+        {
             var jsonObj = JObject.Parse(rawJson);
             if (jsonObj?["message"]?["body"]?["macro_calls"] is not JObject calls) return null;
 
@@ -20,7 +26,7 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             var track_get = calls["track.richsync.get"] as JObject;
-            if (CheckHeader200(track_get))
+            if (!ignoreSyllable && CheckHeader200(track_get))
             {
                 var lyrics = track_get?["message"]?["body"]?["richsync"]?["richsync_body"]?.Value<string>();
 
