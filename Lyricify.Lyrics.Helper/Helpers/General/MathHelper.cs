@@ -58,6 +58,33 @@
         }
 
         /// <summary>
+        /// Returns x if x is greater than a minimum value, otherwise the minimum value will be returned
+        /// </summary>
+        public static int GreaterThan(int x, int min)
+        {
+            if (x < min) return min;
+            else return x;
+        }
+
+        /// <summary>
+        /// Returns x if x is greater than a minimum value, otherwise the minimum value will be returned
+        /// </summary>
+        public static double GreaterThan(double x, double min)
+        {
+            if (x < min) return min;
+            else return x;
+        }
+
+        /// <summary>
+        /// Returns x if x is greater than a minimum value, otherwise the minimum value will be returned
+        /// </summary>
+        public static float GreaterThan(float x, float min)
+        {
+            if (x < min) return min;
+            else return x;
+        }
+
+        /// <summary>
         /// Returns whether x is between a and b
         /// </summary>
         /// <param name="containEdge">Contain a and b or not</param>
