@@ -54,8 +54,49 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             return JsonConvert.DeserializeObject<SearchResult>(res);
         }
 
+        public async Task<SearchResult?> SearchNew(string keyword)
+        {
+            const string url = "https://interface.music.163.com/eapi/cloudsearch/pc";
+
+            var data = new Dictionary<string, string>
+            {
+                { "s", keyword },
+                { "type", "1" },
+                { "limit", "30" },
+                { "offset", "0" },
+                { "total", "true" }
+            };
+
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+
+            var eapiResult = JsonConvert.DeserializeObject<EapiSearchResult>(raw);
+            if (eapiResult is null) return null;
+
+            var result = new SearchResult();
+            result.Code = eapiResult.Code;
+            result.NeedLogin = eapiResult.NeedLogin;
+            result.Result = eapiResult.Result;
+            var list = new List<Song>();
+            foreach (var song in eapiResult.Result.Songs)
+            {
+                list.Add(new()
+                {
+                    Album = song.Album,
+                    Alias = song.Alias,
+                    Artists = song.Artists,
+                    Duration = song.Duration,
+                    Id = song.Id,
+                    Name = song.Name,
+                    Privilege = song.Privilege,
+                    PublishTime = song.PublishTime
+                });
+            }
+            result.Result.Songs = list.ToArray();
+            return result;
+        }
+
         /// <summary>
-        /// 
+        ///   
         /// </summary>
         /// <param name="songId"></param>
         /// <param name="bitrate"></param>

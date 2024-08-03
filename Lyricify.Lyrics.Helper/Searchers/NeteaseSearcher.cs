@@ -8,13 +8,37 @@ namespace Lyricify.Lyrics.Searchers
 
         public override string DisplayName => "Netease Cloud Music";
 
+        private bool useNewSearchFirst = false;
+
         public override async Task<List<ISearchResult>?> SearchForResults(string searchString)
         {
             var search = new List<ISearchResult>();
 
+            SearchResult? result = null;
+            if (useNewSearchFirst)
+            {
+                try { result = await Providers.Web.Providers.NeteaseApi.SearchNew(searchString); }
+                catch
+                {
+                    useNewSearchFirst = !useNewSearchFirst;
+                    try { result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID); }
+                    catch { }
+                }
+            }
+            else
+            {
+                try { result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID); }
+                catch
+                {
+                    useNewSearchFirst = !useNewSearchFirst;
+                    // 尝试新接口，可以在外网使用
+                    try { result = await Providers.Web.Providers.NeteaseApi.SearchNew(searchString); }
+                    catch { }
+                }
+            }
+
             try
             {
-                var result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID);
                 var results = result?.Result.Songs;
                 if (results == null) return null;
                 foreach (var track in results)

@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using static Lyricify.Lyrics.Providers.Web.Musixmatch.GetTrackResponse;
 
 namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 {

@@ -66,6 +66,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public static Dictionary<string, string> EApi(string url, object @object)
         {
             url = url.Replace("https://interface3.music.163.com/e", "/");
+            url = url.Replace("https://interface.music.163.com/e", "/");
             string text = JsonConvert.SerializeObject(@object);
             string message = $"nobody{url}use{text}md5forencrypt";
             string digest = message.ToByteArrayUtf8().ComputeMd5().ToHexStringLower();

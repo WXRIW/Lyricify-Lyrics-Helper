@@ -1,4 +1,6 @@
 ﻿#nullable disable
+using Newtonsoft.Json;
+
 namespace Lyricify.Lyrics.Providers.Web.Netease
 {
     /// <summary>
@@ -11,27 +13,44 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public SearchResultData Result { get; set; }
 
         public long Code { get; set; }
+    }
 
-        public class SearchResultData
-        {
-            /* SearchType = SONG */
+    public class SearchResultData
+    {
+        /* SearchType = SONG */
 
-            public Song[] Songs { get; set; }
+        public Song[] Songs { get; set; }
 
-            public long SongCount { get; set; }
+        public long SongCount { get; set; }
 
-            /* SearchType = ALBUM */
+        /* SearchType = ALBUM */
 
-            public Album[] Albums { get; set; }
+        public Album[] Albums { get; set; }
 
-            public long AlbumCount { get; set; }
+        public long AlbumCount { get; set; }
 
-            /* SearchType = PLAYLIST */
+        /* SearchType = PLAYLIST */
 
-            public SimplePlaylist[] Playlists { get; set; }
+        public SimplePlaylist[] Playlists { get; set; }
 
-            public long PlaylistCount { get; set; }
-        }
+        public long PlaylistCount { get; set; }
+    }
+
+    public class EapiSearchResultData : SearchResultData
+    {
+        public new EapiSong[] Songs { get; set; }
+    }
+
+    /// <summary>
+    /// 搜索接口结果
+    /// </summary>
+    public class EapiSearchResult
+    {
+        public bool NeedLogin { get; set; }
+
+        public EapiSearchResultData Result { get; set; }
+
+        public long Code { get; set; }
     }
 
     public class SongUrls
@@ -256,6 +275,28 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         /// <summary>
         /// 时长，单位ms
         /// </summary>
+        public long Duration { get; set; }
+        /// <summary>
+        /// 时间戳，eg 1657900800000
+        /// </summary>
+        public long PublishTime { get; set; }
+        public Privilege Privilege { get; set; }
+    }
+
+    public class EapiSong
+    {
+        public string Name { get; set; }
+        public string Id { get; set; }
+        [JsonProperty("ar")]
+        public List<Ar> Artists { get; set; }
+        [JsonProperty("alia")]
+        public List<object> Alias { get; set; }
+        [JsonProperty("al")]
+        public Al Album { get; set; }
+        /// <summary>
+        /// 时长，单位ms
+        /// </summary>
+        [JsonProperty("dt")]
         public long Duration { get; set; }
         /// <summary>
         /// 时间戳，eg 1657900800000
