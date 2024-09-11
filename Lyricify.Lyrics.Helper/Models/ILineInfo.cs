@@ -77,6 +77,6 @@ namespace Lyricify.Lyrics.Models
             }
         }
 
-        public string? Pronunciation { get; }
+        public string? Pronunciation { get; set; }
     }
 }

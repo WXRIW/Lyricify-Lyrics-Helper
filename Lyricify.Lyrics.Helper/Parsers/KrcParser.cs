@@ -107,7 +107,19 @@ namespace Lyricify.Lyrics.Parsers
                 .Replace("\r\n", "\n")
                 .Replace("\r", "")
                 .Split('\n');
-            return lines;
+            var stringBuilder = new StringBuilder();
+            foreach (string line in lines)
+            {
+                if (line.StartsWith("["))
+                {
+                    // 确保错误的行头被去除
+                    stringBuilder.AppendLine(line);
+                }
+            }
+            return stringBuilder.ToString()
+                .Replace("\r\n", "\n")
+                .Replace("\r", "")
+                .Split('\n');
         }
 
         /// <summary>
