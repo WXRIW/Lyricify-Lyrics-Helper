@@ -84,6 +84,16 @@
             }
             return 0;
         }
+
+        /// <summary>
+        /// Refresh preloaded properties if Syllables have been updated
+        /// </summary>
+        public void RefreshProperties()
+        {
+            _text = null;
+            _startTime = null;
+            _endTime = null;
+        }
     }
 
     public class FullLineInfo : LineInfo, IFullLineInfo
