@@ -18,6 +18,8 @@ namespace Lyricify.Lyrics.Searchers
         /// </summary>
         public string DisplayName { get; }
 
+        public Searchers SearcherType { get; }
+
         /// <summary>
         /// 搜索最佳匹配的曲目
         /// </summary>

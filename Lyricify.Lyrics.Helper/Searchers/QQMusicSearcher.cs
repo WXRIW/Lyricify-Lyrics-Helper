@@ -8,6 +8,8 @@ namespace Lyricify.Lyrics.Searchers
 
         public override string DisplayName => "QQ Music";
 
+        public override Searchers SearcherType => Searchers.QQMusic;
+
         public override async Task<List<ISearchResult>?> SearchForResults(string searchString)
         {
             var search = new List<ISearchResult>();

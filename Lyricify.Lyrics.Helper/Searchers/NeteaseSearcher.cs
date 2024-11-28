@@ -8,6 +8,8 @@ namespace Lyricify.Lyrics.Searchers
 
         public override string DisplayName => "Netease Cloud Music";
 
+        public override Searchers SearcherType => Searchers.Netease;
+
         private bool useNewSearchFirst = false;
 
         public override async Task<List<ISearchResult>?> SearchForResults(string searchString)

@@ -6,6 +6,8 @@
 
         public override string DisplayName => "Kugou Music";
 
+        public override Searchers SearcherType => Searchers.Kugou;
+
         public override async Task<List<ISearchResult>?> SearchForResults(string searchString)
         {
             var search = new List<ISearchResult>();

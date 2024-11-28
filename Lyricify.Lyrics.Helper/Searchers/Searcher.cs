@@ -12,6 +12,8 @@ namespace Lyricify.Lyrics.Searchers
 
         public abstract string DisplayName { get; }
 
+        public abstract Searchers SearcherType { get; }
+
         public abstract Task<List<ISearchResult>?> SearchForResults(string searchString);
 
         public async Task<ISearchResult?> SearchForResult(ITrackMetadata track)

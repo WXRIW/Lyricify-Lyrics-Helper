@@ -9,6 +9,8 @@ namespace Lyricify.Lyrics.Searchers
 
         public string DisplayName => "Musixmatch";
 
+        public Searchers SearcherType => Searchers.Musixmatch;
+
         public async Task<ISearchResult?> SearchForResult(ITrackMetadata track)
         {
             var result = await SearchForResults(track);
