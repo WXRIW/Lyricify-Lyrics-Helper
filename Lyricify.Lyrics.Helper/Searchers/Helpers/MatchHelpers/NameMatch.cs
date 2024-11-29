@@ -28,7 +28,7 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 == (name2.Replace(" - ", " (").Trim() + ")").Remove(" "))
                 return NameMatchType.VeryHigh;
 
-            static bool specialCompare(string str1, string str2, string special)
+            static bool SpecialCompare(string str1, string str2, string special)
             {
                 special = "(" + special;
                 bool c1 = str1.Contains(special);
@@ -38,8 +38,24 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 return false;
             }
 
-            if (specialCompare(name1, name2, "deluxe")) return NameMatchType.High;
-            if (specialCompare(name1, name2, "explicit")) return NameMatchType.High;
+            static bool DuoSpecialCompare(string str1, string str2, string special1, string special2)
+            {
+                special1 = "(" + special1;
+                special2 = "(" + special2;
+                if (str1.Contains(special1) && str2.Contains(special2)
+                    && str1[..(str1.IndexOf(special1) - 1)].Trim() == str2[..(str2.IndexOf(special2) - 1)].Trim()) return true;
+                if (str1.Contains(special2) && str2.Contains(special1)
+                    && str1[..(str1.IndexOf(special2) - 1)].Trim() == str2[..(str2.IndexOf(special1) - 1)].Trim()) return true;
+                return false;
+            }
+
+            if (SpecialCompare(name1, name2, "deluxe")) return NameMatchType.VeryHigh;
+            if (SpecialCompare(name1, name2, "explicit")) return NameMatchType.VeryHigh;
+            if (SpecialCompare(name1, name2, "feat")) return NameMatchType.VeryHigh;
+            if (SpecialCompare(name1, name2, "with")) return NameMatchType.VeryHigh;
+
+            if (DuoSpecialCompare(name1, name2, "feat", "explicit")) return NameMatchType.High;
+            if (DuoSpecialCompare(name1, name2, "with", "explicit")) return NameMatchType.High;
 
             // 在同长度的情况下，判断解决异体字的问题
             int count = 0;
