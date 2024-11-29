@@ -20,7 +20,7 @@ namespace Lyricify.Lyrics.Searchers
 
         public QQMusicSearchResult(Song song) : this(
             song.Title,
-            song.Singer.Select(s => s.Title).ToArray(),
+            song.Singer.Select(s => s.Name).ToArray(),
             song.Album.Title,
             null,
             song.Interval * 1000,

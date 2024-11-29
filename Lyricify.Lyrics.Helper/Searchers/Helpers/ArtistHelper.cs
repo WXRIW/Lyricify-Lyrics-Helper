@@ -8,10 +8,11 @@
         /// <summary>
         /// 中文化艺人名字符串
         /// </summary>
-        /// <param name="artist"></param>
-        /// <returns></returns>
         public static string ChineselizeArtist(string artist)
         {
+            if (string.IsNullOrWhiteSpace(artist))
+                return string.Empty;
+
             foreach (var item in ArtistNamePairs)
                 if (item.Name.Equals(artist))
                     return item.ChineseName;
@@ -22,10 +23,37 @@
         /// <summary>
         /// 中文化艺人名字符串列表
         /// </summary>
-        /// <param name="artists"></param>
         public static void ChineselizeArtists(List<string> artists)
         {
             for (int i = 0; i < artists.Count; i++)
+                artists[i] = ChineselizeArtist(artists[i]);
+        }
+
+        /// <summary>
+        /// 中文化艺人名字符串列表
+        /// </summary>
+        /// <param name="artists"></param>
+        public static void ChineselizeArtists(string[] artists)
+        {
+            for (int i = 0; i < artists.Length; i++)
+                artists[i] = ChineselizeArtist(artists[i]);
+        }
+
+        /// <summary>
+        /// 中文化艺人名字符串列表
+        /// </summary>
+        public static void ToChineselizeArtists(this List<string> artists)
+        {
+            for (int i = 0; i < artists.Count; i++)
+                artists[i] = ChineselizeArtist(artists[i]);
+        }
+
+        /// <summary>
+        /// 中文化艺人名字符串列表
+        /// </summary>
+        public static void ToChineselizeArtists(this string[] artists)
+        {
+            for (int i = 0; i < artists.Length; i++)
                 artists[i] = ChineselizeArtist(artists[i]);
         }
 
