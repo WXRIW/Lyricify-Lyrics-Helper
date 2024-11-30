@@ -21,6 +21,8 @@ namespace Lyricify.Lyrics.Searchers.Helpers
 
             name1 = name1.Replace('’', '\'').Replace('，', ',');
             name2 = name2.Replace('’', '\'').Replace('，', ',');
+            name1 = name1.Replace('[', '(').Replace(']', ')');
+            name2 = name2.Replace('[', '(').Replace(']', ')');
             name1 = name1.Replace("acoustic version", "acoustic");
             name2 = name2.Replace("acoustic version", "acoustic");
 
@@ -33,8 +35,16 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 special = "(" + special;
                 bool c1 = str1.Contains(special);
                 bool c2 = str2.Contains(special);
-                if (c1 && !c2 && str1[..(str1.IndexOf(special) - 1)].Trim() == str2) return true;
-                if (c2 && !c1 && str2[..(str2.IndexOf(special) - 1)].Trim() == str1) return true;
+                if (c1 && !c2 && str1[..str1.IndexOf(special)].Trim() == str2) return true;
+                if (c2 && !c1 && str2[..str2.IndexOf(special)].Trim() == str1) return true;
+                return false;
+            }
+
+            static bool SingleSpecialCompare(string str1, string str2, string special)
+            {
+                special = "(" + special;
+                if (str1.Contains(special) && str2.Contains(special)
+                    && str1[..str1.IndexOf(special)].Trim() == str2[..str2.IndexOf(special)].Trim()) return true;
                 return false;
             }
 
@@ -43,9 +53,9 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 special1 = "(" + special1;
                 special2 = "(" + special2;
                 if (str1.Contains(special1) && str2.Contains(special2)
-                    && str1[..(str1.IndexOf(special1) - 1)].Trim() == str2[..(str2.IndexOf(special2) - 1)].Trim()) return true;
+                    && str1[..str1.IndexOf(special1)].Trim() == str2[..str2.IndexOf(special2)].Trim()) return true;
                 if (str1.Contains(special2) && str2.Contains(special1)
-                    && str1[..(str1.IndexOf(special2) - 1)].Trim() == str2[..(str2.IndexOf(special1) - 1)].Trim()) return true;
+                    && str1[..str1.IndexOf(special2)].Trim() == str2[..str2.IndexOf(special1)].Trim()) return true;
                 return false;
             }
 
@@ -56,6 +66,8 @@ namespace Lyricify.Lyrics.Searchers.Helpers
 
             if (DuoSpecialCompare(name1, name2, "feat", "explicit")) return NameMatchType.High;
             if (DuoSpecialCompare(name1, name2, "with", "explicit")) return NameMatchType.High;
+            if (SingleSpecialCompare(name1, name2, "feat")) return NameMatchType.High;
+            if (SingleSpecialCompare(name1, name2, "with")) return NameMatchType.High;
 
             // 在同长度的情况下，判断解决异体字的问题
             int count = 0;

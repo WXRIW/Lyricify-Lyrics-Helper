@@ -43,6 +43,9 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             if (list1.Count > 7 && list2.Count > 7 && (double)count / list1.Count > 0.66)
                 return ArtistMatchType.High;
 
+            if (count == 1 && list1.Count == 1 && list2.Count >= 3)
+                return ArtistMatchType.Medium;
+
             if (count >= 2)
                 return ArtistMatchType.Low;
 
@@ -55,7 +58,8 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             {
                 ArtistMatchType.Perfect => 7,
                 ArtistMatchType.VeryHigh => 6,
-                ArtistMatchType.High => 4,
+                ArtistMatchType.High => 5,
+                ArtistMatchType.Medium => 4,
                 ArtistMatchType.Low => 2,
                 ArtistMatchType.NoMatch => 0,
                 _ => 0,
@@ -70,6 +74,7 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             Perfect,
             VeryHigh,
             High,
+            Medium,
             Low,
             NoMatch = -1,
         }
