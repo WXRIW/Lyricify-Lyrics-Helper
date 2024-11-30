@@ -231,9 +231,12 @@ namespace Lyricify.Lyrics.Parsers
             try
             {
                 var result = new List<string>();
-                for (int i = 0; i < translation!.Content![0].LyricContent!.Count; i++)
+                var content = translation!.Content.FirstOrDefault(t => t.Type == 1);
+                if (content == null) return null;
+
+                for (int i = 0; i < content.LyricContent!.Count; i++)
                 {
-                    result.Add(translation!.Content![0].LyricContent![i]![0]);
+                    result.Add(content.LyricContent![i]![0]);
                 }
 
                 return result;
