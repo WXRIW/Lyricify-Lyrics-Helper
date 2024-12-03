@@ -42,19 +42,27 @@
         /// <summary>
         /// 中文化艺人名字符串列表
         /// </summary>
-        public static void ToChineselizeArtists(this List<string> artists)
+        public static List<string> ToChineselizeArtists(this List<string> artists)
         {
+            var newList = new List<string>();
+
             for (int i = 0; i < artists.Count; i++)
-                artists[i] = ChineselizeArtist(artists[i]);
+                newList.Add(ChineselizeArtist(artists[i]));
+
+            return newList;
         }
 
         /// <summary>
         /// 中文化艺人名字符串列表
         /// </summary>
-        public static void ToChineselizeArtists(this string[] artists)
+        public static string[] ToChineselizeArtists(this string[] artists)
         {
+            var newArray = new string[artists.Length];
+
             for (int i = 0; i < artists.Length; i++)
-                artists[i] = ChineselizeArtist(artists[i]);
+                newArray[i] = ChineselizeArtist(artists[i]);
+
+            return newArray;
         }
 
         public record class Artist(string SpotifyId, string Name, string ChineseName);
