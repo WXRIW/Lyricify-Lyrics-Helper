@@ -31,24 +31,31 @@ namespace Lyricify.Lyrics.Searchers
         {
             var search = new List<ISearchResult>();
 
-            var result = await Providers.Web.Providers.MusixmatchApi.GetTrack(track, artist, duration / 1000);
-            var t = result?.Message?.Body?.Track;
-            if (t == null) return null;
-            var r = new MusixmatchSearchResult(t)
+            try
             {
-                MatchType = result!.Message.Header.Confidence switch
+                var result = await Providers.Web.Providers.MusixmatchApi.GetTrack(track, artist, duration / 1000);
+                var t = result?.Message?.Body?.Track;
+                if (t == null) return null;
+                var r = new MusixmatchSearchResult(t)
                 {
-                    1000 => CompareHelper.MatchType.Perfect,
-                    >= 950 => CompareHelper.MatchType.VeryHigh,
-                    >= 900 => CompareHelper.MatchType.High,
-                    >= 750 => CompareHelper.MatchType.PrettyHigh,
-                    >= 600 => CompareHelper.MatchType.Medium,
-                    >= 400 => CompareHelper.MatchType.Low,
-                    >= 200 => CompareHelper.MatchType.VeryLow,
-                    _ => CompareHelper.MatchType.NoMatch,
-                }
-            };
-            search.Add(r);
+                    MatchType = result!.Message.Header.Confidence switch
+                    {
+                        1000 => CompareHelper.MatchType.Perfect,
+                        >= 950 => CompareHelper.MatchType.VeryHigh,
+                        >= 900 => CompareHelper.MatchType.High,
+                        >= 750 => CompareHelper.MatchType.PrettyHigh,
+                        >= 600 => CompareHelper.MatchType.Medium,
+                        >= 400 => CompareHelper.MatchType.Low,
+                        >= 200 => CompareHelper.MatchType.VeryLow,
+                        _ => CompareHelper.MatchType.NoMatch,
+                    }
+                };
+                search.Add(r);
+            }
+            catch
+            {
+                return null;
+            }
 
             return search;
         }

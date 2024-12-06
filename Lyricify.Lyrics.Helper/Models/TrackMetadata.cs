@@ -33,7 +33,7 @@
 
         public string? AlbumArtist
         {
-            get => string.Join(", ", AlbumArtist);
+            get => string.Join(", ", AlbumArtists);
             set => AlbumArtists = (value ?? string.Empty).Split(", ").ToList();
         }
 

@@ -10,7 +10,7 @@
         /// <returns>时长匹配程度</returns>
         public static DurationMatchType? CompareDuration(int? duration1, int? duration2)
         {
-            if (duration1 == null || duration2 == null) return null;
+            if (duration1 == null || duration2 == null || duration1 == 0 || duration2 == 0) return null;
 
             return Math.Abs(duration1.Value - duration2.Value) switch
             {
@@ -21,6 +21,11 @@
                 < 3500 => DurationMatchType.Low,
                 _ => DurationMatchType.NoMatch,
             };
+        }
+
+        public static int GetMatchScore(this DurationMatchType matchType)
+        {
+            return GetMatchScore(matchType);
         }
 
         public static int GetMatchScore(this DurationMatchType? matchType)

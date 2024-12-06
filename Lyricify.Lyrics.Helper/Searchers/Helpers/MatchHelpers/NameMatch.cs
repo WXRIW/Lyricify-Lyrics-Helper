@@ -86,6 +86,11 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             return NameMatchType.NoMatch;
         }
 
+        public static int GetMatchScore(this NameMatchType matchType)
+        {
+            return GetMatchScore(matchType);
+        }
+
         public static int GetMatchScore(this NameMatchType? matchType)
         {
             return matchType switch

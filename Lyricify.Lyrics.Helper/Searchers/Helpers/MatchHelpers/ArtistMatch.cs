@@ -43,6 +43,15 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             if (list1.Count > 7 && list2.Count > 7 && (double)count / list1.Count > 0.66)
                 return ArtistMatchType.High;
 
+            if (list1.Count == 1 && list2.Count > 1 && list1[0].StartsWith(list2[0]))
+                return ArtistMatchType.High;
+
+            if (list1.Count == 1 && list2.Count > 1 && list2[0].Length > 3 && list1[0].Contains(list2[0]))
+                return ArtistMatchType.High;
+
+            if (list1.Count == 1 && list2.Count > 1 && list2[0].Length > 1 && list1[0].Contains(list2[0]))
+                return ArtistMatchType.Medium;
+
             if (count == 1 && list1.Count == 1 && list2.Count >= 3)
                 return ArtistMatchType.Medium;
 
@@ -50,6 +59,11 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 return ArtistMatchType.Low;
 
             return ArtistMatchType.NoMatch;
+        }
+
+        public static int GetMatchScore(this ArtistMatchType matchType)
+        {
+            return GetMatchScore(matchType);
         }
 
         public static int GetMatchScore(this ArtistMatchType? matchType)
