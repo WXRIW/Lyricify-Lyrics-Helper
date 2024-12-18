@@ -1,4 +1,6 @@
-﻿namespace Lyricify.Lyrics.Helpers.Optimization
+﻿using System.Text.RegularExpressions;
+
+namespace Lyricify.Lyrics.Helpers.Optimization
 {
     public static class Explicit
     {
@@ -206,59 +208,34 @@
         /// <returns>修护后的字符串</returns>
         public static string FixExplicit(string str)
         {
-            return str
-                .Replace("a*s", "ass")
-                .Replace("a**", "ass")
-                .Replace("b***h", "bitch")
-                .Replace("B***h", "Bitch")
-                .Replace("b**ch", "bitch")
-                .Replace("B**ch", "Bitch")
-                .Replace("b*****s", "bitches")
-                .Replace("B*****s", "Bitches")
-                .Replace("d**n", "damn")
-                .Replace("D**n", "Damn")
-                .Replace("d**mit", "dammit")
-                .Replace("D**mit", "Dammit")
-                .Replace("d**k", "dick")
-                .Replace("D**k", "Dick")
-                .Replace("d**e", "dope")
-                .Replace("D**e", "Dope")
-                .Replace("f**k", "fuck")
-                .Replace("F**k", "Fuck")
-                .Replace("fu*k", "fuck")
-                .Replace("Fu*k", "Fuck")
-                .Replace("h*e", "hoe")
-                .Replace("H*e", "Hoe")
-                .Replace("h**s", "hoes")
-                .Replace("H**s", "Hoes")
-                .Replace("mother****", "motherfuck")
-                .Replace("Mother****", "Motherfuck")
-                .Replace("n***a", "nigga")
-                .Replace("N***a", "Nigga")
-                .Replace("n**ga", "nigga")
-                .Replace("N**ga", "Nigga")
-                .Replace("ni**a", "nigga")
-                .Replace("Ni**a", "Nigga")
-                .Replace("n***as", "nigras")
-                .Replace("N***as", "Nigras")
-                .Replace("p***y", "pussy")
-                .Replace("P***y", "Pussy")
-                .Replace("p**sy", "pussy")
-                .Replace("P**sy", "Pussy")
-                .Replace("sh*t", "shit")
-                .Replace("Sh*t", "Shit")
-                .Replace("s*x", "sex")
-                .Replace("S*x", "Sex")
-                .Replace("s**t", "shit")
-                .Replace("S**t", "shit")
-                .Replace("w**d", "weed")
-                .Replace("W**d", "Weed")
-                .Replace("w***e", "whore")
-                .Replace("W***e", "Whore")
-                .Replace("c*****e", "cocaine")
-                .Replace("C*****e", "Cocaine")
-                .Replace("d**g", "drug")
-                .Replace("D**g", "Drug");
+            foreach (var (pattern, replacement) in Replacements)
+            {
+                str = Regex.Replace(str, pattern, match =>
+                {
+                    string original = match.Value;
+                    return char.IsUpper(original[0]) ?
+                        char.ToUpper(replacement[0]) + replacement[1..] : replacement;
+                }, RegexOptions.IgnoreCase);
+            }
+            return str;
         }
+
+        private static readonly IReadOnlyList<(string Pattern, string Replacement)> Replacements = new List<(string Pattern, string Replacement)>
+        {
+            ("a\\*s", "ass"), ("a\\*\\*", "ass"),
+            ("b\\*{3}h", "bitch"), ("b\\*{2}ch", "bitch"),
+            ("b\\*{5}s", "bitches"),
+            ("d\\*{2}n", "damn"), ("d\\*{2}mit", "dammit"),
+            ("d\\*{2}k", "dick"), ("d\\*{2}e", "dope"),
+            ("f\\*{2}k", "fuck"), ("f\\*ck", "fuck"), ("fu\\*k", "fuck"),
+            ("h\\*e", "hoe"), ("h\\*{2}s", "hoes"),
+            ("mother\\*{4}", "motherfuck"),
+            ("n\\*{3}a", "nigga"), ("n\\*{2}ga", "nigga"), ("ni\\*{2}a", "nigga"),
+            ("n\\*{3}as", "nigras"),
+            ("p\\*{3}y", "pussy"), ("p\\*{2}sy", "pussy"),
+            ("sh\\*t", "shit"), ("s\\*x", "sex"), ("s\\*{2}t", "shit"),
+            ("w\\*{2}d", "weed"), ("w\\*{3}e", "whore"),
+            ("c\\*{4}e", "cocaine"), ("d\\*{2}g", "drug")
+        };
     }
 }
