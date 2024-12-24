@@ -23,13 +23,24 @@ namespace Lyricify.Lyrics.Searchers
                 catch
                 {
                     useNewSearchFirst = !useNewSearchFirst;
-                    try { result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID); }
-                    catch { }
+                    try
+                    {
+                        result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID);
+                        if (result?.Code == -460) throw new Exception();
+                    }
+                    catch
+                    {
+                        useNewSearchFirst = !useNewSearchFirst;
+                    }
                 }
             }
             else
             {
-                try { result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID); }
+                try
+                {
+                    result = await Providers.Web.Providers.NeteaseApi.Search(searchString, Api.SearchTypeEnum.SONG_ID);
+                    if (result?.Code == -460) throw new Exception();
+                }
                 catch
                 {
                     useNewSearchFirst = !useNewSearchFirst;

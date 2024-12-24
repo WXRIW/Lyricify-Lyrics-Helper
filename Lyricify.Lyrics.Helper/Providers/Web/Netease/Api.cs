@@ -290,6 +290,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                         "c",
                         "[" + songRequests.Remove(songRequests.Length - 1, 1) + "]"
                     },
+                    { "os", "pc" },
                     { "csrf_token", string.Empty },
                 };
 
