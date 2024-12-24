@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 #nullable disable
 namespace Lyricify.Lyrics.Providers.Web.Kugou
@@ -23,21 +23,21 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
             {
                 public string Hash { get; set; }
 
-                [JsonProperty("songname")]
+                [JsonPropertyName("songname")]
                 public string SongName { get; set; }
 
-                [JsonProperty("album_name")]
+                [JsonPropertyName("album_name")]
                 public string AlbumName { get; set; }
 
-                [JsonProperty("songname_original")]
+                [JsonPropertyName("songname_original")]
                 public string SongNameOriginal { get; set; }
 
-                [JsonProperty("singername")]
+                [JsonPropertyName("singername")]
                 public string SingerName { get; set; }
 
                 public int Duration { get; set; }
 
-                [JsonProperty("filename")]
+                [JsonPropertyName("filename")]
                 public string Filename { get; set; }
 
                 /// <summary>
@@ -47,7 +47,7 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
             }
         }
 
-        [JsonProperty("errcode")]
+        [JsonPropertyName("errcode")]
         public int ErrorCode { get; set; }
     }
 
@@ -57,22 +57,22 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
 
         public string Info { get; set; }
 
-        [JsonProperty("errcode")]
+        [JsonPropertyName("errcode")]
         public int ErrorCode { get; set; }
 
-        [JsonProperty("errmsg")]
+        [JsonPropertyName("errmsg")]
         public string ErrorMessage { get; set; }
 
         public string Keywork { get; set; }
 
         public string Proposal { get; set; }
 
-        [JsonProperty("has_complete_right")]
+        [JsonPropertyName("has_complete_right")]
         public int HasCompleteRight { get; set; }
 
         public int Ugc { get; set; }
 
-        [JsonProperty("ugccount")]
+        [JsonPropertyName("ugccount")]
         public int UgcCount { get; set; }
 
         public int Expire { get; set; }
@@ -83,13 +83,13 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
         {
             public string Id { get; set; }
 
-            [JsonProperty("product_from")]
+            [JsonPropertyName("product_from")]
             public string ProductFrom { get; set; }
 
-            [JsonProperty("accesskey")]
+            [JsonPropertyName("accesskey")]
             public string AccessKey { get; set; }
 
-            [JsonProperty("can_score")]
+            [JsonPropertyName("can_score")]
             public bool CanScore { get; set; }
 
             public string Singer { get; set; }
@@ -116,7 +116,7 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
 
             public string Language { get; set; }
 
-            [JsonProperty("krctype")]
+            [JsonPropertyName("krctype")]
             public int KrcType { get; set; }
 
             public int Hitlayer { get; set; }
@@ -127,13 +127,13 @@ namespace Lyricify.Lyrics.Providers.Web.Kugou
 
             public int Score { get; set; }
 
-            [JsonProperty("contenttype")]
+            [JsonPropertyName("contenttype")]
             public int ContentType { get; set; }
 
-            [JsonProperty("content_format")]
+            [JsonPropertyName("content_format")]
             public int ContentFormat { get; set; }
 
-            [JsonProperty("trans_id")]
+            [JsonPropertyName("trans_id")]
             public string TransId { get; set; }
         }
     }

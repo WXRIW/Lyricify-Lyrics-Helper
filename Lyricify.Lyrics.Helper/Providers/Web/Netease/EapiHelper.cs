@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
@@ -32,7 +32,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 ["MUSIC_U"] = "",
             };
             headers["Cookie"] = string.Join("; ", header.Select(t => t.Key + "=" + t.Value));
-            data["header"] = JsonConvert.SerializeObject(header);
+            data["header"] = Helpers.JsonConvert.SerializeObject(header);
             var data2 = EApi(url, data);
             url = Regex.Replace(url, @"\w*api", "eapi");
 
@@ -63,11 +63,11 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
         private static readonly byte[] eapiKey = Encoding.ASCII.GetBytes("e82ckenh8dichen8");
 
-        public static Dictionary<string, string> EApi(string url, object @object)
+        public static Dictionary<string, string> EApi<T>(string url, T @object)
         {
             url = url.Replace("https://interface3.music.163.com/e", "/");
             url = url.Replace("https://interface.music.163.com/e", "/");
-            string text = JsonConvert.SerializeObject(@object);
+            string text = Helpers.JsonConvert.SerializeObject(@object);
             string message = $"nobody{url}use{text}md5forencrypt";
             string digest = message.ToByteArrayUtf8().ComputeMd5().ToHexStringLower();
             string data = $"{url}-36cd479b6b5-{text}-36cd479b6b5-{digest}";

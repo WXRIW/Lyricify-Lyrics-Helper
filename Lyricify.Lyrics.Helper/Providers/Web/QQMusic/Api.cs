@@ -40,27 +40,24 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
                 SearchTypeEnum.PLAYLIST_ID => 3,
                 _ => 0,
             };
-            var data = new Dictionary<string, object>
+
+            var data = new SearchRequestModel()
             {
+                req_1 = new SearchRequestModel.SearchRequestModel_req_1()
                 {
-                    "req_1", new Dictionary<string, object>
+                    method = "DoSearchForQQMusicDesktop",
+                    module = "music.search.SearchCgiService",
+                    param = new SearchRequestModel.SearchRequestModel_req_1_param()
                     {
-                        { "method", "DoSearchForQQMusicDesktop" },
-                        { "module", "music.search.SearchCgiService" },
-                        {
-                            "param", new Dictionary<string, object>
-                            {
-                                { "num_per_page", "20" },
-                                { "page_num", "1" },
-                                { "query", keyword },
-                                { "search_type", type },
-                            }
-                        }
+                        num_per_page = "20",
+                        page_num = "1",
+                        query = keyword,
+                        search_type = type,
                     }
                 }
             };
 
-            var resp = await PostAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
+            var resp = await PostJsonAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
 
             return resp.ToEntity<MusicFcgApiResult>();
         }
@@ -88,17 +85,17 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
 
         public async Task<AlbumSongListResult?> GetAlbumSongList(string mid, int page = 1, int pageSize = 1000)
         {
-            var data = new
+            var data = new GetAlbumSongListRequestModel()
             {
-                comm = new
+                comm = new GetAlbumSongListRequestModel.GetAlbumSongListRequestModel_comm()
                 {
                     ct = 24,
                     cv = 10000
                 },
-                albumSonglist = new
+                albumSonglist = new GetAlbumSongListRequestModel.GetAlbumSongListRequestModel_albumSonglist()
                 {
                     method = "GetAlbumSongList",
-                    param = new
+                    param = new GetAlbumSongListRequestModel.GetAlbumSongListRequestModel_albumSonglist_param()
                     {
                         albumMid = mid,
                         albumID = 0,
@@ -117,17 +114,17 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
 
         public async Task<SingerSongResult?> GetSingerSongs(string singerMid, int page = 1, int pageSize = 20)
         {
-            var data = new
+            var data = new GetSingerSongsRequestModel()
             {
-                comm = new
+                comm = new GetSingerSongsRequestModel.GetSingerSongsRequestModel_comm()
                 {
                     ct = 24,
                     cv = 0
                 },
-                singer = new
+                singer = new GetSingerSongsRequestModel.GetSingerSongsRequestModel_singer()
                 {
                     method = "get_singer_detail_info",
-                    param = new
+                    param = new GetSingerSongsRequestModel.GetSingerSongsRequestModel_singer_param()
                     {
                         sort = 5,
                         singermid = singerMid,
@@ -152,13 +149,13 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             };
             string postPeriod = period ?? DateTime.Now.ToString(timeType);
 
-            var data = new
+            var data = new GetToplistRequestModel()
             {
-                detail = new
+                detail = new GetToplistRequestModel.GetToplistRequestModel_detail()
                 {
                     module = "musicToplist.ToplistInfoServer",
                     method = "GetDetail",
-                    param = new
+                    param = new GetToplistRequestModel.GetToplistRequestModel_detail_param()
                     {
                         topId = id,
                         offset = (page - 1) * pageSize,
@@ -166,7 +163,7 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
                         period = postPeriod,
                     },
                 },
-                comm = new
+                comm = new GetToplistRequestModel.GetToplistRequestModel_comm()
                 {
                     ct = 24,
                     cv = 0
@@ -346,53 +343,43 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         {
             var guid = GetGuid();
 
-            var data = new Dictionary<string, object>
+            var data = new GetSongLinkRequestModel()
             {
+                comm = new GetSongLinkRequestModel.GetSongLinkRequestModel_comm()
                 {
-                    "req", new Dictionary<string, object>
+                    uin = 0,
+                    format = "json",
+                    ct = 24,
+                    cv = 0,
+                },
+                req = new GetSongLinkRequestModel.GetSongLinkRequestModel_req()
+                {
+                    method = "GetCdnDispatch",
+                    module = "CDN.SrfCdnDispatchServer",
+                    param = new GetSongLinkRequestModel.GetSongLinkRequestModel_req_param()
                     {
-                        { "method", "GetCdnDispatch" },
-                        { "module", "CDN.SrfCdnDispatchServer" },
-                        {
-                            "param", new Dictionary<string, object>
-                            {
-                                { "guid", guid },
-                                { "calltype", "0" },
-                                { "userip", "" },
-                            }
-                        }
+                        guid = guid,
+                        calltype = "0",
+                        userip = ""
                     }
                 },
+                req0 = new GetSongLinkRequestModel.GetSongLinkRequestModel_req0()
                 {
-                    "req_0", new Dictionary<string, object>
+                    method = "CgiGetVkey",
+                    module = "vkey.GetVkeyServer",
+                    param = new GetSongLinkRequestModel.GetSongLinkRequestModel_req0_param()
                     {
-                        { "method", "CgiGetVkey" },
-                        { "module", "vkey.GetVkeyServer" },
-                        {
-                            "param", new Dictionary<string, object>
-                            {
-                                { "guid", "8348972662" },
-                                { "songmid", new[] {songMid } },
-                                { "songtype", new[] { 1 } },
-                                { "uin", "0" },
-                                { "loginflag", 1 },
-                                { "platform", "20" },
-                            }
-                        }
-                    }
-                },
-                {
-                    "comm", new Dictionary<string, object>
-                    {
-                        { "uin", 0 },
-                        { "format", "json" },
-                        { "ct", 24 },
-                        { "cv", 0 },
+                        guid = "8348972662",
+                        songmid = new[] { songMid },
+                        songtype = new[] { 1 },
+                        uin = "0",
+                        loginflag = 1,
+                        platform = "20"
                     }
                 }
             };
 
-            var resp = await PostAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
+            var resp = await PostJsonAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
 
             var res = resp.ToEntity<MusicFcgApiResult>();
 
@@ -427,5 +414,196 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
 
             return guid.ToString();
         }
+
+
+        internal class SearchRequestModel
+        {
+            public SearchRequestModel_req_1 req_1 { get; set; }
+
+            public class SearchRequestModel_req_1
+            {
+                public string method { get; set; }
+
+                public string module { get; set; }
+
+                public SearchRequestModel_req_1_param param { get; set; }
+            }
+
+            public class SearchRequestModel_req_1_param
+            {
+                public string num_per_page { get; set; }
+
+                public string page_num { get; set; }
+
+                public string query { get; set; }
+
+                public int search_type { get; set; }
+            }
+        }
+
+
+        internal class GetAlbumSongListRequestModel
+        {
+            public GetAlbumSongListRequestModel_comm comm { get; set; }
+
+            public GetAlbumSongListRequestModel_albumSonglist albumSonglist { get; set; }
+
+            internal class GetAlbumSongListRequestModel_comm
+            {
+                public int ct { get; set; }
+
+                public int cv { get; set; }
+            }
+
+            internal class GetAlbumSongListRequestModel_albumSonglist
+            {
+                public string method { get; set; }
+
+                public GetAlbumSongListRequestModel_albumSonglist_param param { get; set; }
+
+                public string module { get; set; }
+            }
+
+            internal class GetAlbumSongListRequestModel_albumSonglist_param
+            {
+                public string albumMid { get; set; }
+
+                public int albumID { get; set; }
+
+                public int begin { get; set; }
+
+                public int num { get; set; }
+
+                public int order { get; set; }
+            }
+        }
+
+        internal class GetSingerSongsRequestModel
+        {
+            public GetSingerSongsRequestModel_comm comm { get; set; }
+
+            public GetSingerSongsRequestModel_singer singer { get; set; }
+
+            internal class GetSingerSongsRequestModel_comm
+            {
+                public int ct { get; set; }
+
+                public int cv { get; set; }
+            }
+
+            internal class GetSingerSongsRequestModel_singer
+            {
+                public string method { get; set; }
+
+                public GetSingerSongsRequestModel_singer_param param { get; set; }
+
+                public string module { get; set; }
+            }
+
+            internal class GetSingerSongsRequestModel_singer_param
+            {
+                public int sort { get; set; }
+
+                public string singermid { get; set; }
+
+                public int sin { get; set; }
+
+                public int num { get; set; }
+            }
+        }
+
+        internal class GetToplistRequestModel
+        {
+            public GetToplistRequestModel_comm comm { get; set; }
+
+            public GetToplistRequestModel_detail detail { get; set; }
+
+            public class GetToplistRequestModel_comm
+            {
+                public int ct { get; set; }
+
+                public int cv { get; set; }
+            }
+
+            public class GetToplistRequestModel_detail
+            {
+                public string method { get; set; }
+
+                public string module { get; set; }
+
+                public GetToplistRequestModel_detail_param param { get; set; }
+            }
+
+            public class GetToplistRequestModel_detail_param
+            {
+                public int topId { get; set; }
+
+                public int offset { get; set; }
+
+                public int num { get; set; }
+
+                public string period { get; set; }
+            }
+        }
+
+        internal class GetSongLinkRequestModel
+        {
+            public GetSongLinkRequestModel_comm comm { get; set; }
+
+            public GetSongLinkRequestModel_req req { get; set; }
+
+            public GetSongLinkRequestModel_req0 req0 { get; set; }
+
+            public class GetSongLinkRequestModel_comm
+            {
+                public int uin { get; set; }
+                public string format { get; set; }
+                public int ct { get; set; }
+                public int cv { get; set; }
+            }
+
+            public class GetSongLinkRequestModel_req
+            {
+                public string method { get; set; }
+
+                public string module { get; set; }
+
+                public GetSongLinkRequestModel_req_param param { get; set; }
+            }
+
+            public class GetSongLinkRequestModel_req_param
+            {
+                public string guid { get; set; }
+
+                public string calltype { get; set; }
+
+                public string userip { get; set; }
+            }
+
+            public class GetSongLinkRequestModel_req0
+            {
+                public string method { get; set; }
+
+                public string module { get; set; }
+
+                public GetSongLinkRequestModel_req0_param param { get; set; }
+            }
+
+            public class GetSongLinkRequestModel_req0_param
+            {
+                public string guid { get; set; }
+
+                public string[] songmid { get; set; }
+
+                public int[] songtype { get; set; }
+
+                public string uin { get; set; }
+
+                public int loginflag { get; set; }
+
+                public string platform { get; set; }
+            }
+        }
+
     }
 }

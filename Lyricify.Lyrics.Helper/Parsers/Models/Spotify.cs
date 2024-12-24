@@ -1,59 +1,59 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 #nullable disable
 namespace Lyricify.Lyrics.Parsers.Models.Spotify
 {
     public class SpotifyColorLyrics
     {
-        [JsonProperty("lyrics")]
+        [JsonPropertyName("lyrics")]
         public SpotifyLyrics Lyrics { get; set; }
 
-        [JsonProperty("colors")]
+        [JsonPropertyName("colors")]
         public SpotifyColors Colors { get; set; }
 
-        [JsonProperty("hasVocalRemoval")]
+        [JsonPropertyName("hasVocalRemoval")]
         public bool HasVocalRemoval { get; set; }
     }
 
     public class SpotifyLyrics
     {
-        [JsonProperty("syncType")]
+        [JsonPropertyName("syncType")]
         public string SyncType { get; set; }
 
-        [JsonProperty("lines")]
+        [JsonPropertyName("lines")]
         public List<SpotifyLyricsLine> Lines { get; set; }
 
-        [JsonProperty("provider")]
+        [JsonPropertyName("provider")]
         public string Provider { get; set; }
 
-        [JsonProperty("providerLyricsId")]
+        [JsonPropertyName("providerLyricsId")]
         public string ProviderLyricsId { get; set; }
 
-        [JsonProperty("providerDisplayName")]
+        [JsonPropertyName("providerDisplayName")]
         public string ProviderDisplayName { get; set; }
 
-        [JsonProperty("syncLyricsUri")]
+        [JsonPropertyName("syncLyricsUri")]
         public string SyncLyricsUri { get; set; }
 
-        [JsonProperty("isDenseTypeface")]
+        [JsonPropertyName("isDenseTypeface")]
         public bool IsDenseTypeface { get; set; }
 
-        [JsonProperty("alternatives")]
+        [JsonPropertyName("alternatives")]
         public List<AlternativeItem> Alternatives { get; set; }
 
-        [JsonProperty("language")]
+        [JsonPropertyName("language")]
         public string Language { get; set; }
 
-        [JsonProperty("isRtlLanguage")]
+        [JsonPropertyName("isRtlLanguage")]
         public bool IsRtlLanguage { get; set; }
 
-        [JsonProperty("fullscreenAction")]
+        [JsonPropertyName("fullscreenAction")]
         public string FullscreenAction { get; set; }
     }
 
     public class SpotifyLyricsLine
     {
-        [JsonProperty("startTimeMs")]
+        [JsonPropertyName("startTimeMs")]
         public string StartTimeMs { get; set; }
 
         public int StartTime
@@ -71,7 +71,7 @@ namespace Lyricify.Lyrics.Parsers.Models.Spotify
             }
         }
 
-        [JsonProperty("endTimeMs")]
+        [JsonPropertyName("endTimeMs")]
         public string EndTimeMs { get; set; }
 
         public int EndTime
@@ -89,16 +89,16 @@ namespace Lyricify.Lyrics.Parsers.Models.Spotify
             }
         }
 
-        [JsonProperty("words")]
+        [JsonPropertyName("words")]
         public string Words { get; set; }
 
-        [JsonProperty("syllables")]
+        [JsonPropertyName("syllables")]
         public List<SyllableItem> Syllables { get; set; }
     }
 
     public class SyllableItem
     {
-        [JsonProperty("startTimeMs")]
+        [JsonPropertyName("startTimeMs")]
         public string StartTimeMs { get; set; }
 
         public int StartTime
@@ -116,7 +116,7 @@ namespace Lyricify.Lyrics.Parsers.Models.Spotify
             }
         }
 
-        [JsonProperty("endTimeMs")]
+        [JsonPropertyName("endTimeMs")]
         public string EndTimeMs { get; set; }
 
         public int EndTime
@@ -134,7 +134,7 @@ namespace Lyricify.Lyrics.Parsers.Models.Spotify
             }
         }
 
-        [JsonProperty("numChars")]
+        [JsonPropertyName("numChars")]
         public string NumberChars { get; set; }
 
         public int CharsCount
@@ -155,25 +155,25 @@ namespace Lyricify.Lyrics.Parsers.Models.Spotify
 
     public class AlternativeItem
     {
-        [JsonProperty("language")]
+        [JsonPropertyName("language")]
         public string Language { get; set; }
 
-        [JsonProperty("lines")]
+        [JsonPropertyName("lines")]
         public List<string> Lines { get; set; }
 
-        [JsonProperty("isRtlLanguage")]
+        [JsonPropertyName("isRtlLanguage")]
         public bool IsRtlLanguage { get; set; }
     }
 
     public class SpotifyColors
     {
-        [JsonProperty("background")]
+        [JsonPropertyName("background")]
         public int Background { get; set; }
 
-        [JsonProperty("text")]
+        [JsonPropertyName("text")]
         public int Text { get; set; }
 
-        [JsonProperty("highlightText")]
+        [JsonPropertyName("highlightText")]
         public int HighlightText { get; set; }
     }
 }

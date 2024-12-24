@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using System.Buffers;
+using System.Text;
 using System.Text.RegularExpressions;
 
 #nullable disable
@@ -238,8 +239,8 @@ namespace Lyricify.Lyrics.Helpers.General
         /// </summary>
         public static unsafe string ToUpperFirst(this string str)
         {
-            if (str == null) return null;
-
+            if (string.IsNullOrEmpty(str)) return str;
+            
             string ret = string.Copy(str);
             fixed (char* ptr = ret)
                 *ptr = char.ToUpper(*ptr);

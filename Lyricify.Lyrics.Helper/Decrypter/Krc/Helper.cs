@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Lyricify.Lyrics.Decrypter.Krc
 {
@@ -30,7 +30,7 @@ namespace Lyricify.Lyrics.Decrypter.Krc
             var json = Client.GetStringAsync($"https://lyrics.kugou.com/download?ver=1&client=pc&id={id}&accesskey={accessKey}&fmt=krc&charset=utf8").Result;
             try
             {
-                var response = JsonConvert.DeserializeObject<KugouLyricsResponse>(json);
+                var response = Helpers.JsonConvert.DeserializeObject<KugouLyricsResponse>(json);
                 return response?.Content;
             }
             catch
@@ -63,7 +63,7 @@ namespace Lyricify.Lyrics.Decrypter.Krc
             var json = await Client.GetStringAsync($"https://lyrics.kugou.com/download?ver=1&client=pc&id={id}&accesskey={accessKey}&fmt=krc&charset=utf8");
             try
             {
-                var response = JsonConvert.DeserializeObject<KugouLyricsResponse>(json);
+                var response = Helpers.JsonConvert.DeserializeObject<KugouLyricsResponse>(json);
                 return response?.Content;
             }
             catch

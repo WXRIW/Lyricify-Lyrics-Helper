@@ -1,29 +1,29 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 #nullable disable
 namespace Lyricify.Lyrics.Parsers.Models
 {
     public class RichSyncedLine
     {
-        [JsonProperty("ts")]
+        [JsonPropertyName("ts")]
         public float TimeStart { get; set; }
 
-        [JsonProperty("te")]
+        [JsonPropertyName("te")]
         public float TimeEnd { get; set; }
 
-        [JsonProperty("l")]
+        [JsonPropertyName("l")]
         public List<Word> Words { get; set; }
 
         public class Word
         {
-            [JsonProperty("c")]
+            [JsonPropertyName("c")]
             public string Chars { get; set; }
 
-            [JsonProperty("o")]
+            [JsonPropertyName("o")]
             public double Position { get; set; }
         }
 
-        [JsonProperty("x")]
+        [JsonPropertyName("x")]
         public string Text { get; set; }
     }
 }

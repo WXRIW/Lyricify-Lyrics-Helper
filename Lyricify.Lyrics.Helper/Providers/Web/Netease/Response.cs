@@ -1,5 +1,5 @@
 ﻿#nullable disable
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace Lyricify.Lyrics.Providers.Web.Netease
 {
@@ -268,6 +268,8 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
     public class Song
     {
         public string Name { get; set; }
+
+        [JsonConverter(typeof(Helpers.ULongToStringConverter))]
         public string Id { get; set; }
         public List<Ar> Artists { get; set; }
         public List<object> Alias { get; set; }
@@ -286,17 +288,19 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
     public class EapiSong
     {
         public string Name { get; set; }
+
+        [JsonConverter(typeof(Helpers.ULongToStringConverter))]
         public string Id { get; set; }
-        [JsonProperty("ar")]
+        [JsonPropertyName("ar")]
         public List<Ar> Artists { get; set; }
-        [JsonProperty("alia")]
+        [JsonPropertyName("alia")]
         public List<object> Alias { get; set; }
-        [JsonProperty("al")]
+        [JsonPropertyName("al")]
         public Al Album { get; set; }
         /// <summary>
         /// 时长，单位ms
         /// </summary>
-        [JsonProperty("dt")]
+        [JsonPropertyName("dt")]
         public long Duration { get; set; }
         /// <summary>
         /// 时间戳，eg 1657900800000

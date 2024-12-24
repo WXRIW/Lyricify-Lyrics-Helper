@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Text;
 
 #nullable disable
@@ -216,25 +216,25 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
 
         public string Traceid { get; set; }
 
-        [JsonProperty("music.search.SearchCgiService")]
-        public SearchCgiService Search { get; set; }
+        [JsonPropertyName("music.search.SearchCgiService")]
+        public MusicFcgApiAlternativeResult_SearchCgiService Search { get; set; }
 
-        public class SearchCgiService
+        public class MusicFcgApiAlternativeResult_SearchCgiService
         {
-            public DataBody Data { get; set; }
+            public MusicFcgApiAlternativeResult_DataBody Data { get; set; }
         }
 
-        public class DataBody
+        public class MusicFcgApiAlternativeResult_DataBody
         {
-            public SearchData Body { get; set; }
+            public MusicFcgApiAlternativeResult_SearchData Body { get; set; }
         }
 
-        public class SearchData
+        public class MusicFcgApiAlternativeResult_SearchData
         {
-            public Song Song { get; set; }
+            public MusicFcgApiAlternativeResult_Song Song { get; set; }
         }
 
-        public class Song
+        public class MusicFcgApiAlternativeResult_Song
         {
             public QQMusic.Song[] List { get; set; }
         }
@@ -414,7 +414,7 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         /// <summary>
         /// 同版本的曲目
         /// </summary>
-        [JsonProperty("grp")]
+        [JsonPropertyName("grp")]
         public List<Song> Group { get; set; }
         public int Language { get; set; }
         public int Genre { get; set; }
@@ -618,19 +618,19 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         public long Ts { get; set; }
         public long Start_ts { get; set; }
         public string TraceId { get; set; }
-        public AlbumSonglistInfo AlbumSonglist { get; set; }
+        public AlbumSongListResult_AlbumSonglistInfo AlbumSonglist { get; set; }
 
-        public class AlbumSonglistInfo
+        public class AlbumSongListResult_AlbumSonglistInfo
         {
             public int Code { get; set; }
-            public DataInfo Data { get; set; }
+            public AlbumSongListResult_DataInfo Data { get; set; }
         }
 
-        public class DataInfo
+        public class AlbumSongListResult_DataInfo
         {
             public string AlbumMid { get; set; }
             public int TotalNum { get; set; }
-            public List<SongItem> SongList { get; set; }
+            public List<AlbumSongListResult_SongItem> SongList { get; set; }
             public List<object> ClassicList { get; set; }
             public int Sort { get; set; }
             public string AlbumTips { get; set; }
@@ -641,16 +641,16 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             public object CdNameMap { get; set; }
         }
 
-        public class SongItem
+        public class AlbumSongListResult_SongItem
         {
-            public SongInfo SongInfo { get; set; }
+            public AlbumSongListResult_SongInfo SongInfo { get; set; }
             public int ListenCount { get; set; }
             public string UploadTime { get; set; }
             public int IsThemeSong { get; set; }
             public string TeamStr { get; set; }
         }
 
-        public class SongInfo
+        public class AlbumSongListResult_SongInfo
         {
             public int Id { get; set; }
             public int Type { get; set; }

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>netstandard2.1;net9.0</TargetFrameworks>
 		<LangVersion>10.0</LangVersion>
 		<RootNamespace>Lyricify.Lyrics</RootNamespace>
 		<ImplicitUsings>enable</ImplicitUsings>
@@ -18,6 +18,8 @@
 		<IncludeSymbols>true</IncludeSymbols>
 		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
 		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<JsonSerializerIsReflectionEnabledByDefault>false</JsonSerializerIsReflectionEnabledByDefault>
+		<IsAotCompatible Condition="$([MSBuild]::IsTargetFrameworkCompatible('$(TargetFramework)', 'net9.0'))">true</IsAotCompatible>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -34,7 +36,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CHTCHSConv" Version="1.0.0" />
-		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="System.Text.Json" Version="9.0.0" />
 		<PackageReference Include="SharpZipLib" Version="1.4.2" />
 	</ItemGroup>
 

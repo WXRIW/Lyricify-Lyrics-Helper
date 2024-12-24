@@ -1,7 +1,7 @@
 ﻿using Lyricify.Lyrics.Decrypter.Krc;
 using Lyricify.Lyrics.Helpers.General;
 using Lyricify.Lyrics.Models;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 using System.Text;
 
 namespace Lyricify.Lyrics.Parsers
@@ -203,7 +203,7 @@ namespace Lyricify.Lyrics.Parsers
                 language = language[..language.IndexOf(']')];
                 var decode = Encoding.UTF8.GetString(Convert.FromBase64String(language));
 
-                var translation = JsonConvert.DeserializeObject<KugouTranslation>(decode);
+                var translation = Helpers.JsonConvert.DeserializeObject<KugouTranslation>(decode);
                 if (translation!.Content!.Count > 0) return true;
             }
             catch { }
@@ -224,7 +224,7 @@ namespace Lyricify.Lyrics.Parsers
             language = language[..language.IndexOf(']')];
             var decode = Encoding.UTF8.GetString(Convert.FromBase64String(language));
 
-            var translation = JsonConvert.DeserializeObject<KugouTranslation>(decode);
+            var translation = Helpers.JsonConvert.DeserializeObject<KugouTranslation>(decode);
 
             if (translation == null || translation!.Content == null || translation!.Content!.Count == 0) return null;
 
@@ -260,7 +260,7 @@ namespace Lyricify.Lyrics.Parsers
             language = language[..language.IndexOf(']')];
             var decode = Encoding.UTF8.GetString(Convert.FromBase64String(language));
 
-            return JsonConvert.DeserializeObject<KugouTranslation>(decode);
+            return Helpers.JsonConvert.DeserializeObject<KugouTranslation>(decode);
         }
     }
 }

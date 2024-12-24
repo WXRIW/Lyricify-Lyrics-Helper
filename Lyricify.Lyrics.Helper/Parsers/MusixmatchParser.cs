@@ -1,7 +1,8 @@
 ﻿using Lyricify.Lyrics.Models;
 using Lyricify.Lyrics.Parsers.Models;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Lyricify.Lyrics.Parsers
 {
@@ -15,22 +16,39 @@ namespace Lyricify.Lyrics.Parsers
         /// <param name="ignoreSyllable">忽略逐字歌词</param>
         public static LyricsData? Parse(string rawJson, bool ignoreSyllable)
         {
-            var jsonObj = JObject.Parse(rawJson);
-            if (jsonObj?["message"]?["body"]?["macro_calls"] is not JObject calls) return null;
+            JsonDocument? jsonDoc = null;
 
-            static bool CheckHeader200(JObject? getObj)
+            try
             {
-                if (getObj?["message"]?["header"]?["status_code"]?.Type != JTokenType.Integer) return false;
-                if (getObj?["message"]?["header"]?.Value<int>("status_code") != 200) return false;
+                jsonDoc = JsonDocument.Parse(rawJson, new JsonDocumentOptions()
+                {
+                    AllowTrailingCommas = true,
+                });
+            }
+            catch
+            {
+                return null;
+            }
+
+            var root = (JsonElementResult)jsonDoc.RootElement;
+
+            var calls = root["message"]["body"]["macro_calls"];
+            if (calls.ValueKind != JsonValueKind.Object) return null;
+
+            static bool CheckHeader200(JsonElementResult getObj)
+            {
+                var obj = getObj["message"]["header"]["status_code"];
+                if (obj.ValueKind != JsonValueKind.Number) return false;
+                if (obj.Value.GetInt32() != 200) return false;
                 return true;
             }
 
-            var track_get = calls["track.richsync.get"] as JObject;
+            var track_get = calls["track.richsync.get"];
             if (!ignoreSyllable && CheckHeader200(track_get))
             {
-                var lyrics = track_get?["message"]?["body"]?["richsync"]?["richsync_body"]?.Value<string>();
+                var lyrics = track_get["message"]["body"]["richsync"]["richsync_body"].GetString();
 
-                if (!string.IsNullOrEmpty(lyrics) && JsonConvert.DeserializeObject<List<RichSyncedLine>>(lyrics) is List<RichSyncedLine> list)
+                if (!string.IsNullOrEmpty(lyrics) && Helpers.JsonConvert.DeserializeObject<List<RichSyncedLine>>(lyrics) is List<RichSyncedLine> list)
                 {
                     var lines = new List<ILineInfo>();
                     foreach (var line in list)
@@ -63,13 +81,13 @@ namespace Lyricify.Lyrics.Parsers
                 }
             }
 
-            track_get = calls["track.subtitles.get"] as JObject;
+            track_get = calls["track.subtitles.get"];
             if (CheckHeader200(track_get))
             {
-                var list = track_get?["message"]?["body"]?["subtitle_list"] as JArray;
-                if (list is { Count: > 0 })
+                var list = track_get["message"]["body"]["subtitle_list"];
+                if (list.HasValue && list.ValueKind == JsonValueKind.Array && list.Value.GetArrayLength() > 0)
                 {
-                    var subtitle = list[0]["subtitle"]?["subtitle_body"]?.Value<string>();
+                    var subtitle = list[0]["subtitle"]["subtitle_body"].GetString();
                     if (!string.IsNullOrEmpty(subtitle))
                     {
                         var lines = LrcParser.ParseLyrics(subtitle);
@@ -85,10 +103,10 @@ namespace Lyricify.Lyrics.Parsers
                 }
             }
 
-            track_get = calls["track.lyrics.get"] as JObject;
+            track_get = calls["track.lyrics.get"];
             if (CheckHeader200(track_get))
             {
-                var lyrics = track_get?["message"]?["body"]?["lyrics"]?["lyrics_body"]?.Value<string>();
+                var lyrics = track_get["message"]["body"]["lyrics"]["lyrics_body"].GetString();
 
                 if (!string.IsNullOrEmpty(lyrics))
                 {
@@ -111,5 +129,84 @@ namespace Lyricify.Lyrics.Parsers
 
             return null;
         }
+
+        private struct JsonElementResult
+        {
+            internal JsonElementResult(JsonElement element)
+            {
+                HasValue = element.ValueKind != JsonValueKind.Undefined;
+                Value = element;
+            }
+
+            public readonly JsonElement Value { get; }
+
+            public readonly bool HasValue { get; }
+
+            public readonly JsonValueKind ValueKind => HasValue ? Value.ValueKind : JsonValueKind.Undefined;
+
+            public readonly JsonElementResult this[string property]
+            {
+                get
+                {
+                    if (HasValue && Value.TryGetProperty(property, out var result))
+                    {
+                        return new JsonElementResult(result);
+                    }
+                    return default;
+                }
+            }
+
+            public readonly JsonElementResult this[int index]
+            {
+                get
+                {
+                    if (HasValue && ValueKind == JsonValueKind.Array)
+                    {
+                        if (index < 0 || index >= Value.GetArrayLength())
+                        {
+                            ThrowIndexOutOfRangeException();
+                        }
+                        using (var enumerator = Value.EnumerateArray())
+                        {
+                            do
+                            {
+                                enumerator.MoveNext();
+                                index--;
+                            } while (index >= 0);
+                            return new JsonElementResult(enumerator.Current);
+                        }
+                    }
+
+                    ThrowInvalidOperationException();
+                    return default;
+
+                    [DoesNotReturn]
+                    static void ThrowInvalidOperationException()
+                    {
+                        throw new InvalidOperationException();
+                    }
+
+                    [DoesNotReturn]
+                    static void ThrowIndexOutOfRangeException()
+                    {
+                        throw new InvalidOperationException();
+                    }
+                }
+            }
+
+            public readonly string? GetString()
+            {
+                if (HasValue && Value.ValueKind == JsonValueKind.String) return Value.GetString();
+                return null;
+            }
+
+            public static implicit operator JsonElement?(JsonElementResult result) => result.HasValue ? result.Value : null;
+
+            public static implicit operator JsonElementResult(JsonElement element) => new JsonElementResult(element);
+
+            public static implicit operator JsonElementResult(JsonElement? element) => element.HasValue ? new JsonElementResult(element.Value) : default;
+        }
+
     }
+
 }
