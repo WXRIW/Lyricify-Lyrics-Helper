@@ -7,8 +7,18 @@ using System.Text.RegularExpressions;
 #nullable disable
 namespace Lyricify.Lyrics.Providers.Web.Netease
 {
-    internal class EapiHelper
+    internal partial class EapiHelper
     {
+#if NET7_0_OR_GREATER
+        [GeneratedRegex(@"\w*api")]
+        private static partial Regex ReplaceApiRegexGenerated();
+
+#else
+        private static Regex ReplaceApiRegexGenerated() => new Regex(@"\w*api");
+#endif
+
+        private static readonly Regex ReplaceApiRegex = ReplaceApiRegexGenerated();
+
         public static async Task<string> PostAsync(string url, HttpClient httpClient, Dictionary<string, string> data)
         {
             var headers = new Dictionary<string, string>
@@ -34,7 +44,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             headers["Cookie"] = string.Join("; ", header.Select(t => t.Key + "=" + t.Value));
             data["header"] = Helpers.JsonConvert.SerializeObject(header);
             var data2 = EApi(url, data);
-            url = Regex.Replace(url, @"\w*api", "eapi");
+            url = ReplaceApiRegex.Replace(url, "eapi");
 
             httpClient.DefaultRequestHeaders.Clear();
             foreach (var h in headers)

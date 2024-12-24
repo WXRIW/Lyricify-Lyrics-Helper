@@ -2,20 +2,33 @@
 
 namespace Lyricify.Lyrics.Helpers.Types
 {
-    public static class LyricifyLines
+    public static partial class LyricifyLines
     {
+#if NET7_0_OR_GREATER
+        [GeneratedRegex(@"^\[\d+,\d+\].*")]
+        private static partial Regex LyricsLineCheckRegexGenerated();
+
+        [GeneratedRegex(@"\w+\(\d+,\d+\)")]
+        private static partial Regex SyllableRegexGenerated();
+#else
+        private static Regex LyricsLineCheckRegexGenerated() => new Regex(@"^\[\d+,\d+\].*");
+        private static Regex SyllableRegexGenerated() => new Regex(@"\w+\(\d+,\d+\)");
+#endif
+
+        private static readonly Regex LyricsLineCheckRegex = LyricsLineCheckRegexGenerated();
+        private static readonly Regex SyllableRegex = SyllableRegexGenerated();
+
+
         public static bool IsLyricifyLines(string input)
         {
             if (input == null) return false;
 
             if (input.Contains("[type:LyricifyLines]")) return true;
 
-            var regex = new Regex(@"^\[\d+,\d+\].*");
-            var matches = regex.Matches(input);
+            var matches = LyricsLineCheckRegex.Matches(input);
             if (matches.Count > 0)
             {
-                var syllableRegex = new Regex(@"\w+\(\d+,\d+\)");
-                var syllableMatches = syllableRegex.Matches(input);
+                var syllableMatches = SyllableRegex.Matches(input);
                 return syllableMatches.Count <= matches.Count;
             }
 
