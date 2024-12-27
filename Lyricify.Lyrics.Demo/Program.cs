@@ -162,7 +162,7 @@ namespace Lyricify.Lyrics.Demo
             return null;
         }
 
-        [System.Text.Json.Serialization.JsonSourceGenerationOptions(UseStringEnumConverter = true, WriteIndented = true, IndentSize = 4)]
+        [System.Text.Json.Serialization.JsonSourceGenerationOptions(UseStringEnumConverter = true, WriteIndented = true)]
         [System.Text.Json.Serialization.JsonSerializable(typeof(LyricsData))]
         [System.Text.Json.Serialization.JsonSerializable(typeof(Searchers.ISearchResult), GenerationMode = System.Text.Json.Serialization.JsonSourceGenerationMode.Serialization)]
         [System.Text.Json.Serialization.JsonSerializable(typeof(List<Searchers.ISearchResult>), GenerationMode = System.Text.Json.Serialization.JsonSourceGenerationMode.Serialization)]

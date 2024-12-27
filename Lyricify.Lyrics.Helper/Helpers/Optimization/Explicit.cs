@@ -208,34 +208,48 @@ namespace Lyricify.Lyrics.Helpers.Optimization
         /// <returns>修护后的字符串</returns>
         public static string FixExplicit(string str)
         {
-            foreach (var (pattern, replacement) in Replacements)
+            foreach (var (regex, replacement) in Replacements)
             {
-                str = Regex.Replace(str, pattern, match =>
+                str = regex.Replace(str, match =>
                 {
                     string original = match.Value;
                     return char.IsUpper(original[0]) ?
-                        char.ToUpper(replacement[0]) + replacement[1..] : replacement;
-                }, RegexOptions.IgnoreCase);
+                        char.ToUpperInvariant(replacement[0]) + replacement[1..] : replacement;
+                });
             }
             return str;
         }
 
-        private static readonly IReadOnlyList<(string Pattern, string Replacement)> Replacements = new List<(string Pattern, string Replacement)>
+        private static readonly IReadOnlyList<(Regex Regex, string Replacement)> Replacements = new List<(Regex Regex, string Replacement)>
         {
-            ("a\\*s", "ass"), ("a\\*\\*", "ass"),
-            ("b\\*{3}h", "bitch"), ("b\\*{2}ch", "bitch"),
-            ("b\\*{5}s", "bitches"),
-            ("d\\*{2}n", "damn"), ("d\\*{2}mit", "dammit"),
-            ("d\\*{2}k", "dick"), ("d\\*{2}e", "dope"),
-            ("f\\*{2}k", "fuck"), ("f\\*ck", "fuck"), ("fu\\*k", "fuck"),
-            ("h\\*e", "hoe"), ("h\\*{2}s", "hoes"),
-            ("mother\\*{4}", "motherfuck"),
-            ("n\\*{3}a", "nigga"), ("n\\*{2}ga", "nigga"), ("ni\\*{2}a", "nigga"),
-            ("n\\*{3}as", "nigras"),
-            ("p\\*{3}y", "pussy"), ("p\\*{2}sy", "pussy"),
-            ("sh\\*t", "shit"), ("s\\*x", "sex"), ("s\\*{2}t", "shit"),
-            ("w\\*{2}d", "weed"), ("w\\*{3}e", "whore"),
-            ("c\\*{4}e", "cocaine"), ("d\\*{2}g", "drug")
+            (new Regex("a\\*s", RegexOptions.IgnoreCase), "ass"),
+            (new Regex("a\\*\\*", RegexOptions.IgnoreCase), "ass"),
+            (new Regex("b\\*{3}h", RegexOptions.IgnoreCase), "bitch"),
+            (new Regex("b\\*{2}ch", RegexOptions.IgnoreCase), "bitch"),
+            (new Regex("b\\*{5}s", RegexOptions.IgnoreCase), "bitches"),
+            (new Regex("d\\*{2}n", RegexOptions.IgnoreCase), "damn"),
+            (new Regex("d\\*{2}mit", RegexOptions.IgnoreCase), "dammit"),
+            (new Regex("d\\*{2}k", RegexOptions.IgnoreCase), "dick"),
+            (new Regex("d\\*{2}e", RegexOptions.IgnoreCase), "dope"),
+            (new Regex("f\\*{2}k", RegexOptions.IgnoreCase), "fuck"),
+            (new Regex("f\\*ck", RegexOptions.IgnoreCase), "fuck"),
+            (new Regex("fu\\*k", RegexOptions.IgnoreCase), "fuck"),
+            (new Regex("h\\*e", RegexOptions.IgnoreCase), "hoe"),
+            (new Regex("h\\*{2}s", RegexOptions.IgnoreCase), "hoes"),
+            (new Regex("mother\\*{4}", RegexOptions.IgnoreCase), "motherfuck"),
+            (new Regex("n\\*{3}a", RegexOptions.IgnoreCase), "nigga"),
+            (new Regex("n\\*{2}ga", RegexOptions.IgnoreCase), "nigga"),
+            (new Regex("ni\\*{2}a", RegexOptions.IgnoreCase), "nigga"),
+            (new Regex("n\\*{3}as", RegexOptions.IgnoreCase), "nigras"),
+            (new Regex("p\\*{3}y", RegexOptions.IgnoreCase), "pussy"),
+            (new Regex("p\\*{2}sy", RegexOptions.IgnoreCase), "pussy"),
+            (new Regex("sh\\*t", RegexOptions.IgnoreCase), "shit"),
+            (new Regex("s\\*x", RegexOptions.IgnoreCase), "sex"),
+            (new Regex("s\\*{2}t", RegexOptions.IgnoreCase), "shit"),
+            (new Regex("w\\*{2}d", RegexOptions.IgnoreCase), "weed"),
+            (new Regex("w\\*{3}e", RegexOptions.IgnoreCase), "whore"),
+            (new Regex("c\\*{4}e", RegexOptions.IgnoreCase), "cocaine"),
+            (new Regex("d\\*{2}g", RegexOptions.IgnoreCase), "drug"),
         };
     }
 }
