@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.Text;
 
 namespace Lyricify.Lyrics.Providers.Web
@@ -40,26 +40,13 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
-        protected async Task<string> PostJsonAsync(string url, object param)
+        protected async Task<string> PostJsonAsync<T>(string url, T param)
         {
             SetRequestHeaders();
 
-            var content = new StringContent(JsonConvert.SerializeObject(param), Encoding.UTF8, "application/json");
+            var content = new StringContent(Helpers.JsonConvert.SerializeObject(param), Encoding.UTF8, "application/json");
 
             var response = await HttpClient.PostAsync(url, content);
-
-            response.EnsureSuccessStatusCode();
-            var result = await response.Content.ReadAsStringAsync();
-
-            return result;
-        }
-
-        protected async Task<string> PostAsync(string url, Dictionary<string, object> paramDict)
-        {
-            SetRequestHeaders();
-
-            var jsonContent = new StringContent(paramDict.ToJson(), Encoding.UTF8, "application/json");
-            var response = await HttpClient.PostAsync(url, jsonContent);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
@@ -103,10 +90,8 @@ namespace Lyricify.Lyrics.Providers.Web
 
     public static class JsonUtils
     {
-        public static T? ToEntity<T>(this string val) => JsonConvert.DeserializeObject<T>(val);
+        public static T? ToEntity<T>(this string val) => Helpers.JsonConvert.DeserializeObject<T>(val);
 
-        public static List<T>? ToEntityList<T>(this string val) => JsonConvert.DeserializeObject<List<T>>(val);
-
-        public static string? ToJson<T>(this T entity, Formatting formatting = Formatting.None) => JsonConvert.SerializeObject(entity, formatting);
+        public static string? ToJson<T>(this T entity) => Helpers.JsonConvert.SerializeObject(entity);
     }
 }

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 using System.ComponentModel;
 using System.Numerics;
 using System.Security.Cryptography;
@@ -51,7 +51,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
             var res = await GetAsync(url);
 
-            return JsonConvert.DeserializeObject<SearchResult>(res);
+            return Helpers.JsonConvert.DeserializeObject<SearchResult>(res);
         }
 
         public async Task<SearchResult?> SearchNew(string keyword)
@@ -69,7 +69,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
             var raw = await EapiHelper.PostAsync(url, HttpClient, data);
 
-            var eapiResult = JsonConvert.DeserializeObject<EapiSearchResult>(raw);
+            var eapiResult = Helpers.JsonConvert.DeserializeObject<EapiSearchResult>(raw);
             if (eapiResult is null) return null;
 
             var result = new SearchResult();
@@ -162,9 +162,9 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "csrf_token", string.Empty },
             };
 
-            var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
+            var raw = await PostAsync(url, Prepare(Helpers.JsonConvert.SerializeObject(data)));
 
-            return JsonConvert.DeserializeObject<AlbumResult>(raw);
+            return Helpers.JsonConvert.DeserializeObject<AlbumResult>(raw);
         }
 
         public async Task<PlaylistResult?> GetPlaylist(string playlistId)
@@ -181,9 +181,9 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "n", "1000" }
             };
 
-            var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
+            var raw = await PostAsync(url, Prepare(Helpers.JsonConvert.SerializeObject(data)));
 
-            return JsonConvert.DeserializeObject<PlaylistResult>(raw);
+            return Helpers.JsonConvert.DeserializeObject<PlaylistResult>(raw);
         }
 
         /// <summary>
@@ -208,9 +208,9 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "csrf_token", string.Empty }
             };
 
-            var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
+            var raw = await PostAsync(url, Prepare(Helpers.JsonConvert.SerializeObject(data)));
 
-            return JsonConvert.DeserializeObject<LyricResult>(raw);
+            return Helpers.JsonConvert.DeserializeObject<LyricResult>(raw);
         }
 
         /// <summary>
@@ -240,7 +240,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
             var raw = await EapiHelper.PostAsync(url, HttpClient, data);
 
-            return JsonConvert.DeserializeObject<LyricResult>(raw);
+            return Helpers.JsonConvert.DeserializeObject<LyricResult>(raw);
         }
 
         /// <summary>
@@ -261,9 +261,9 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "csrf_token", string.Empty }
             };
 
-            var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
+            var raw = await PostAsync(url, Prepare(Helpers.JsonConvert.SerializeObject(data)));
 
-            return JsonConvert.DeserializeObject<SongUrls>(raw);
+            return Helpers.JsonConvert.DeserializeObject<SongUrls>(raw);
         }
 
         /// <summary>
@@ -294,9 +294,9 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                     { "csrf_token", string.Empty },
                 };
 
-                var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
+                var raw = await PostAsync(url, Prepare(Helpers.JsonConvert.SerializeObject(data)));
 
-                return JsonConvert.DeserializeObject<DetailResult>(raw);
+                return Helpers.JsonConvert.DeserializeObject<DetailResult>(raw);
             }
             catch
             {

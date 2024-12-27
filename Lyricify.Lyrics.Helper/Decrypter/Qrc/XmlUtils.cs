@@ -4,13 +4,22 @@ using System.Xml;
 
 namespace Lyricify.Lyrics.Decrypter.Qrc
 {
-    public static class XmlUtils
+    public static partial class XmlUtils
     {
-        private static readonly Regex AmpRegex = new Regex("&(?![a-zA-Z]{2,6};|#[0-9]{2,4};)");
+#if NET7_0_OR_GREATER
+        [GeneratedRegex("&(?![a-zA-Z]{2,6};|#[0-9]{2,4};)")]
+        private static partial Regex AmpRegexGenerated();
 
-        private static readonly Regex QuotRegex =
-            new Regex(
-                "(\\s+[\\w:.-]+\\s*=\\s*\")(([^\"]*)((\")((?!\\s+[\\w:.-]+\\s*=\\s*\"|\\s*(?:/?|\\?)>))[^\"]*)*)\"");
+        [GeneratedRegex("(\\s+[\\w:.-]+\\s*=\\s*\")(([^\"]*)((\")((?!\\s+[\\w:.-]+\\s*=\\s*\"|\\s*(?:/?|\\?)>))[^\"]*)*)\"")]
+        private static partial Regex QuotRegexGenerated();
+#else
+        private static Regex AmpRegexGenerated() => new Regex("&(?![a-zA-Z]{2,6};|#[0-9]{2,4};)");
+        private static Regex QuotRegexGenerated() => new Regex("(\\s+[\\w:.-]+\\s*=\\s*\")(([^\"]*)((\")((?!\\s+[\\w:.-]+\\s*=\\s*\"|\\s*(?:/?|\\?)>))[^\"]*)*)\"");
+#endif
+
+        private static readonly Regex AmpRegex = AmpRegexGenerated();
+
+        private static readonly Regex QuotRegex = QuotRegexGenerated();
 
         /// <summary>
         /// 创建 XML DOM

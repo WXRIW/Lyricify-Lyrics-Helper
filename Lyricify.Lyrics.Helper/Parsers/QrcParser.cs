@@ -4,8 +4,17 @@ using System.Text.RegularExpressions;
 
 namespace Lyricify.Lyrics.Parsers
 {
-    public static class QrcParser
+    public static partial class QrcParser
     {
+#if NET7_0_OR_GREATER
+        [GeneratedRegex(@"(.*?)\((\d+),(\d+)\)")]
+        private static partial Regex LyricsLineRegexGenerated();
+#else
+        private static Regex LyricsLineRegexGenerated() => new Regex(@"(.*?)\((\d+),(\d+)\)");
+#endif
+
+        private static readonly Regex LyricsLineRegex = LyricsLineRegexGenerated();
+
         public static LyricsData Parse(string lyrics)
         {
             var lyricsLines = lyrics.Trim().Split('\n').ToList();
@@ -70,7 +79,7 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             List<SyllableInfo> lyricItems = new();
-            MatchCollection matches = Regex.Matches(line, @"(.*?)\((\d+),(\d+)\)");
+            MatchCollection matches = LyricsLineRegex.Matches(line);
 
             foreach (Match match in matches.Cast<Match>())
             {

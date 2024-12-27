@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 {
@@ -33,7 +33,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
         public async Task<GetTokenResponse?> GetToken()
         {
             var response = await GetAsync("https://apic-desktop.musixmatch.com/ws/1.1/token.get?app_id=web-desktop-app-v1.0&t=" + RandomId());
-            var resp = JsonConvert.DeserializeObject<GetTokenResponse>(response);
+            var resp = Helpers.JsonConvert.DeserializeObject<GetTokenResponse>(response);
             return resp;
         }
 
@@ -52,7 +52,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 $"&q_artist={artist}" +
                 (duration.HasValue ? $"&q_duration={duration}" : string.Empty));
             if (response == null) return null;
-            return JsonConvert.DeserializeObject<GetTrackResponse>(response);
+            return Helpers.JsonConvert.DeserializeObject<GetTrackResponse>(response);
         }
 
         /// <summary>
@@ -67,7 +67,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
             var response = await GetFullLyricsRaw(track, artist, duration);
             if (response == null) return null;
-            return JsonConvert.DeserializeObject<GetTrackResponse>(response);
+            return Helpers.JsonConvert.DeserializeObject<GetTrackResponse>(response);
         }
 
         /// <summary>
@@ -116,7 +116,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 $"&track_id={trackId}" +
                 $"&comment_format=text&part=user");
             if (response == null) return null;
-            return JsonConvert.DeserializeObject<GetTranslationsResponse>(response);
+            return Helpers.JsonConvert.DeserializeObject<GetTranslationsResponse>(response);
         }
 
         /// <summary>

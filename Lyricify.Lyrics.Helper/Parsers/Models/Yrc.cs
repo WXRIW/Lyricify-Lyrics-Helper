@@ -1,25 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 #nullable disable
 namespace Lyricify.Lyrics.Parsers.Models.Yrc
 {
     public class CreditsInfo
     {
-        [JsonProperty("t")]
+        [JsonPropertyName("t")]
         public int Timestamp { get; set; }
 
-        [JsonProperty("c")]
+        [JsonPropertyName("c")]
         public List<Credit> Credits { get; set; }
 
         public class Credit
         {
-            [JsonProperty("tx")]
+            [JsonPropertyName("tx")]
             public string Text { get; set; }
 
-            [JsonProperty("li")]
+            [JsonPropertyName("li")]
             public string Image { get; set; }
 
-            [JsonProperty("or")]
+            [JsonPropertyName("or")]
             public string Orpheus { get; set; }
         }
     }

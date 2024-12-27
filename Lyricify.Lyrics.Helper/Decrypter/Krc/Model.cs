@@ -1,49 +1,49 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Lyricify.Lyrics.Decrypter.Krc
 {
     public class KugouLyricsResponse
     {
-        [JsonProperty("content")]
+        [JsonPropertyName("content")]
         public string? Content { get; set; }
 
-        [JsonProperty("info")]
+        [JsonPropertyName("info")]
         public string? Info { get; set; }
 
-        [JsonProperty("_source")]
+        [JsonPropertyName("_source")]
         public string? Source { get; set; }
 
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public int Status { get; set; }
 
-        [JsonProperty("contenttype")]
+        [JsonPropertyName("contenttype")]
         public int ContentType { get; set; }
 
-        [JsonProperty("error_code")]
+        [JsonPropertyName("error_code")]
         public int ErrorCode { get; set; }
 
-        [JsonProperty("fmt")]
+        [JsonPropertyName("fmt")]
         public string? Format { get; set; }
     }
 
     public class KugouTranslation
     {
-        [JsonProperty("content")]
+        [JsonPropertyName("content")]
         public List<ContentItem>? Content { get; set; }
 
         public class ContentItem
         {
-            [JsonProperty("language")]
+            [JsonPropertyName("language")]
             public int Language { get; set; }
 
-            [JsonProperty("type")]
+            [JsonPropertyName("type")]
             public int Type { get; set; }
 
-            [JsonProperty("lyricContent")]
+            [JsonPropertyName("lyricContent")]
             public List<List<string>?>? LyricContent { get; set; }
         }
 
-        [JsonProperty("version")]
+        [JsonPropertyName("version")]
         public int Version { get; set; }
     }
 }

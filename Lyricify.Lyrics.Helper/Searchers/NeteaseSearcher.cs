@@ -52,7 +52,7 @@ namespace Lyricify.Lyrics.Searchers
 
             try
             {
-                var results = result?.Result.Songs;
+                var results = result?.Result?.Songs;
                 if (results == null) return null;
                 foreach (var track in results)
                 {

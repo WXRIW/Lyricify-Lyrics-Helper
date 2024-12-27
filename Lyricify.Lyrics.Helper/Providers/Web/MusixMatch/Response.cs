@@ -1,889 +1,889 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 #nullable disable
 namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 {
     public class GetTokenResponse
     {
-        [JsonProperty("message")]
-        public MessageContent Message { get; set; }
+        [JsonPropertyName("message")]
+        public GetTokenResponse_MessageContent Message { get; set; }
 
-        public class MessageContent
+        public class GetTokenResponse_MessageContent
         {
-            [JsonProperty("header")]
-            public Header Header { get; set; }
+            [JsonPropertyName("header")]
+            public GetTokenResponse_MessageContent_Header Header { get; set; }
 
-            [JsonProperty("body")]
-            public Body Body { get; set; }
+            [JsonPropertyName("body")]
+            public GetTokenResponse_MessageContent_Body Body { get; set; }
         }
 
-        public class Header
+        public class GetTokenResponse_MessageContent_Header
         {
-            [JsonProperty("status_code")]
+            [JsonPropertyName("status_code")]
             public int StatusCode { get; set; }
 
-            [JsonProperty("execute_time")]
+            [JsonPropertyName("execute_time")]
             public double ExecuteTime { get; set; }
 
-            [JsonProperty("pid")]
+            [JsonPropertyName("pid")]
             public int Pid { get; set; }
 
-            [JsonProperty("surrogate_key_list")]
+            [JsonPropertyName("surrogate_key_list")]
             public object[] SurrogateKeyList { get; set; }
 
-            [JsonProperty("hint")]
+            [JsonPropertyName("hint")]
             public string Hint { get; set; }
         }
 
-        public class Body
+        public class GetTokenResponse_MessageContent_Body
         {
-            [JsonProperty("user_token")]
+            [JsonPropertyName("user_token")]
             public string UserToken { get; set; }
 
-            [JsonProperty("app_config")]
+            [JsonPropertyName("app_config")]
             public AppConfig AppConfig { get; set; }
 
-            [JsonProperty("location")]
+            [JsonPropertyName("location")]
             public Location Location { get; set; }
         }
 
         public class AppConfig
         {
-            [JsonProperty("trial")]
+            [JsonPropertyName("trial")]
             public bool Trial { get; set; }
 
-            [JsonProperty("mobilePopOverMaximum")]
+            [JsonPropertyName("mobilePopOverMaximum")]
             public int MobilePopOverMaximum { get; set; }
 
-            [JsonProperty("mobilePopOverMinTimes")]
+            [JsonPropertyName("mobilePopOverMinTimes")]
             public int MobilePopOverMinTimes { get; set; }
 
-            [JsonProperty("mobilePopOverMaxTimes")]
+            [JsonPropertyName("mobilePopOverMaxTimes")]
             public int MobilePopOverMaxTimes { get; set; }
 
-            [JsonProperty("isRoviCopyEnabled")]
+            [JsonPropertyName("isRoviCopyEnabled")]
             public bool IsRoviCopyEnabled { get; set; }
 
-            [JsonProperty("isGettyCopyEnabled")]
+            [JsonPropertyName("isGettyCopyEnabled")]
             public bool IsGettyCopyEnabled { get; set; }
 
-            [JsonProperty("searchMaxResults")]
+            [JsonPropertyName("searchMaxResults")]
             public int SearchMaxResults { get; set; }
 
-            [JsonProperty("fbShareUrlSpotify")]
+            [JsonPropertyName("fbShareUrlSpotify")]
             public bool FbShareUrlSpotify { get; set; }
 
-            [JsonProperty("twShareUrlSpotify")]
+            [JsonPropertyName("twShareUrlSpotify")]
             public bool TwShareUrlSpotify { get; set; }
 
-            [JsonProperty("fbPostTimeline")]
+            [JsonPropertyName("fbPostTimeline")]
             public bool FbPostTimeline { get; set; }
 
-            [JsonProperty("fbOpenGraph")]
+            [JsonPropertyName("fbOpenGraph")]
             public bool FbOpenGraph { get; set; }
 
-            [JsonProperty("subtitlesMaxDeviation")]
+            [JsonPropertyName("subtitlesMaxDeviation")]
             public int SubtitlesMaxDeviation { get; set; }
 
-            [JsonProperty("localeDefaultLang")]
+            [JsonPropertyName("localeDefaultLang")]
             public string LocaleDefaultLang { get; set; }
 
-            [JsonProperty("missionEnable")]
+            [JsonPropertyName("missionEnable")]
             public bool MissionEnable { get; set; }
 
-            [JsonProperty("content_team")]
+            [JsonPropertyName("content_team")]
             public bool ContentTeam { get; set; }
 
-            [JsonProperty("missions")]
+            [JsonPropertyName("missions")]
             public Missions Missions { get; set; }
 
-            [JsonProperty("mission_manager_categories")]
+            [JsonPropertyName("mission_manager_categories")]
             public MissionManagerCategories MissionManagerCategories { get; set; }
 
-            [JsonProperty("appstore_products")]
+            [JsonPropertyName("appstore_products")]
             public object[] AppstoreProducts { get; set; }
 
-            [JsonProperty("tracking_list")]
+            [JsonPropertyName("tracking_list")]
             public TrackingList[] TrackingList { get; set; }
 
-            [JsonProperty("spotifyCountries")]
+            [JsonPropertyName("spotifyCountries")]
             public string[] SpotifyCountries { get; set; }
 
-            [JsonProperty("service_list")]
+            [JsonPropertyName("service_list")]
             public ServiceList[] ServiceList { get; set; }
 
-            [JsonProperty("show_amazon_music")]
+            [JsonPropertyName("show_amazon_music")]
             public bool ShowAmazonMusic { get; set; }
 
-            [JsonProperty("isSentryEnabled")]
+            [JsonPropertyName("isSentryEnabled")]
             public bool IsSentryEnabled { get; set; }
 
-            [JsonProperty("languages")]
+            [JsonPropertyName("languages")]
             public string[] Languages { get; set; }
 
-            [JsonProperty("last_updated")]
+            [JsonPropertyName("last_updated")]
             public DateTime LastUpdated { get; set; }
 
-            [JsonProperty("cluster")]
+            [JsonPropertyName("cluster")]
             public string Cluster { get; set; }
 
-            [JsonProperty("event_map")]
+            [JsonPropertyName("event_map")]
             public EventMap[] EventMap { get; set; }
 
-            [JsonProperty("mission_report_types")]
+            [JsonPropertyName("mission_report_types")]
             public string[] MissionReportTypes { get; set; }
 
-            [JsonProperty("can_show_performers_tag")]
+            [JsonPropertyName("can_show_performers_tag")]
             public bool CanShowPerformersTag { get; set; }
 
-            [JsonProperty("smart_translations")]
+            [JsonPropertyName("smart_translations")]
             public SmartTranslations SmartTranslations { get; set; }
 
-            [JsonProperty("audio_upload")]
+            [JsonPropertyName("audio_upload")]
             public bool AudioUpload { get; set; }
         }
 
         public class Missions
         {
-            [JsonProperty("enabled")]
+            [JsonPropertyName("enabled")]
             public bool Enabled { get; set; }
 
-            [JsonProperty("community")]
+            [JsonPropertyName("community")]
             public string[] Community { get; set; }
         }
 
         public class MissionManagerCategories
         {
-            [JsonProperty("taskTypes")]
+            [JsonPropertyName("taskTypes")]
             public TaskType[] TaskTypes { get; set; }
 
-            [JsonProperty("audioSources")]
+            [JsonPropertyName("audioSources")]
             public AudioSource[] AudioSources { get; set; }
 
-            [JsonProperty("userGroups")]
+            [JsonPropertyName("userGroups")]
             public UserGroup[] UserGroups { get; set; }
 
-            [JsonProperty("rewards")]
+            [JsonPropertyName("rewards")]
             public Reward[] Rewards { get; set; }
         }
 
         public class TaskType
         {
-            [JsonProperty("value")]
+            [JsonPropertyName("value")]
             public string Value { get; set; }
 
-            [JsonProperty("label")]
+            [JsonPropertyName("label")]
             public string Label { get; set; }
         }
 
         public class AudioSource
         {
-            [JsonProperty("value")]
+            [JsonPropertyName("value")]
             public string Value { get; set; }
 
-            [JsonProperty("label")]
+            [JsonPropertyName("label")]
             public string Label { get; set; }
         }
 
         public class UserGroup
         {
-            [JsonProperty("value")]
+            [JsonPropertyName("value")]
             public string Value { get; set; }
 
-            [JsonProperty("label")]
+            [JsonPropertyName("label")]
             public string Label { get; set; }
         }
 
         public class Reward
         {
-            [JsonProperty("label")]
+            [JsonPropertyName("label")]
             public string Label { get; set; }
 
-            [JsonProperty("value")]
+            [JsonPropertyName("value")]
             public string Value { get; set; }
         }
 
         public class TrackingList
         {
-            [JsonProperty("tracking")]
+            [JsonPropertyName("tracking")]
             public Tracking Tracking { get; set; }
         }
 
         public class Tracking
         {
-            [JsonProperty("context")]
+            [JsonPropertyName("context")]
             public string Context { get; set; }
 
-            [JsonProperty("delay")]
+            [JsonPropertyName("delay")]
             public int Delay { get; set; }
 
-            [JsonProperty("track_cache_ttl")]
+            [JsonPropertyName("track_cache_ttl")]
             public int TrackCacheTtl { get; set; }
         }
 
         public class ServiceList
         {
-            [JsonProperty("service")]
+            [JsonPropertyName("service")]
             public Service Service { get; set; }
         }
 
         public class Service
         {
-            [JsonProperty("name")]
+            [JsonPropertyName("name")]
             public string Name { get; set; }
 
-            [JsonProperty("display_name")]
+            [JsonPropertyName("display_name")]
             public string DisplayName { get; set; }
 
-            [JsonProperty("type")]
+            [JsonPropertyName("type")]
             public string Type { get; set; }
 
-            [JsonProperty("oauth_api")]
+            [JsonPropertyName("oauth_api")]
             public bool OauthApi { get; set; }
 
-            [JsonProperty("oauth_web_signin")]
+            [JsonPropertyName("oauth_web_signin")]
             public OauthWebSignin OauthWebSignin { get; set; }
 
-            [JsonProperty("streaming")]
+            [JsonPropertyName("streaming")]
             public bool Streaming { get; set; }
 
-            [JsonProperty("playlist")]
+            [JsonPropertyName("playlist")]
             public bool Playlist { get; set; }
 
-            [JsonProperty("locker")]
+            [JsonPropertyName("locker")]
             public bool Locker { get; set; }
 
-            [JsonProperty("deeplink")]
+            [JsonPropertyName("deeplink")]
             public bool Deeplink { get; set; }
         }
 
         public class OauthWebSignin
         {
-            [JsonProperty("enabled")]
+            [JsonPropertyName("enabled")]
             public bool Enabled { get; set; }
 
-            [JsonProperty("user_prefix")]
+            [JsonPropertyName("user_prefix")]
             public string UserPrefix { get; set; }
         }
 
         public class EventMap
         {
-            [JsonProperty("regex")]
+            [JsonPropertyName("regex")]
             public string Regex { get; set; }
 
-            [JsonProperty("enabled")]
+            [JsonPropertyName("enabled")]
             public bool Enabled { get; set; }
 
-            [JsonProperty("piggyback")]
+            [JsonPropertyName("piggyback")]
             public Piggyback Piggyback { get; set; }
         }
 
         public class Piggyback
         {
-            [JsonProperty("server_weight")]
+            [JsonPropertyName("server_weight")]
             public int ServerWeight { get; set; }
         }
 
         public class SmartTranslations
         {
-            [JsonProperty("enabled")]
+            [JsonPropertyName("enabled")]
             public bool Enabled { get; set; }
 
-            [JsonProperty("threshold")]
+            [JsonPropertyName("threshold")]
             public int Threshold { get; set; }
         }
 
         public class Location
         {
-            [JsonProperty("GEOIP_CITY_COUNTRY_CODE")]
+            [JsonPropertyName("GEOIP_CITY_COUNTRY_CODE")]
             public string GeoIPCityCountryCode { get; set; }
 
-            [JsonProperty("GEOIP_CITY_COUNTRY_CODE3")]
+            [JsonPropertyName("GEOIP_CITY_COUNTRY_CODE3")]
             public string GeoIPCityCountryCode3 { get; set; }
 
-            [JsonProperty("GEOIP_CITY_COUNTRY_NAME")]
+            [JsonPropertyName("GEOIP_CITY_COUNTRY_NAME")]
             public string GeoIPCityCountryName { get; set; }
 
-            [JsonProperty("GEOIP_CITY")]
+            [JsonPropertyName("GEOIP_CITY")]
             public string GeoIPCity { get; set; }
 
-            [JsonProperty("GEOIP_CITY_CONTINENT_CODE")]
+            [JsonPropertyName("GEOIP_CITY_CONTINENT_CODE")]
             public string GeoIPCityContinentCode { get; set; }
 
-            [JsonProperty("GEOIP_LATITUDE")]
+            [JsonPropertyName("GEOIP_LATITUDE")]
             public double GeoIPLatitude { get; set; }
 
-            [JsonProperty("GEOIP_LONGITUDE")]
+            [JsonPropertyName("GEOIP_LONGITUDE")]
             public double GeoIPLongitude { get; set; }
 
-            [JsonProperty("GEOIP_AS_ORG")]
+            [JsonPropertyName("GEOIP_AS_ORG")]
             public string GeoIPAsOrg { get; set; }
 
-            [JsonProperty("GEOIP_ORG")]
+            [JsonPropertyName("GEOIP_ORG")]
             public string GeoIPOrg { get; set; }
 
-            [JsonProperty("GEOIP_ISP")]
+            [JsonPropertyName("GEOIP_ISP")]
             public string GeoIPIsp { get; set; }
 
-            [JsonProperty("GEOIP_NET_NAME")]
+            [JsonPropertyName("GEOIP_NET_NAME")]
             public string GeoIPNetName { get; set; }
 
-            [JsonProperty("BADIP_TAGS")]
+            [JsonPropertyName("BADIP_TAGS")]
             public object[] BadipTags { get; set; }
         }
     }
 
     public class GetTrackResponse
     {
-        [JsonProperty("message")]
-        public MessageContent Message { get; set; }
+        [JsonPropertyName("message")]
+        public GetTrackResponse_MessageContent Message { get; set; }
 
-        public class MessageContent
+        public class GetTrackResponse_MessageContent
         {
-            [JsonProperty("header")]
-            public Header Header { get; set; }
+            [JsonPropertyName("header")]
+            public GetTrackResponse_MessageContent_Header Header { get; set; }
 
-            [JsonProperty("body")]
-            public Body Body { get; set; }
+            [JsonPropertyName("body")]
+            public GetTrackResponse_MessageContent_Body Body { get; set; }
         }
 
-        public class Header
+        public class GetTrackResponse_MessageContent_Header
         {
-            [JsonProperty("status_code")]
+            [JsonPropertyName("status_code")]
             public int StatusCode { get; set; }
 
-            [JsonProperty("execute_time")]
+            [JsonPropertyName("execute_time")]
             public double ExecuteTime { get; set; }
 
-            [JsonProperty("confidence")]
+            [JsonPropertyName("confidence")]
             public int Confidence { get; set; }
 
-            [JsonProperty("mode")]
+            [JsonPropertyName("mode")]
             public string Mode { get; set; }
 
-            [JsonProperty("cached")]
+            [JsonPropertyName("cached")]
             public int Cached { get; set; }
 
-            [JsonProperty("hint")]
+            [JsonPropertyName("hint")]
             public string Hint { get; set; }
         }
 
-        public class Body
+        public class GetTrackResponse_MessageContent_Body
         {
-            [JsonProperty("track")]
+            [JsonPropertyName("track")]
             public Track Track { get; set; }
         }
 
         public class Track
         {
-            [JsonProperty("track_id")]
+            [JsonPropertyName("track_id")]
             public int TrackId { get; set; }
 
-            [JsonProperty("track_mbid")]
+            [JsonPropertyName("track_mbid")]
             public string TrackMbid { get; set; }
 
-            [JsonProperty("track_isrc")]
+            [JsonPropertyName("track_isrc")]
             public string TrackIsrc { get; set; }
 
-            [JsonProperty("commontrack_isrcs")]
+            [JsonPropertyName("commontrack_isrcs")]
             public List<List<string>> CommontrackIsrcs { get; set; }
 
-            [JsonProperty("track_spotify_id")]
+            [JsonPropertyName("track_spotify_id")]
             public string TrackSpotifyId { get; set; }
 
-            [JsonProperty("commontrack_spotify_ids")]
+            [JsonPropertyName("commontrack_spotify_ids")]
             public List<string> CommontrackSpotifyIds { get; set; }
 
-            [JsonProperty("track_soundcloud_id")]
+            [JsonPropertyName("track_soundcloud_id")]
             public int TrackSoundcloudId { get; set; }
 
-            [JsonProperty("track_xboxmusic_id")]
+            [JsonPropertyName("track_xboxmusic_id")]
             public string TrackXboxmusicId { get; set; }
 
-            [JsonProperty("track_name")]
+            [JsonPropertyName("track_name")]
             public string TrackName { get; set; }
 
-            [JsonProperty("track_name_translation_list")]
+            [JsonPropertyName("track_name_translation_list")]
             public List<TrackNameTranslationList> TrackNameTranslationList { get; set; }
 
-            [JsonProperty("track_rating")]
+            [JsonPropertyName("track_rating")]
             public int TrackRating { get; set; }
 
-            [JsonProperty("track_length")]
+            [JsonPropertyName("track_length")]
             public int TrackLength { get; set; }
 
-            [JsonProperty("commontrack_id")]
+            [JsonPropertyName("commontrack_id")]
             public int CommontrackId { get; set; }
 
-            [JsonProperty("instrumental")]
+            [JsonPropertyName("instrumental")]
             public int Instrumental { get; set; }
 
-            [JsonProperty("explicit")]
+            [JsonPropertyName("explicit")]
             public int Explicit { get; set; }
 
-            [JsonProperty("has_lyrics")]
+            [JsonPropertyName("has_lyrics")]
             public int HasLyrics { get; set; }
 
-            [JsonProperty("has_lyrics_crowd")]
+            [JsonPropertyName("has_lyrics_crowd")]
             public int HasLyricsCrowd { get; set; }
 
-            [JsonProperty("has_subtitles")]
+            [JsonPropertyName("has_subtitles")]
             public int HasSubtitles { get; set; }
 
-            [JsonProperty("has_richsync")]
+            [JsonPropertyName("has_richsync")]
             public int HasRichsync { get; set; }
 
-            [JsonProperty("has_track_structure")]
+            [JsonPropertyName("has_track_structure")]
             public int HasTrackStructure { get; set; }
 
-            [JsonProperty("num_favourite")]
+            [JsonPropertyName("num_favourite")]
             public int NumFavourite { get; set; }
 
-            [JsonProperty("lyrics_id")]
+            [JsonPropertyName("lyrics_id")]
             public int LyricsId { get; set; }
 
-            [JsonProperty("subtitle_id")]
+            [JsonPropertyName("subtitle_id")]
             public int SubtitleId { get; set; }
 
-            [JsonProperty("album_id")]
+            [JsonPropertyName("album_id")]
             public int AlbumId { get; set; }
 
-            [JsonProperty("album_name")]
+            [JsonPropertyName("album_name")]
             public string AlbumName { get; set; }
 
-            [JsonProperty("album_vanity_id")]
+            [JsonPropertyName("album_vanity_id")]
             public string AlbumVanityId { get; set; }
 
-            [JsonProperty("artist_id")]
+            [JsonPropertyName("artist_id")]
             public int ArtistId { get; set; }
 
-            [JsonProperty("artist_mbid")]
+            [JsonPropertyName("artist_mbid")]
             public string ArtistMbid { get; set; }
 
-            [JsonProperty("artist_name")]
+            [JsonPropertyName("artist_name")]
             public string ArtistName { get; set; }
 
-            [JsonProperty("album_coverart_100x100")]
+            [JsonPropertyName("album_coverart_100x100")]
             public string AlbumCoverart100x100 { get; set; }
 
-            [JsonProperty("album_coverart_350x350")]
+            [JsonPropertyName("album_coverart_350x350")]
             public string AlbumCoverart350x350 { get; set; }
 
-            [JsonProperty("album_coverart_500x500")]
+            [JsonPropertyName("album_coverart_500x500")]
             public string AlbumCoverart500x500 { get; set; }
 
-            [JsonProperty("album_coverart_800x800")]
+            [JsonPropertyName("album_coverart_800x800")]
             public string AlbumCoverart800x800 { get; set; }
 
-            [JsonProperty("track_share_url")]
+            [JsonPropertyName("track_share_url")]
             public string TrackShareUrl { get; set; }
 
-            [JsonProperty("track_edit_url")]
+            [JsonPropertyName("track_edit_url")]
             public string TrackEditUrl { get; set; }
 
-            [JsonProperty("commontrack_vanity_id")]
+            [JsonPropertyName("commontrack_vanity_id")]
             public string CommontrackVanityId { get; set; }
 
-            [JsonProperty("restricted")]
+            [JsonPropertyName("restricted")]
             public int Restricted { get; set; }
 
-            [JsonProperty("first_release_date")]
+            [JsonPropertyName("first_release_date")]
             public DateTime FirstReleaseDate { get; set; }
 
-            [JsonProperty("updated_time")]
+            [JsonPropertyName("updated_time")]
             public DateTime UpdatedTime { get; set; }
 
-            [JsonProperty("primary_genres")]
+            [JsonPropertyName("primary_genres")]
             public PrimaryGenres PrimaryGenres { get; set; }
 
-            [JsonProperty("secondary_genres")]
+            [JsonPropertyName("secondary_genres")]
             public SecondaryGenres SecondaryGenres { get; set; }
         }
 
         public class TrackNameTranslationList
         {
-            [JsonProperty("track_name_translation")]
+            [JsonPropertyName("track_name_translation")]
             public TrackNameTranslation TrackNameTranslation { get; set; }
         }
 
         public class TrackNameTranslation
         {
-            [JsonProperty("language")]
+            [JsonPropertyName("language")]
             public string Language { get; set; }
 
-            [JsonProperty("translation")]
+            [JsonPropertyName("translation")]
             public string Translation { get; set; }
         }
 
         public class PrimaryGenres
         {
-            [JsonProperty("music_genre_list")]
+            [JsonPropertyName("music_genre_list")]
             public List<MusicGenreList> MusicGenreList { get; set; }
         }
 
         public class MusicGenreList
         {
-            [JsonProperty("music_genre")]
+            [JsonPropertyName("music_genre")]
             public MusicGenre MusicGenre { get; set; }
         }
 
         public class MusicGenre
         {
-            [JsonProperty("music_genre_id")]
+            [JsonPropertyName("music_genre_id")]
             public int MusicGenreId { get; set; }
 
-            [JsonProperty("music_genre_parent_id")]
+            [JsonPropertyName("music_genre_parent_id")]
             public int MusicGenreParentId { get; set; }
 
-            [JsonProperty("music_genre_name")]
+            [JsonPropertyName("music_genre_name")]
             public string MusicGenreName { get; set; }
 
-            [JsonProperty("music_genre_name_extended")]
+            [JsonPropertyName("music_genre_name_extended")]
             public string MusicGenreNameExtended { get; set; }
 
-            [JsonProperty("music_genre_vanity")]
+            [JsonPropertyName("music_genre_vanity")]
             public string MusicGenreVanity { get; set; }
         }
 
         public class SecondaryGenres
         {
-            [JsonProperty("music_genre_list")]
+            [JsonPropertyName("music_genre_list")]
             public List<MusicGenreList> MusicGenreList { get; set; }
         }
     }
 
     public class GetTranslationsResponse
     {
-        [JsonProperty("message")]
-        public MessageContent Message { get; set; }
+        [JsonPropertyName("message")]
+        public GetTranslationsResponse_MessageContent Message { get; set; }
 
-        public class MessageContent
+        public class GetTranslationsResponse_MessageContent
         {
-            [JsonProperty("header")]
-            public Header Header { get; set; }
+            [JsonPropertyName("header")]
+            public GetTranslationsResponse_MessageContent_Header Header { get; set; }
 
-            [JsonProperty("body")]
-            public Body Body { get; set; }
+            [JsonPropertyName("body")]
+            public GetTranslationsResponse_MessageContent_Body Body { get; set; }
         }
 
-        public class Header
+        public class GetTranslationsResponse_MessageContent_Header
         {
-            [JsonProperty("status_code")]
+            [JsonPropertyName("status_code")]
             public int StatusCode { get; set; }
 
-            [JsonProperty("execute_time")]
+            [JsonPropertyName("execute_time")]
             public double ExecuteTime { get; set; }
 
-            [JsonProperty("hint")]
+            [JsonPropertyName("hint")]
             public string Hint { get; set; }
         }
 
-        public class Body
+        public class GetTranslationsResponse_MessageContent_Body
         {
-            [JsonProperty("translations_list")]
+            [JsonPropertyName("translations_list")]
             public TranslationsListItem[] TranslationsList { get; set; }
         }
 
         public class TranslationsListItem
         {
-            [JsonProperty("translation")]
+            [JsonPropertyName("translation")]
             public Translation Translation { get; set; }
         }
 
         public class Translation
         {
-            [JsonProperty("type_id")]
+            [JsonPropertyName("type_id")]
             public string TypeId { get; set; }
 
-            [JsonProperty("artist_id")]
+            [JsonPropertyName("artist_id")]
             public int ArtistId { get; set; }
 
-            [JsonProperty("language_from")]
+            [JsonPropertyName("language_from")]
             public string LanguageFrom { get; set; }
 
-            [JsonProperty("user_id")]
+            [JsonPropertyName("user_id")]
             public string UserId { get; set; }
 
-            [JsonProperty("app_id")]
+            [JsonPropertyName("app_id")]
             public string AppId { get; set; }
 
-            [JsonProperty("description")]
+            [JsonPropertyName("description")]
             public string Description { get; set; }
 
-            [JsonProperty("snippet")]
+            [JsonPropertyName("snippet")]
             public string Snippet { get; set; }
 
-            [JsonProperty("position")]
+            [JsonPropertyName("position")]
             public int Position { get; set; }
 
-            [JsonProperty("selected_language")]
+            [JsonPropertyName("selected_language")]
             public string SelectedLanguage { get; set; }
 
-            [JsonProperty("index")]
+            [JsonPropertyName("index")]
             public int Index { get; set; }
 
-            [JsonProperty("wantkey")]
+            [JsonPropertyName("wantkey")]
             public bool Wantkey { get; set; }
 
-            [JsonProperty("create_timestamp")]
+            [JsonPropertyName("create_timestamp")]
             public int CreateTimestamp { get; set; }
 
-            [JsonProperty("language")]
+            [JsonPropertyName("language")]
             public string Language { get; set; }
 
-            [JsonProperty("type_id_weight")]
+            [JsonPropertyName("type_id_weight")]
             public int TypeIdWeight { get; set; }
 
-            [JsonProperty("last_updated")]
+            [JsonPropertyName("last_updated")]
             public DateTime LastUpdated { get; set; }
 
-            [JsonProperty("key")]
+            [JsonPropertyName("key")]
             public string Key { get; set; }
 
-            [JsonProperty("matched_line")]
+            [JsonPropertyName("matched_line")]
             public string MatchedLine { get; set; }
 
-            [JsonProperty("subtitle_matched_line")]
+            [JsonPropertyName("subtitle_matched_line")]
             public string SubtitleMatchedLine { get; set; }
 
-            [JsonProperty("confidence")]
+            [JsonPropertyName("confidence")]
             public double Confidence { get; set; }
 
-            [JsonProperty("user_score")]
+            [JsonPropertyName("user_score")]
             public int UserScore { get; set; }
 
-            [JsonProperty("published_status_macro")]
+            [JsonPropertyName("published_status_macro")]
             public object PublishedStatusMacro { get; set; }
 
-            [JsonProperty("image_id")]
+            [JsonPropertyName("image_id")]
             public int ImageId { get; set; }
 
-            [JsonProperty("video_id")]
+            [JsonPropertyName("video_id")]
             public int VideoId { get; set; }
 
-            [JsonProperty("lyrics_id")]
+            [JsonPropertyName("lyrics_id")]
             public int LyricsId { get; set; }
 
-            [JsonProperty("subtitle_id")]
+            [JsonPropertyName("subtitle_id")]
             public int SubtitleId { get; set; }
 
-            [JsonProperty("created_date")]
+            [JsonPropertyName("created_date")]
             public DateTime CreatedDate { get; set; }
 
-            [JsonProperty("commontrack_id")]
+            [JsonPropertyName("commontrack_id")]
             public int CommontrackId { get; set; }
 
-            [JsonProperty("is_expired")]
+            [JsonPropertyName("is_expired")]
             public int IsExpired { get; set; }
 
-            [JsonProperty("group_key")]
+            [JsonPropertyName("group_key")]
             public string GroupKey { get; set; }
 
-            [JsonProperty("can_delete")]
+            [JsonPropertyName("can_delete")]
             public int CanDelete { get; set; }
 
-            [JsonProperty("is_mine")]
+            [JsonPropertyName("is_mine")]
             public int IsMine { get; set; }
 
-            [JsonProperty("can_approve")]
+            [JsonPropertyName("can_approve")]
             public int CanApprove { get; set; }
 
-            [JsonProperty("user")]
+            [JsonPropertyName("user")]
             public User User { get; set; }
 
-            [JsonProperty("approver")]
+            [JsonPropertyName("approver")]
             public object Approver { get; set; }
 
-            [JsonProperty("can_translate")]
+            [JsonPropertyName("can_translate")]
             public int CanTranslate { get; set; }
         }
 
         public class User
         {
-            [JsonProperty("uaid")]
+            [JsonPropertyName("uaid")]
             public string Uaid { get; set; }
 
-            [JsonProperty("is_mine")]
+            [JsonPropertyName("is_mine")]
             public int IsMine { get; set; }
 
-            [JsonProperty("user_name")]
+            [JsonPropertyName("user_name")]
             public string UserName { get; set; }
 
-            [JsonProperty("user_profile_photo")]
+            [JsonPropertyName("user_profile_photo")]
             public string UserProfilePhoto { get; set; }
 
-            [JsonProperty("has_private_profile")]
+            [JsonPropertyName("has_private_profile")]
             public int HasPrivateProfile { get; set; }
 
-            [JsonProperty("has_informative_profile_page")]
+            [JsonPropertyName("has_informative_profile_page")]
             public int HasInformativeProfilePage { get; set; }
 
-            [JsonProperty("has_distributor_profile_page")]
+            [JsonPropertyName("has_distributor_profile_page")]
             public int HasDistributorProfilePage { get; set; }
 
-            [JsonProperty("score")]
+            [JsonPropertyName("score")]
             public int Score { get; set; }
 
-            [JsonProperty("position")]
+            [JsonPropertyName("position")]
             public int Position { get; set; }
 
-            [JsonProperty("level")]
+            [JsonPropertyName("level")]
             public string Level { get; set; }
 
-            [JsonProperty("key")]
+            [JsonPropertyName("key")]
             public string Key { get; set; }
 
-            [JsonProperty("rank_level")]
+            [JsonPropertyName("rank_level")]
             public int RankLevel { get; set; }
 
-            [JsonProperty("rank_name")]
+            [JsonPropertyName("rank_name")]
             public string RankName { get; set; }
 
-            [JsonProperty("rank_color")]
+            [JsonPropertyName("rank_color")]
             public string RankColor { get; set; }
 
-            [JsonProperty("rank_colors")]
+            [JsonPropertyName("rank_colors")]
             public RankColors RankColors { get; set; }
 
-            [JsonProperty("rank_image_url")]
+            [JsonPropertyName("rank_image_url")]
             public string RankImageUrl { get; set; }
 
-            [JsonProperty("weekly_score")]
+            [JsonPropertyName("weekly_score")]
             public int WeeklyScore { get; set; }
 
-            [JsonProperty("points_to_next_level")]
+            [JsonPropertyName("points_to_next_level")]
             public int PointsToNextLevel { get; set; }
 
-            [JsonProperty("ratio_to_next_level")]
+            [JsonPropertyName("ratio_to_next_level")]
             public double RatioToNextLevel { get; set; }
 
-            [JsonProperty("next_rank_name")]
+            [JsonPropertyName("next_rank_name")]
             public string NextRankName { get; set; }
 
-            [JsonProperty("ratio_to_next_rank")]
+            [JsonPropertyName("ratio_to_next_rank")]
             public double RatioToNextRank { get; set; }
 
-            [JsonProperty("next_rank_color")]
+            [JsonPropertyName("next_rank_color")]
             public string NextRankColor { get; set; }
 
-            [JsonProperty("next_rank_colors")]
+            [JsonPropertyName("next_rank_colors")]
             public RankColors NextRankColors { get; set; }
 
-            [JsonProperty("next_rank_image_url")]
+            [JsonPropertyName("next_rank_image_url")]
             public string NextRankImageUrl { get; set; }
 
-            [JsonProperty("counters")]
+            [JsonPropertyName("counters")]
             public Counters Counters { get; set; }
 
-            [JsonProperty("moderator_eligible")]
+            [JsonPropertyName("moderator_eligible")]
             public bool ModeratorEligible { get; set; }
 
-            [JsonProperty("artist_manager")]
+            [JsonPropertyName("artist_manager")]
             public int ArtistManager { get; set; }
 
-            [JsonProperty("academy_completed")]
+            [JsonPropertyName("academy_completed")]
             public bool AcademyCompleted { get; set; }
 
-            [JsonProperty("academy_completed_date")]
+            [JsonPropertyName("academy_completed_date")]
             public DateTime AcademyCompletedDate { get; set; }
         }
 
         public class RankColors
         {
-            [JsonProperty("rank_color_10")]
+            [JsonPropertyName("rank_color_10")]
             public string RankColor10 { get; set; }
 
-            [JsonProperty("rank_color_50")]
+            [JsonPropertyName("rank_color_50")]
             public string RankColor50 { get; set; }
 
-            [JsonProperty("rank_color_100")]
+            [JsonPropertyName("rank_color_100")]
             public string RankColor100 { get; set; }
 
-            [JsonProperty("rank_color_200")]
+            [JsonPropertyName("rank_color_200")]
             public string RankColor200 { get; set; }
         }
 
         public class Counters
         {
-            [JsonProperty("lyrics_favourite_added")]
+            [JsonPropertyName("lyrics_favourite_added")]
             public int LyricsFavouriteAdded { get; set; }
 
-            [JsonProperty("lyrics_subtitle_added")]
+            [JsonPropertyName("lyrics_subtitle_added")]
             public int LyricsSubtitleAdded { get; set; }
 
-            [JsonProperty("lyrics_generic_ko")]
+            [JsonPropertyName("lyrics_generic_ko")]
             public int LyricsGenericKo { get; set; }
 
-            [JsonProperty("lyrics_missing")]
+            [JsonPropertyName("lyrics_missing")]
             public int LyricsMissing { get; set; }
 
-            [JsonProperty("lyrics_changed")]
+            [JsonPropertyName("lyrics_changed")]
             public int LyricsChanged { get; set; }
 
-            [JsonProperty("lyrics_ok")]
+            [JsonPropertyName("lyrics_ok")]
             public int LyricsOk { get; set; }
 
-            [JsonProperty("lyrics_to_add")]
+            [JsonPropertyName("lyrics_to_add")]
             public int LyricsToAdd { get; set; }
 
-            [JsonProperty("lyrics_ko")]
+            [JsonPropertyName("lyrics_ko")]
             public int LyricsKo { get; set; }
 
-            [JsonProperty("lyrics_music_id")]
+            [JsonPropertyName("lyrics_music_id")]
             public int LyricsMusicId { get; set; }
 
-            [JsonProperty("vote_bonuses")]
+            [JsonPropertyName("vote_bonuses")]
             public int VoteBonuses { get; set; }
 
-            [JsonProperty("track_translation")]
+            [JsonPropertyName("track_translation")]
             public int TrackTranslation { get; set; }
 
-            [JsonProperty("vote_maluses")]
+            [JsonPropertyName("vote_maluses")]
             public int VoteMaluses { get; set; }
 
-            [JsonProperty("lyrics_ai_incorrect_text_no")]
+            [JsonPropertyName("lyrics_ai_incorrect_text_no")]
             public int LyricsAiIncorrectTextNo { get; set; }
 
-            [JsonProperty("lyrics_ai_completely_wrong_skip")]
+            [JsonPropertyName("lyrics_ai_completely_wrong_skip")]
             public int LyricsAiCompletelyWrongSkip { get; set; }
 
-            [JsonProperty("lyrics_ai_incorrect_text_yes")]
+            [JsonPropertyName("lyrics_ai_incorrect_text_yes")]
             public int LyricsAiIncorrectTextYes { get; set; }
 
-            [JsonProperty("lyrics_ai_phrases_not_related_yes")]
+            [JsonPropertyName("lyrics_ai_phrases_not_related_yes")]
             public int LyricsAiPhrasesNotRelatedYes { get; set; }
 
-            [JsonProperty("lyrics_implicitly_ok")]
+            [JsonPropertyName("lyrics_implicitly_ok")]
             public int LyricsImplicitlyOk { get; set; }
 
-            [JsonProperty("lyrics_report_completely_wrong")]
+            [JsonPropertyName("lyrics_report_completely_wrong")]
             public int LyricsReportCompletelyWrong { get; set; }
 
-            [JsonProperty("lyrics_richsync_added")]
+            [JsonPropertyName("lyrics_richsync_added")]
             public int LyricsRichsyncAdded { get; set; }
 
-            [JsonProperty("track_influencer_bonus_moderator_vote")]
+            [JsonPropertyName("track_influencer_bonus_moderator_vote")]
             public int TrackInfluencerBonusModeratorVote { get; set; }
 
-            [JsonProperty("lyrics_ai_mood_analysis_v3_value")]
+            [JsonPropertyName("lyrics_ai_mood_analysis_v3_value")]
             public int LyricsAiMoodAnalysisV3Value { get; set; }
 
-            [JsonProperty("lyrics_ai_ugc_language")]
+            [JsonPropertyName("lyrics_ai_ugc_language")]
             public int LyricsAiUgcLanguage { get; set; }
 
-            [JsonProperty("lyrics_ranking_change")]
+            [JsonPropertyName("lyrics_ranking_change")]
             public int LyricsRankingChange { get; set; }
 
-            [JsonProperty("track_structure")]
+            [JsonPropertyName("track_structure")]
             public int TrackStructure { get; set; }
 
-            [JsonProperty("track_complete_metadata")]
+            [JsonPropertyName("track_complete_metadata")]
             public int TrackCompleteMetadata { get; set; }
 
-            [JsonProperty("evaluation_academy_test")]
+            [JsonPropertyName("evaluation_academy_test")]
             public int EvaluationAcademyTest { get; set; }
 
-            [JsonProperty("lyrics_report_contain_mistakes")]
+            [JsonPropertyName("lyrics_report_contain_mistakes")]
             public int LyricsReportContainMistakes { get; set; }
         }
     }
