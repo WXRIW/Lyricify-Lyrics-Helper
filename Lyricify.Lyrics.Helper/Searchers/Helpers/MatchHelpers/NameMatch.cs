@@ -61,6 +61,8 @@ namespace Lyricify.Lyrics.Searchers.Helpers
 
             if (SpecialCompare(name1, name2, "deluxe")) return NameMatchType.VeryHigh;
             if (SpecialCompare(name1, name2, "explicit")) return NameMatchType.VeryHigh;
+            if (SpecialCompare(name1, name2, "special edition")) return NameMatchType.VeryHigh;
+            if (SpecialCompare(name1, name2, "bonus track")) return NameMatchType.VeryHigh;
             if (SpecialCompare(name1, name2, "feat")) return NameMatchType.VeryHigh;
             if (SpecialCompare(name1, name2, "with")) return NameMatchType.VeryHigh;
 
