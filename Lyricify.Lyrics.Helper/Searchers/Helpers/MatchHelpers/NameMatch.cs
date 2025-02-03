@@ -19,10 +19,22 @@ namespace Lyricify.Lyrics.Searchers.Helpers
 
             if (name1 == name2) return NameMatchType.Perfect;
 
-            name1 = name1.Replace('’', '\'').Replace('，', ',');
-            name2 = name2.Replace('’', '\'').Replace('，', ',');
-            name1 = name1.Replace('[', '(').Replace(']', ')');
-            name2 = name2.Replace('[', '(').Replace(']', ')');
+            name1 = name1
+                .Replace('’', '\'')
+                .Replace('，', ',')
+                .Replace("（", " (")
+                .Replace("）", " )")
+                .Replace('[', '(')
+                .Replace(']', ')')
+                .RemoveDuoSpaces();
+            name2 = name2
+                .Replace('’', '\'')
+                .Replace('，', ',')
+                .Replace("（", " (")
+                .Replace("）", " )")
+                .Replace('[', '(')
+                .Replace(']', ')')
+                .RemoveDuoSpaces();
             name1 = name1.Replace("acoustic version", "acoustic");
             name2 = name2.Replace("acoustic version", "acoustic");
 
@@ -59,6 +71,15 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 return false;
             }
 
+            static bool BracketsCompare(string str1, string str2)
+            {
+                if (str1.Contains('(') && !str2.Contains('(')
+                    && str1[..str1.IndexOf('(')].Trim() == str2) return true;
+                if (str2.Contains('(') && !str2.Contains('(')
+                    && str2[..str2.IndexOf('(')].Trim() == str1) return true;
+                return false;
+            }
+
             if (SpecialCompare(name1, name2, "deluxe")) return NameMatchType.VeryHigh;
             if (SpecialCompare(name1, name2, "explicit")) return NameMatchType.VeryHigh;
             if (SpecialCompare(name1, name2, "special edition")) return NameMatchType.VeryHigh;
@@ -70,6 +91,8 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             if (DuoSpecialCompare(name1, name2, "with", "explicit")) return NameMatchType.High;
             if (SingleSpecialCompare(name1, name2, "feat")) return NameMatchType.High;
             if (SingleSpecialCompare(name1, name2, "with")) return NameMatchType.High;
+
+            if (BracketsCompare(name1, name2)) return NameMatchType.Medium;
 
             // 在同长度的情况下，判断解决异体字的问题
             int count = 0;
@@ -83,7 +106,10 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                     return NameMatchType.High;
             }
 
-            if (StringHelper.ComputeTextSame(name1, name2, true) > 66) return NameMatchType.Low;
+            if (StringHelper.ComputeTextSame(name1, name2, true) > 90) return NameMatchType.VeryHigh;
+            if (StringHelper.ComputeTextSame(name1, name2, true) > 80) return NameMatchType.High;
+            if (StringHelper.ComputeTextSame(name1, name2, true) > 68) return NameMatchType.Medium;
+            if (StringHelper.ComputeTextSame(name1, name2, true) > 55) return NameMatchType.Low;
 
             return NameMatchType.NoMatch;
         }
@@ -100,6 +126,7 @@ namespace Lyricify.Lyrics.Searchers.Helpers
                 NameMatchType.Perfect => 7,
                 NameMatchType.VeryHigh => 6,
                 NameMatchType.High => 5,
+                NameMatchType.Medium => 4,
                 NameMatchType.Low => 2,
                 NameMatchType.NoMatch => 0,
                 _ => 0,
@@ -114,6 +141,7 @@ namespace Lyricify.Lyrics.Searchers.Helpers
             Perfect,
             VeryHigh,
             High,
+            Medium,
             Low,
             NoMatch = -1,
         }
