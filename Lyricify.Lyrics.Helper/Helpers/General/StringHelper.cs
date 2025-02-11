@@ -553,6 +553,8 @@ namespace Lyricify.Lyrics.Helpers.General
 
         public static bool ContainsEmoji(this string str, bool full = true)
         {
+            if (string.IsNullOrEmpty(str)) return false;
+
             InitiateEmojiRegex();
             return EmojiMatchOneRegex.IsMatch(str);
         }
