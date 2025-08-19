@@ -106,7 +106,7 @@ namespace Lyricify.Lyrics.Demo
                 Artists = new() { "OneRepublic" },
                 DurationMs = 143264,
                 Title = "RUNAWAY",
-            }, Searchers.Searchers.Netease, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
+            }, Searchers.Searchers.SodaMusic, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
 
             //var qqSearch = new Searchers.QQMusicSearcher();

@@ -19,6 +19,7 @@
                 Searchers.Netease => SearcherHelper.NeteaseSearcher,
                 Searchers.Kugou => SearcherHelper.KugouSearcher,
                 Searchers.Musixmatch => SearcherHelper.MusixmatchSearcher,
+                Searchers.SodaMusic => SearcherHelper.SodaMusicSearcher,
                 _ => throw new NotImplementedException(),
             };
         }
@@ -37,6 +38,7 @@
                 Searchers.Netease => new NeteaseSearcher(),
                 Searchers.Kugou => new KugouSearcher(),
                 Searchers.Musixmatch => new MusixmatchSearcher(),
+                Searchers.SodaMusic => new SodaMusicSearcher(),
                 _ => throw new NotImplementedException(),
             };
         }
@@ -52,6 +54,7 @@
             if (searcher is NeteaseSearcher) return Searchers.Netease;
             if (searcher is KugouSearcher) return Searchers.Kugou;
             if (searcher is MusixmatchSearcher) return Searchers.Musixmatch;
+            if (searcher is SodaMusicSearcher) return Searchers.SodaMusic;
             return null;
         }
     }
