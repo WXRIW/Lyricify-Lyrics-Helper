@@ -1,4 +1,5 @@
-﻿using Lyricify.Lyrics.Helpers;
+﻿using Lyricify.Lyrics.Decrypter.Qrc;
+using Lyricify.Lyrics.Helpers;
 using Lyricify.Lyrics.Models;
 using Lyricify.Lyrics.Providers.Web.QQMusic;
 using Newtonsoft.Json;
@@ -50,22 +51,29 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
 
         public async Task<LyricResult?> GetLyric(string id)
         {
-            var result = new LyricResult();
+            var result = new LyricResult
+            {
+                Lyric = new LyricsData(),
+                Translate = new LyricsData(),
+            };
 
             var detail = await GetDetail(id);
+            // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(detail, Newtonsoft.Json.Formatting.Indented));
 
             var lyricDetail = detail?.Lyric;
             if (lyricDetail != null)
             {
-                Enum.TryParse(lyricDetail.Type, out LyricsRawTypes lyricType);
+                Enum.TryParse(lyricDetail.Type, true, out LyricsRawTypes lyricType);
                 result.Lyric = ParseHelper.ParseLyrics(lyricDetail.Content, lyricType);
+                // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result.Lyric, Newtonsoft.Json.Formatting.Indented));
             }
 
             if (lyricDetail.LangTranslations.ContainsKey("ZH-HANS-CN"))
             {
                 var lyricTrans = lyricDetail.LangTranslations["ZH-HANS-CN"];
-                Enum.TryParse(lyricTrans.Type, out LyricsRawTypes lyricTransType);
+                Enum.TryParse(lyricTrans.Type, true, out LyricsRawTypes lyricTransType);
                 result.Translate = ParseHelper.ParseLyrics(lyricTrans.Content, lyricTransType);
+                // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result.Translate, Newtonsoft.Json.Formatting.Indented));
             }
 
             return result;

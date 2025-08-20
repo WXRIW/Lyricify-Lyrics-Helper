@@ -1,5 +1,6 @@
 ﻿using Lyricify.Lyrics.Helpers;
 using Lyricify.Lyrics.Models;
+using Lyricify.Lyrics.Searchers;
 
 namespace Lyricify.Lyrics.Demo
 {
@@ -10,7 +11,7 @@ namespace Lyricify.Lyrics.Demo
             // ParsersDemo();
             // GeneratorsDemo();
             // TypeDetectorDemo();
-            // SearchDemo();
+            SearchDemo();
         }
 
         static void ParsersDemo()
@@ -108,6 +109,10 @@ namespace Lyricify.Lyrics.Demo
                 Title = "RUNAWAY",
             }, Searchers.Searchers.SodaMusic, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
+
+            var api = new Providers.Web.SodaMusic.Api();
+            var lyrics = api.GetLyric((search as SodaMusicSearchResult).Id).Result;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyrics, Newtonsoft.Json.Formatting.Indented));
 
             //var qqSearch = new Searchers.QQMusicSearcher();
             //var result = qqSearch.SearchForResult(new TrackMultiArtistMetadata()
