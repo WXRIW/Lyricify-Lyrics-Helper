@@ -12,5 +12,7 @@
         public static Providers.Web.Kugou.Api KugouApi => Providers.Web.Providers.KugouApi;
 
         public static Providers.Web.Musixmatch.Api MusixmatchApi => Providers.Web.Providers.MusixmatchApi;
+
+        public static Providers.Web.SodaMusic.Api SodaMusicApi => Providers.Web.Providers.SodaMusicApi;
     }
 }

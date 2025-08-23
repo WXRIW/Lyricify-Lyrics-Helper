@@ -20,5 +20,9 @@
         private static MusixmatchSearcher? _musixmatchSearcher;
 
         public static MusixmatchSearcher MusixmatchSearcher => _musixmatchSearcher ??= new();
+
+        private static SodaMusicSearcher? _sodaMusicSearcher;
+
+        public static SodaMusicSearcher SodaMusicSearcher => _sodaMusicSearcher ??= new();
     }
 }

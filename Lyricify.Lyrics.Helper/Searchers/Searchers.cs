@@ -9,5 +9,6 @@
         Netease,
         Kugou,
         Musixmatch,
+        SodaMusic,
     }
 }

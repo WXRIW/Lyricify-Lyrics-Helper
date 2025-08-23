@@ -17,5 +17,9 @@
         private static Musixmatch.Api? _musixmatchApi;
 
         public static Musixmatch.Api MusixmatchApi => _musixmatchApi ??= new();
+
+        private static SodaMusic.Api? _sodaMusicApi;
+
+        public static SodaMusic.Api SodaMusicApi => _sodaMusicApi ??= new();
     }
 }
