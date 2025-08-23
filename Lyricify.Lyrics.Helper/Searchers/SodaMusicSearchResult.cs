@@ -1,8 +1,5 @@
 ﻿using Lyricify.Lyrics.Providers.Web.SodaMusic;
 using Lyricify.Lyrics.Searchers.Helpers;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Lyricify.Lyrics.Searchers
 {

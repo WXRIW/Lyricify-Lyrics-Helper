@@ -1,8 +1,4 @@
-﻿using Lyricify.Lyrics.Models;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json;
 
 #nullable disable
 namespace Lyricify.Lyrics.Providers.Web.SodaMusic
@@ -670,12 +666,5 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
 
         [JsonProperty("video_model_type")]
         public int? VideoModelType { get; set; }
-    }
-
-    public class LyricResult
-    {
-        public LyricsData? Lyric { get; set; }
-
-        public LyricsData? Translate { get; set; }
     }
 }

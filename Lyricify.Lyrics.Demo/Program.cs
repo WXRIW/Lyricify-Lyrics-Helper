@@ -1,6 +1,5 @@
 ﻿using Lyricify.Lyrics.Helpers;
 using Lyricify.Lyrics.Models;
-using Lyricify.Lyrics.Searchers;
 
 namespace Lyricify.Lyrics.Demo
 {
@@ -11,7 +10,7 @@ namespace Lyricify.Lyrics.Demo
             // ParsersDemo();
             // GeneratorsDemo();
             // TypeDetectorDemo();
-            SearchDemo();
+            // SearchDemo();
         }
 
         static void ParsersDemo()
@@ -51,7 +50,7 @@ namespace Lyricify.Lyrics.Demo
 
             lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/SpotifyUnsyncedDemo.txt"), LyricsRawTypes.Spotify);
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
-            
+
             lyricsData = ParseHelper.ParseLyrics(File.ReadAllText("RawLyrics/MusixmatchDemo.txt"), LyricsRawTypes.Musixmatch);
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsData, Newtonsoft.Json.Formatting.Indented));
             Helpers.Optimization.Musixmatch.StandardizeMusixmatchLyrics(lyricsData!.Lines!); // 优化 Musixmatch 歌词
@@ -107,12 +106,8 @@ namespace Lyricify.Lyrics.Demo
                 Artists = new() { "OneRepublic" },
                 DurationMs = 143264,
                 Title = "RUNAWAY",
-            }, Searchers.Searchers.SodaMusic, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
+            }, Searchers.Searchers.Netease, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
             Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
-
-            var api = new Providers.Web.SodaMusic.Api();
-            var lyrics = api.GetLyric((search as SodaMusicSearchResult).Id).Result;
-            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyrics, Newtonsoft.Json.Formatting.Indented));
 
             //var qqSearch = new Searchers.QQMusicSearcher();
             //var result = qqSearch.SearchForResult(new TrackMultiArtistMetadata()

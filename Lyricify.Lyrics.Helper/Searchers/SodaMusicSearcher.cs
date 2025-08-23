@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Lyricify.Lyrics.Searchers
+﻿namespace Lyricify.Lyrics.Searchers
 {
     public class SodaMusicSearcher : Searcher, ISearcher
     {

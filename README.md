@@ -26,6 +26,7 @@
   - 酷狗音乐
   - Spotify (暂不支持)
   - Musixmatch
+  - 汽水音乐
 - 歌词处理优化
   - Explicit 歌词处理及修复
   - YRC 歌词优化

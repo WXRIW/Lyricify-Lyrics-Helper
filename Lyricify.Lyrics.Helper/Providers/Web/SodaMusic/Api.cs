@@ -1,11 +1,4 @@
-﻿using Lyricify.Lyrics.Decrypter.Qrc;
-using Lyricify.Lyrics.Helpers;
-using Lyricify.Lyrics.Models;
-using Lyricify.Lyrics.Providers.Web.QQMusic;
-using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Newtonsoft.Json;
 
 namespace Lyricify.Lyrics.Providers.Web.SodaMusic
 {
@@ -43,41 +36,42 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
                 var resp = await PostAsync(url, data);
 
                 return resp.ToEntity<TrackDetailResult>();
-            } catch
+            }
+            catch
             {
                 return null;
             }
         }
 
-        public async Task<LyricResult?> GetLyric(string id)
-        {
-            var result = new LyricResult
-            {
-                Lyric = new LyricsData(),
-                Translate = new LyricsData(),
-            };
+        // 待后期歌词获取模块整理开源后并入
+        //public async Task<LyricResult?> GetLyric(string id)
+        //{
+        //    var result = new LyricResult
+        //    {
+        //        Lyric = new LyricsData(),
+        //        Translate = new LyricsData(),
+        //    };
 
-            var detail = await GetDetail(id);
-            // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(detail, Newtonsoft.Json.Formatting.Indented));
+        //    var detail = await GetDetail(id);
+        //    // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(detail, Newtonsoft.Json.Formatting.Indented));
 
-            var lyricDetail = detail?.Lyric;
-            if (lyricDetail != null)
-            {
-                Enum.TryParse(lyricDetail.Type, true, out LyricsRawTypes lyricType);
-                result.Lyric = ParseHelper.ParseLyrics(lyricDetail.Content, lyricType);
-                // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result.Lyric, Newtonsoft.Json.Formatting.Indented));
-            }
+        //    var lyricDetail = detail?.Lyric;
+        //    if (lyricDetail != null)
+        //    {
+        //        Enum.TryParse(lyricDetail.Type, true, out LyricsRawTypes lyricType);
+        //        result.Lyric = ParseHelper.ParseLyrics(lyricDetail.Content, lyricType);
+        //        // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result.Lyric, Newtonsoft.Json.Formatting.Indented));
+        //    }
 
-            if (lyricDetail.LangTranslations.ContainsKey("ZH-HANS-CN"))
-            {
-                var lyricTrans = lyricDetail.LangTranslations["ZH-HANS-CN"];
-                Enum.TryParse(lyricTrans.Type, true, out LyricsRawTypes lyricTransType);
-                result.Translate = ParseHelper.ParseLyrics(lyricTrans.Content, lyricTransType);
-                // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result.Translate, Newtonsoft.Json.Formatting.Indented));
-            }
+        //    if (lyricDetail.LangTranslations.ContainsKey("ZH-HANS-CN"))
+        //    {
+        //        var lyricTrans = lyricDetail.LangTranslations["ZH-HANS-CN"];
+        //        Enum.TryParse(lyricTrans.Type, true, out LyricsRawTypes lyricTransType);
+        //        result.Translate = ParseHelper.ParseLyrics(lyricTrans.Content, lyricTransType);
+        //        // Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result.Translate, Newtonsoft.Json.Formatting.Indented));
+        //    }
 
-            return result;
-
-        }
+        //    return result;
+        //}
     }
 }
