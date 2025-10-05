@@ -56,9 +56,16 @@ namespace Lyricify.Lyrics.Parsers
                     {
                         File = new(),
                         Lines = lines,
+                        TrackMetadata = new TrackMetadata(),
                     };
                     lyricsData.File.Type = LyricsTypes.Musixmatch;
                     lyricsData.File.SyncTypes = SyncTypes.SyllableSynced;
+                    var language = track_get?["message"]?["body"]?["richsync"]?["richssync_language"]?.Value<string>()
+                        ?? track_get?["message"]?["body"]?["richsync"]?["richsync_language"]?.Value<string>();
+                    if (language is not null)
+                    {
+                        lyricsData.TrackMetadata.Language = new() { language };
+                    }
                     return lyricsData;
                 }
             }
@@ -77,9 +84,15 @@ namespace Lyricify.Lyrics.Parsers
                         {
                             File = new(),
                             Lines = lines,
+                            TrackMetadata = new TrackMetadata(),
                         };
                         lyricsData.File.Type = LyricsTypes.Musixmatch;
                         lyricsData.File.SyncTypes = SyncTypes.LineSynced;
+                        var language = list[0]["subtitle"]?["subtitle_language"]?.Value<string>();
+                        if (language is not null)
+                        {
+                            lyricsData.TrackMetadata.Language = new() { language };
+                        }
                         return lyricsData;
                     }
                 }
