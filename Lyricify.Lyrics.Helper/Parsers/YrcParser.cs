@@ -1,4 +1,4 @@
-﻿using Lyricify.Lyrics.Models;
+using Lyricify.Lyrics.Models;
 using Lyricify.Lyrics.Parsers.Models.Yrc;
 using Newtonsoft.Json;
 using System.Text;
@@ -55,14 +55,15 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             int j = input.Length - 1;
-            while (input[j] == '\n' || input[j] == '\r') j--;
+            while (j >= 0 && (input[j] == '\n' || input[j] == '\r')) j--;
             var endCredits = new List<ILineInfo>();
             for (; j >= 0; j--)
             {
                 if (input[j] == '}')
                 {
-                    var endIndex = input.LastIndexOf('\n', j);
-                    var jsonLine = input[(endIndex + 1)..(j + 1)];
+                    var startIndex = input.LastIndexOf('\n', j);
+                    if (startIndex == -1) startIndex = 0; else startIndex++;
+                    var jsonLine = input[startIndex..(j + 1)];
                     var credits = JsonConvert.DeserializeObject<CreditsInfo>(jsonLine);
                     if (credits != null)
                     {
@@ -78,7 +79,7 @@ namespace Lyricify.Lyrics.Parsers
                                 .ToList();
                         }
                     }
-                    j = endIndex;
+                    j = startIndex - 1;
                 }
                 else if (input[j] == '\n' || input[j] == '\r')
                 {
@@ -91,7 +92,8 @@ namespace Lyricify.Lyrics.Parsers
             }
 
             // 处理歌词行
-            var lyricsList = ParseOnlyLyrics(input, i);
+            var lyricsSpan = input.AsSpan(i, j + 1 - i);
+            var lyricsList = ParseOnlyLyrics(lyricsSpan);
 
             lines.AddRange(lyricsList);
             endCredits.Reverse();
@@ -115,6 +117,7 @@ namespace Lyricify.Lyrics.Parsers
                 if (input[i] == '{')
                 {
                     var endIndex = input.IndexOf('\n', i);
+                    if (endIndex == -1) endIndex = input.Length;
                     var jsonLine = input[i..endIndex];
                     var credits = JsonConvert.DeserializeObject<CreditsInfo>(jsonLine);
                     if (credits != null)
@@ -123,14 +126,42 @@ namespace Lyricify.Lyrics.Parsers
                     }
                     i = endIndex;
                 }
+                else if (input[i] == '\n' || input[i] == '\r')
+                {
+                    continue;
+                }
                 else
                 {
                     break;
                 }
             }
 
+            int j = input.Length - 1;
+            while (j >= 0 && (input[j] == '\n' || input[j] == '\r')) j--;
+            for (; j >= 0; j--)
+            {
+                if (input[j] == '}')
+                {
+                    // 按照原始逻辑，不解析末尾的信息行，只用于定位
+                    var startIndex = input.LastIndexOf('\n', j);
+                    if (startIndex == -1) startIndex = 0; else startIndex++;
+
+                    j = startIndex - 1;
+                }
+                else if (input[j] == '\n' || input[j] == '\r')
+                {
+                    continue;
+                }
+                else
+                {
+                    break;
+                }
+            }
+            if (j < i) j = i - 1;
+
             // 处理歌词行
-            var lyricsList = ParseOnlyLyrics(input, i);
+            var lyricsSpan = input.AsSpan(i, j + 1 - i);
+            var lyricsList = ParseOnlyLyrics(lyricsSpan);
 
             lines.AddRange(lyricsList);
             return lines;
@@ -139,7 +170,7 @@ namespace Lyricify.Lyrics.Parsers
         /// <summary>
         /// 解析 YRC 歌词 (不含信息行)
         /// </summary>
-        public static List<ILineInfo> ParseOnlyLyrics(ReadOnlySpan<char> input, int? startIndex = null)
+        public static List<ILineInfo> ParseOnlyLyrics(ReadOnlySpan<char> input)
         {
             var lines = new List<SyllableLineInfo>();
             var karaokeWordInfos = new List<ISyllableInfo>();
@@ -149,7 +180,7 @@ namespace Lyricify.Lyrics.Parsers
             var wordDuration = 0;
             var state = CurrentState.None;
             var reachesEnd = false;
-            for (var i = startIndex ?? 0; i < input.Length; i++)
+            for (var i = 0; i < input.Length; i++)
             {
                 if (i != input.Length)
                 {
