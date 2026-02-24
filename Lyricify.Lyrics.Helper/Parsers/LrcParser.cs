@@ -170,7 +170,7 @@ namespace Lyricify.Lyrics.Parsers
                             attributeName = string.Empty;
                             state = CurrentState.None;
                             break;
-                        };
+                        }
                         if (attributeName == "offset")
                         {
                             timeCalculationCache = timeCalculationCache * 10 + curChar - '0';

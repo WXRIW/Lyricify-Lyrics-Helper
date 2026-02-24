@@ -14,5 +14,7 @@
         public static Providers.Web.Musixmatch.Api MusixmatchApi => Providers.Web.Providers.MusixmatchApi;
 
         public static Providers.Web.SodaMusic.Api SodaMusicApi => Providers.Web.Providers.SodaMusicApi;
+
+        public static Providers.Web.AppleMusic.Api AppleMusicApi => Providers.Web.Providers.AppleMusicApi;
     }
 }

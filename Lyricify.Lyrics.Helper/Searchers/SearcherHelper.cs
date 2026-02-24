@@ -24,5 +24,9 @@
         private static SodaMusicSearcher? _sodaMusicSearcher;
 
         public static SodaMusicSearcher SodaMusicSearcher => _sodaMusicSearcher ??= new();
+
+        private static AppleMusicSearcher? _appleMusicSearcher;
+
+        public static AppleMusicSearcher AppleMusicSearcher => _appleMusicSearcher ??= new();
     }
 }

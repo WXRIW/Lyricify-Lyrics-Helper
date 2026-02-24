@@ -10,5 +10,6 @@
         Kugou,
         Musixmatch,
         SodaMusic,
+        AppleMusic,
     }
 }

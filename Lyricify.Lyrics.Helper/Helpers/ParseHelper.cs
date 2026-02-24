@@ -38,6 +38,7 @@ namespace Lyricify.Lyrics.Helpers
                 LyricsRawTypes.Qrc => Parsers.QrcParser.Parse(lyrics),
                 LyricsRawTypes.Krc => Parsers.KrcParser.Parse(lyrics),
                 LyricsRawTypes.Yrc => Parsers.YrcParser.Parse(lyrics),
+                LyricsRawTypes.Ttml => Parsers.TtmlParser.Parse(lyrics),
                 LyricsRawTypes.Spotify => Parsers.SpotifyParser.Parse(lyrics),
                 LyricsRawTypes.Musixmatch => Parsers.MusixmatchParser.Parse(lyrics),
                 _ => null,

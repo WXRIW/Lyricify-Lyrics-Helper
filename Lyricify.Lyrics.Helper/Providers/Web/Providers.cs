@@ -21,5 +21,9 @@
         private static SodaMusic.Api? _sodaMusicApi;
 
         public static SodaMusic.Api SodaMusicApi => _sodaMusicApi ??= new();
+
+        private static AppleMusic.Api? _appleMusicApi;
+
+        public static AppleMusic.Api AppleMusicApi => _appleMusicApi ??= new();
     }
 }
