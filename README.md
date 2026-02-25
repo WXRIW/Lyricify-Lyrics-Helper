@@ -10,7 +10,7 @@
   - QRC
   - KRC
   - YRC
-  - TTML (暂不支持)
+  - TTML
   - Spotify Lyrics (原始 JSON)
   - Musixmatch (原始 JSON)
 - 歌词生成
@@ -24,14 +24,15 @@
   - QQ 音乐
   - 网易云音乐
   - 酷狗音乐
-  - Spotify (暂不支持)
-  - Musixmatch
   - 汽水音乐
+  - Apple Music
+  - Musixmatch
+  - Spotify (暂不支持)
 - 歌词处理优化
   - Explicit 歌词处理及修复
   - YRC 歌词优化
   - 对唱识别 (暂不支持)
-  - 标题行识别 (暂不支持)
+  - 信息行 (标题行) 识别
 - 歌词解密
   - QRC
   - KRC
@@ -54,6 +55,9 @@
     - Explicit // Explicit 歌词处理及修复
     - Yrc // YRC 歌词优化
     - Musixmatch // Musixmatch 歌词优化
+    - Apple Music // Apple Music 歌词处理及优化
+    - SyncDowngrade // 同步级别降级 (如逐字降级至逐行)
+    - InfoLines // 信息行处理
   - Types // 歌词类型
     - Lrc // LRC 歌词类型特性
   - GeneratorHelper // 生成帮助
