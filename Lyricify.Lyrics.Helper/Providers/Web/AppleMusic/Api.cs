@@ -88,7 +88,7 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
             lock (_lock)
             {
                 mut = _mediaUserToken;
-                needInit = !_inited || !string.Equals(_cachedMut, mut, StringComparison.Ordinal);
+                needInit = !_inited || string.IsNullOrEmpty(_accessToken) || !string.Equals(_cachedMut, mut, StringComparison.Ordinal);
             }
 
             if (!needInit) return;
