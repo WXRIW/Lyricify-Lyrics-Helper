@@ -11,6 +11,7 @@ namespace Lyricify.Lyrics.Demo
             // GeneratorsDemo();
             // TypeDetectorDemo();
             // SearchDemo();
+            LRCLIBDemo();
         }
 
         static void ParsersDemo()
@@ -148,6 +149,69 @@ namespace Lyricify.Lyrics.Demo
             //    Title = "RUNAWAY",
             //}).Result;
             //Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(_result, Newtonsoft.Json.Formatting.Indented));
+        }
+
+        static void LRCLIBDemo()
+        {
+            /* LRCLIB Demo */
+
+            // 方法1: 使用 SearchHelper 搜索
+            Console.WriteLine("=== LRCLIB Search with SearchHelper ===");
+            var search = SearchHelper.Search(new TrackMultiArtistMetadata()
+            {
+                Album = "RUNAWAY",
+                AlbumArtists = new() { "OneRepublic" },
+                Artists = new() { "OneRepublic" },
+                DurationMs = 143264,
+                Title = "RUNAWAY",
+            }, Searchers.Searchers.LRCLIB, Searchers.Helpers.CompareHelper.MatchType.Medium).Result;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(search, Newtonsoft.Json.Formatting.Indented));
+
+            // 方法2: 使用 LRCLIB Searcher
+            Console.WriteLine("\n=== LRCLIB Searcher ===");
+            var lrclibSearcher = new Searchers.LRCLIBSearcher();
+            var result = lrclibSearcher.SearchForResult(new TrackMultiArtistMetadata()
+            {
+                Album = "GUTS",
+                AlbumArtists = new() { "Olivia Rodrigo" },
+                Artists = new() { "Olivia Rodrigo" },
+                DurationMs = 211141,
+                Title = "get him back!",
+            }).Result;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(result, Newtonsoft.Json.Formatting.Indented));
+
+            // 方法3: 直接使用 LRCLIB API 搜索
+            Console.WriteLine("\n=== LRCLIB API Search ===");
+            var searchResults = ProviderHelper.LRCLIBApi.Search("RUNAWAY", "OneRepublic").Result;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(searchResults, Newtonsoft.Json.Formatting.Indented));
+
+            // 方法4: 使用 LRCLIB API 获取歌词
+            Console.WriteLine("\n=== LRCLIB API Get Lyrics ===");
+            var lyrics = ProviderHelper.LRCLIBApi.Get("RUNAWAY", "OneRepublic", "RUNAWAY", 143).Result;
+            if (lyrics != null)
+            {
+                Console.WriteLine($"Track: {lyrics.TrackName} - {lyrics.ArtistName}");
+                Console.WriteLine($"Album: {lyrics.AlbumName}");
+                Console.WriteLine($"Duration: {lyrics.Duration}s");
+                Console.WriteLine($"Instrumental: {lyrics.Instrumental}");
+
+                if (!string.IsNullOrEmpty(lyrics.SyncedLyrics))
+                {
+                    Console.WriteLine("\nSynced Lyrics (LRC):");
+                    Console.WriteLine(lyrics.SyncedLyrics);
+                }
+
+                if (!string.IsNullOrEmpty(lyrics.PlainLyrics))
+                {
+                    Console.WriteLine("\nPlain Lyrics:");
+                    Console.WriteLine(lyrics.PlainLyrics);
+                }
+            }
+
+            // 方法5: 通过 ID 获取歌词（如果你已知 ID）
+            Console.WriteLine("\n=== LRCLIB API Get by ID ===");
+            var lyricsById = ProviderHelper.LRCLIBApi.GetById(2268843).Result;
+            Console.WriteLine(Newtonsoft.Json.JsonConvert.SerializeObject(lyricsById, Newtonsoft.Json.Formatting.Indented));
         }
     }
 }

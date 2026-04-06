@@ -28,5 +28,9 @@
         private static AppleMusicSearcher? _appleMusicSearcher;
 
         public static AppleMusicSearcher AppleMusicSearcher => _appleMusicSearcher ??= new();
+
+        private static LRCLIBSearcher? _lrclibSearcher;
+
+        public static LRCLIBSearcher LRCLIBSearcher => _lrclibSearcher ??= new();
     }
 }

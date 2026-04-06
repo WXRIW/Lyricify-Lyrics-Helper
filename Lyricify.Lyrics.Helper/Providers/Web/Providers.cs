@@ -25,5 +25,9 @@
         private static AppleMusic.Api? _appleMusicApi;
 
         public static AppleMusic.Api AppleMusicApi => _appleMusicApi ??= new();
+
+        private static LRCLIB.Api? _lrclibApi;
+
+        public static LRCLIB.Api LRCLIBApi => _lrclibApi ??= new();
     }
 }

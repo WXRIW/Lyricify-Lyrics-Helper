@@ -16,5 +16,7 @@
         public static Providers.Web.SodaMusic.Api SodaMusicApi => Providers.Web.Providers.SodaMusicApi;
 
         public static Providers.Web.AppleMusic.Api AppleMusicApi => Providers.Web.Providers.AppleMusicApi;
+
+        public static Providers.Web.LRCLIB.Api LRCLIBApi => Providers.Web.Providers.LRCLIBApi;
     }
 }
