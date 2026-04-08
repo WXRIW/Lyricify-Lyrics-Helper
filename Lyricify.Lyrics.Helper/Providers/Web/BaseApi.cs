@@ -15,11 +15,16 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected abstract Dictionary<string, string>? AdditionalHeaders { get; }
 
-        protected async Task<string> GetAsync(string url)
+        protected async Task<HttpResponseMessage> GetResponseAsync(string url)
         {
             SetRequestHeaders();
 
-            var response = await HttpClient.GetAsync(url);
+            return await HttpClient.GetAsync(url);
+        }
+
+        protected async Task<string> GetAsync(string url)
+        {
+            var response = await GetResponseAsync(url);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();

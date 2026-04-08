@@ -1,5 +1,7 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
 
 namespace Lyricify.Lyrics.Providers.Web.AppleMusic
@@ -73,6 +75,55 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
             }
         }
 
+        /// <summary>
+        /// 对外提供：导入 Access Token
+        /// </summary>
+        public void SetAccessToken(string? token)
+        {
+            lock (_lock)
+            {
+                _accessToken = token?.Trim() ?? string.Empty;
+            }
+        }
+
+        public string GetAccessToken()
+        {
+            lock (_lock)
+            {
+                return _accessToken;
+            }
+        }
+
+        public void SetStorefrontCache(string storefront, string? language = null, string? mediaUserToken = null)
+        {
+            if (string.IsNullOrWhiteSpace(storefront)) return;
+
+            lock (_lock)
+            {
+                _storefront = storefront.Trim();
+                _language = string.IsNullOrWhiteSpace(language) ? "en-US" : language.Trim();
+                _acceptLanguage = $"{_language},en;q=0.9";
+                _cachedMut = string.IsNullOrWhiteSpace(mediaUserToken) ? null : mediaUserToken.Trim();
+                _inited = true;
+            }
+        }
+
+        public string GetStorefront()
+        {
+            lock (_lock)
+            {
+                return _storefront;
+            }
+        }
+
+        public string GetLanguage()
+        {
+            lock (_lock)
+            {
+                return _language;
+            }
+        }
+
         private static void EnsureInitSync()
         {
             // 这里不做网络请求，只保证字段存在（避免 AdditionalHeaders 里引用空）
@@ -84,20 +135,23 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
         private async Task EnsureInitAsync()
         {
             string? mut;
+            string accessToken;
+            bool needRefreshAccessToken;
             bool needInit;
             lock (_lock)
             {
                 mut = _mediaUserToken;
-                needInit = !_inited || string.IsNullOrEmpty(_accessToken) || !string.Equals(_cachedMut, mut, StringComparison.Ordinal);
+                accessToken = _accessToken;
+                needRefreshAccessToken = IsAccessTokenRefreshRequired(accessToken);
+                needInit = !_inited || needRefreshAccessToken || !string.Equals(_cachedMut, mut, StringComparison.Ordinal);
             }
 
             if (!needInit) return;
 
             // 1) 获取 access token
-            var accessToken = await GetAccessTokenAsync().ConfigureAwait(false);
-            lock (_lock)
+            if (needRefreshAccessToken)
             {
-                _accessToken = accessToken;
+                await RefreshAccessTokenAsync().ConfigureAwait(false);
             }
 
             // 2) 若存在 media-user-token 则获取 storefront/language，否则 fallback
@@ -132,6 +186,85 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
                 _cachedMut = mut;
                 _inited = true;
             }
+        }
+
+        private async Task RefreshAccessTokenAsync()
+        {
+            var accessToken = await GetAccessTokenAsync().ConfigureAwait(false);
+            lock (_lock)
+            {
+                _accessToken = accessToken;
+            }
+        }
+
+        private void ClearAccessToken()
+        {
+            lock (_lock)
+            {
+                _accessToken = string.Empty;
+            }
+        }
+
+        private static bool IsAccessTokenRefreshRequired(string? accessToken)
+        {
+            if (string.IsNullOrWhiteSpace(accessToken)) return true;
+
+            try
+            {
+                var parts = accessToken.Split('.');
+                if (parts.Length < 2) return true;
+
+                var payloadJson = Encoding.UTF8.GetString(Convert.FromBase64String(NormalizeBase64(parts[1])));
+                var exp = JObject.Parse(payloadJson)["exp"]?.Value<long?>();
+                if (!exp.HasValue) return true;
+
+                return DateTimeOffset.UtcNow >= DateTimeOffset.FromUnixTimeSeconds(exp.Value).AddMinutes(-1);
+            }
+            catch
+            {
+                return true;
+            }
+        }
+
+        private static string NormalizeBase64(string value)
+        {
+            value = value.Replace('-', '+').Replace('_', '/');
+            return value.PadRight(value.Length + (4 - value.Length % 4) % 4, '=');
+        }
+
+        private static bool ShouldRefreshAccessToken(HttpResponseMessage response)
+        {
+            if (response.StatusCode == HttpStatusCode.Unauthorized) return true;
+            if (response.StatusCode != HttpStatusCode.Forbidden) return false;
+
+            var mediaType = response.Content?.Headers?.ContentType?.MediaType;
+            var contentLength = response.Content?.Headers?.ContentLength;
+            return string.Equals(mediaType, "application/octet-stream", StringComparison.OrdinalIgnoreCase)
+                && contentLength.GetValueOrDefault() == 0;
+        }
+
+        private async Task<string> GetAsyncWithAccessTokenRetry(string url, bool allowRetry = true)
+        {
+            var response = await GetResponseAsync(url).ConfigureAwait(false);
+            if (response.IsSuccessStatusCode)
+            {
+                return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+            }
+
+            if (allowRetry && ShouldRefreshAccessToken(response))
+            {
+                ClearAccessToken();
+                await RefreshAccessTokenAsync().ConfigureAwait(false);
+
+                response = await GetResponseAsync(url).ConfigureAwait(false);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                }
+            }
+
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         }
 
         private async Task<string> GetAccessTokenAsync()
@@ -170,7 +303,7 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
             // 因为 BaseApi 每次 Clear header，所以本方法开头先把 _mediaUserToken 写入静态字段（让 AdditionalHeaders 注入）
             lock (_lock) _mediaUserToken = mediaUserToken;
 
-            var json = await GetAsync("https://amp-api.music.apple.com/v1/me/storefront").ConfigureAwait(false);
+            var json = await GetAsyncWithAccessTokenRetry("https://amp-api.music.apple.com/v1/me/storefront").ConfigureAwait(false);
             var resp = JsonConvert.DeserializeObject<StorefrontResponse>(json);
 
             var data = resp?.Data;
@@ -201,7 +334,7 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
                 $"https://amp-api.music.apple.com/v1/catalog/{storefront}/search" +
                 $"?term={WebUtility.UrlEncode(keyword)}&types=songs&limit={limit}&l={WebUtility.UrlEncode(language)}";
 
-            var json = await GetAsync(url).ConfigureAwait(false);
+            var json = await GetAsyncWithAccessTokenRetry(url).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<SearchResponse>(json);
         }
 
@@ -223,7 +356,7 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
                 $"https://amp-api.music.apple.com/v1/catalog/{storefront}/songs/{songId}" +
                 $"?include[songs]=syllable-lyrics&l={WebUtility.UrlEncode("zh-hans-cn")}&extend=ttmlLocalizations";
 
-            var json = await GetAsync(url).ConfigureAwait(false);
+            var json = await GetAsyncWithAccessTokenRetry(url).ConfigureAwait(false);
             var resp = JsonConvert.DeserializeObject<LyricResponse>(json);
 
             resp?.NormalizeTtml();
