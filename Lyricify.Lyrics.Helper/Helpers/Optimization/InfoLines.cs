@@ -250,6 +250,8 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             "单位",
             "支持",
             "平台",
+            "录混",
+            "宣发",
             "单簧管",
             "萨克斯",
             "打击乐",
