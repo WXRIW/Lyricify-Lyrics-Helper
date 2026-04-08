@@ -21,6 +21,7 @@
                 Searchers.Musixmatch => SearcherHelper.MusixmatchSearcher,
                 Searchers.SodaMusic => SearcherHelper.SodaMusicSearcher,
                 Searchers.AppleMusic => SearcherHelper.AppleMusicSearcher,
+                Searchers.Spotify => SearcherHelper.SpotifySearcher,
                 Searchers.LRCLIB => SearcherHelper.LRCLIBSearcher,
                 _ => throw new NotImplementedException(),
             };
@@ -42,6 +43,7 @@
                 Searchers.Musixmatch => new MusixmatchSearcher(),
                 Searchers.SodaMusic => new SodaMusicSearcher(),
                 Searchers.AppleMusic => new AppleMusicSearcher(),
+                Searchers.Spotify => new SpotifySearcher(),
                 Searchers.LRCLIB => new LRCLIBSearcher(),
                 _ => throw new NotImplementedException(),
             };
@@ -60,6 +62,7 @@
             if (searcher is MusixmatchSearcher) return Searchers.Musixmatch;
             if (searcher is SodaMusicSearcher) return Searchers.SodaMusic;
             if (searcher is AppleMusicSearcher) return Searchers.AppleMusic;
+            if (searcher is SpotifySearcher) return Searchers.Spotify;
             if (searcher is LRCLIBSearcher) return Searchers.LRCLIB;
             return null;
         }

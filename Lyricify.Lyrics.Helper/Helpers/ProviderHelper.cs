@@ -17,6 +17,8 @@
 
         public static Providers.Web.AppleMusic.Api AppleMusicApi => Providers.Web.Providers.AppleMusicApi;
 
+        public static Providers.Web.Spotify.Api SpotifyApi => Providers.Web.Providers.SpotifyApi;
+
         public static Providers.Web.LRCLIB.Api LRCLIBApi => Providers.Web.Providers.LRCLIBApi;
     }
 }

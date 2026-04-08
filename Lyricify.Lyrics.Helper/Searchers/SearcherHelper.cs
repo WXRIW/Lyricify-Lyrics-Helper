@@ -29,6 +29,10 @@
 
         public static AppleMusicSearcher AppleMusicSearcher => _appleMusicSearcher ??= new();
 
+        private static SpotifySearcher? _spotifySearcher;
+
+        public static SpotifySearcher SpotifySearcher => _spotifySearcher ??= new();
+
         private static LRCLIBSearcher? _lrclibSearcher;
 
         public static LRCLIBSearcher LRCLIBSearcher => _lrclibSearcher ??= new();

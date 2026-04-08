@@ -11,6 +11,7 @@
         Musixmatch,
         SodaMusic,
         AppleMusic,
+        Spotify,
         LRCLIB,
     }
 }

@@ -26,6 +26,10 @@
 
         public static AppleMusic.Api AppleMusicApi => _appleMusicApi ??= new();
 
+        private static Spotify.Api? _spotifyApi;
+
+        public static Spotify.Api SpotifyApi => _spotifyApi ??= new();
+
         private static LRCLIB.Api? _lrclibApi;
 
         public static LRCLIB.Api LRCLIBApi => _lrclibApi ??= new();
