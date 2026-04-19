@@ -252,6 +252,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             "平台",
             "录混",
             "宣发",
+            "念白",
             "单簧管",
             "萨克斯",
             "打击乐",
