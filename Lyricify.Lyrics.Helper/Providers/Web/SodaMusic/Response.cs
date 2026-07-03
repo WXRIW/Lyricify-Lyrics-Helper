@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 
 #nullable disable
 namespace Lyricify.Lyrics.Providers.Web.SodaMusic
@@ -9,6 +9,9 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
     /// </summary>
     public class SearchResult
     {
+        [JsonProperty("status_code")]
+        public int? StatusCode { get; set; }
+
         [JsonProperty("status_info")]
         public StatusInfo StatusInfo { get; set; }
 
@@ -23,6 +26,9 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
     {
         [JsonProperty("log_id")]
         public string LogId { get; set; }
+
+        [JsonProperty("status_msg")]
+        public string StatusMsg { get; set; }
 
         /// <summary>
         /// unix 秒
@@ -502,6 +508,9 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
     /// </summary>
     public class TrackDetailResult
     {
+        [JsonProperty("status_code")]
+        public int? StatusCode { get; set; }
+
         [JsonProperty("status_info")]
         public StatusInfo StatusInfo { get; set; }
 
@@ -537,6 +546,15 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
 
         [JsonProperty("lang_translations")]
         public Dictionary<string, LyricTranslation> LangTranslations { get; set; }
+
+        [JsonProperty("translations")]
+        public LyricTranslation2 Translations { get; set; }
+
+        public class LyricTranslation2
+        {
+            [JsonProperty("cn")]
+            public string ChineseTranslation { get; set; }
+        }
     }
 
     public class LyricContributor

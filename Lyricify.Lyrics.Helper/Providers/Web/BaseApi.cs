@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using System.Text;
 
 namespace Lyricify.Lyrics.Providers.Web
@@ -10,6 +10,10 @@ namespace Lyricify.Lyrics.Providers.Web
         public const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36";
 
         public const string Cookie = "os=pc;osver=Microsoft-Windows-10-Professional-build-16299.125-64bit;appver=2.0.3.131777;channel=netease;__remember_me=true";
+
+        protected virtual string? HttpUserAgent => UserAgent;
+
+        protected virtual string? HttpCookie => Cookie;
 
         protected abstract string? HttpRefer { get; }
 
@@ -89,18 +93,18 @@ namespace Lyricify.Lyrics.Providers.Web
         {
             HttpClient.DefaultRequestHeaders.Clear();
 
-            if (!string.IsNullOrEmpty(UserAgent))
-                HttpClient.DefaultRequestHeaders.Add("User-Agent", UserAgent);
+            if (!string.IsNullOrEmpty(HttpUserAgent))
+                HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", HttpUserAgent);
             if (!string.IsNullOrEmpty(HttpRefer))
-                HttpClient.DefaultRequestHeaders.Add("Referer", HttpRefer);
-            if (!string.IsNullOrEmpty(Cookie))
-                HttpClient.DefaultRequestHeaders.Add("Cookie", Cookie);
+                HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", HttpRefer);
+            if (!string.IsNullOrEmpty(HttpCookie))
+                HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Cookie", HttpCookie);
 
             if (AdditionalHeaders is not null)
             {
                 foreach (var pair in AdditionalHeaders)
                 {
-                    HttpClient.DefaultRequestHeaders.Add(pair.Key, pair.Value);
+                    HttpClient.DefaultRequestHeaders.TryAddWithoutValidation(pair.Key, pair.Value);
                 }
             }
         }
