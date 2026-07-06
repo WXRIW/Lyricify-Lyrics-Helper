@@ -21,6 +21,12 @@ namespace Lyricify.Lyrics.Parsers
             public string Type { get; init; } = ""; // person/group/other/...
         }
 
+        private sealed class TranslationValue
+        {
+            public string Text { get; init; } = "";
+            public List<string> SpanTexts { get; init; } = new();
+        }
+
         public static LyricsData Parse(string ttml)
         {
             var data = new LyricsData
@@ -109,17 +115,18 @@ namespace Lyricify.Lyrics.Parsers
                     var replacement = tmap
                         .Where(kv => kv.Key.type.Equals("replacement", StringComparison.OrdinalIgnoreCase))
                         .Select(kv => kv.Value)
-                        .FirstOrDefault(v => !string.IsNullOrWhiteSpace(v));
+                        .FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.Text));
 
-                    if (!string.IsNullOrWhiteSpace(replacement))
+                    if (replacement != null)
                     {
-                        line = ApplyReplacementMainOnly(line, replacement!);
+                        line = ApplyReplacementMainOnly(line, replacement.Text, replacement.SpanTexts);
                         SetAlignment(line, align);
                     }
 
                     // subtitle translations
                     var subtitles = tmap
                         .Where(kv => kv.Key.type.Equals("subtitle", StringComparison.OrdinalIgnoreCase))
+                        .Select(kv => new KeyValuePair<(string type, string lang), string>(kv.Key, kv.Value.Text))
                         .ToList();
 
                     if (subtitles.Count > 0)
@@ -238,9 +245,9 @@ namespace Lyricify.Lyrics.Parsers
                 data.Writers = writers;
         }
 
-        private static Dictionary<string, Dictionary<(string type, string lang), string>> ParseTranslations(XDocument doc)
+        private static Dictionary<string, Dictionary<(string type, string lang), TranslationValue>> ParseTranslations(XDocument doc)
         {
-            var result = new Dictionary<string, Dictionary<(string type, string lang), string>>(StringComparer.Ordinal);
+            var result = new Dictionary<string, Dictionary<(string type, string lang), TranslationValue>>(StringComparer.Ordinal);
 
             foreach (var translation in doc.Descendants(NsItunes + "translation"))
             {
@@ -257,15 +264,29 @@ namespace Lyricify.Lyrics.Parsers
 
                     if (!result.TryGetValue(key, out var map))
                     {
-                        map = new Dictionary<(string type, string lang), string>();
+                        map = new Dictionary<(string type, string lang), TranslationValue>();
                         result[key] = map;
                     }
 
-                    map[(type, lang)] = value;
+                    map[(type, lang)] = new TranslationValue
+                    {
+                        Text = value,
+                        SpanTexts = ExtractTimedSpanTexts(textNode)
+                    };
                 }
             }
 
             return result;
+        }
+
+        private static List<string> ExtractTimedSpanTexts(XElement textNode)
+        {
+            return textNode
+                .Descendants(NsTtml + "span")
+                .Where(x => !string.IsNullOrWhiteSpace((string?)x.Attribute("begin")))
+                .Select(x => NormalizeText(x.Value))
+                .Where(x => x.Length > 0)
+                .ToList();
         }
 
         // =========================
@@ -364,7 +385,7 @@ namespace Lyricify.Lyrics.Parsers
         // =========================
         // Replacement / subtitle translations
         // =========================
-        private static ILineInfo ApplyReplacementMainOnly(ILineInfo line, string replacement)
+        private static ILineInfo ApplyReplacementMainOnly(ILineInfo line, string replacement, IReadOnlyList<string>? replacementParts)
         {
             // local helpers to keep this function self-contained
             static string NormalizeText(string s) => (s ?? string.Empty).Replace("\r", "").Replace("\n", "");
@@ -440,6 +461,26 @@ namespace Lyricify.Lyrics.Parsers
                 return new SyllableLineInfo(new[] { new SyllableInfo(newText, start, end) });
             }
 
+            static SyllableLineInfo? ReplaceSyllableLineParts(SyllableLineInfo sLine, IReadOnlyList<string>? newParts)
+            {
+                if (newParts == null || newParts.Count == 0 || newParts.Count != sLine.Syllables.Count)
+                    return null;
+
+                var newSylls = new List<ISyllableInfo>(sLine.Syllables.Count);
+                for (int i = 0; i < sLine.Syllables.Count; i++)
+                {
+                    var syllable = sLine.Syllables[i];
+                    var originalText = syllable.Text ?? string.Empty;
+                    var replacementText = NormalizeText(newParts[i]);
+
+                    var leading = Regex.Match(originalText, @"^\s+").Value;
+                    var trailing = Regex.Match(originalText, @"\s+$").Value;
+                    newSylls.Add(new SyllableInfo(leading + replacementText + trailing, syllable.StartTime, syllable.EndTime));
+                }
+
+                return new SyllableLineInfo(newSylls);
+            }
+
             // Replace a line's text (mainly for LineInfo)
             static LineInfo ReplaceLineText(LineInfo li, string newText)
             {
@@ -473,8 +514,8 @@ namespace Lyricify.Lyrics.Parsers
 
             if (line is SyllableLineInfo sMain)
             {
-                var replaced = ReplaceSyllableLineText(sMain, mainReplacement);
-                newMain = replaced;
+                newMain = ReplaceSyllableLineParts(sMain, existingSub == null ? replacementParts : null)
+                    ?? ReplaceSyllableLineText(sMain, mainReplacement);
             }
             else if (line is LineInfo liMain)
             {
