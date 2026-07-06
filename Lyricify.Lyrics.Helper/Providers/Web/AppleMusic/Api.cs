@@ -208,28 +208,43 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
         private static bool IsAccessTokenRefreshRequired(string? accessToken)
         {
             if (string.IsNullOrWhiteSpace(accessToken)) return true;
-
-            try
-            {
-                var parts = accessToken.Split('.');
-                if (parts.Length < 2) return true;
-
-                var payloadJson = Encoding.UTF8.GetString(Convert.FromBase64String(NormalizeBase64(parts[1])));
-                var exp = JObject.Parse(payloadJson)["exp"]?.Value<long?>();
-                if (!exp.HasValue) return true;
-
-                return DateTimeOffset.UtcNow >= DateTimeOffset.FromUnixTimeSeconds(exp.Value).AddMinutes(-1);
-            }
-            catch
-            {
-                return true;
-            }
+            return !TryReadJwt(accessToken, out _, out var payload) || IsJwtRefreshRequired(payload);
         }
 
         private static string NormalizeBase64(string value)
         {
             value = value.Replace('-', '+').Replace('_', '/');
             return value.PadRight(value.Length + (4 - value.Length % 4) % 4, '=');
+        }
+
+        private static bool TryReadJwt(string token, out JObject header, out JObject payload)
+        {
+            header = new JObject();
+            payload = new JObject();
+
+            try
+            {
+                var parts = token.Split('.');
+                if (parts.Length < 2) return false;
+
+                var headerJson = Encoding.UTF8.GetString(Convert.FromBase64String(NormalizeBase64(parts[0])));
+                var payloadJson = Encoding.UTF8.GetString(Convert.FromBase64String(NormalizeBase64(parts[1])));
+
+                header = JObject.Parse(headerJson);
+                payload = JObject.Parse(payloadJson);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private static bool IsJwtRefreshRequired(JObject payload)
+        {
+            var exp = payload["exp"]?.Value<long?>();
+            if (!exp.HasValue) return true;
+            return DateTimeOffset.UtcNow >= DateTimeOffset.FromUnixTimeSeconds(exp.Value).AddMinutes(-1);
         }
 
         private static bool ShouldRefreshAccessToken(HttpResponseMessage response)
@@ -272,29 +287,74 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
             // 注意：BaseApi.GetAsync 会清 header，所以这里用同一个 Api 调即可
             // 先抓 browse HTML
             var html = await GetAsync("https://music.apple.com/us/browse").ConfigureAwait(false);
+            var jsUrls = FindIndexScriptUrls(html);
+            if (jsUrls.Count == 0) throw new Exception("AppleMusic: Failed to find index*.js");
 
-            // 找 index*.js（更鲁棒）
-            var jsMatch = Regex.Match(html, "assets/index(?<hash>[^\"']+)\\.js", RegexOptions.IgnoreCase);
-            string jsUrl;
-
-            if (jsMatch.Success)
-                jsUrl = $"https://music.apple.com/assets/index{jsMatch.Groups["hash"].Value}.js";
-            else
+            foreach (var jsUrl in jsUrls)
             {
-                // 兜底
-                var m2 = Regex.Match(html, "(?<=index)(.*?)(?=\\.js\\\")");
-                if (!m2.Success) throw new Exception("AppleMusic: Failed to find index*.js");
-                jsUrl = $"https://music.apple.com/assets/index{m2.Value}.js";
+                var js = await GetAsync(jsUrl).ConfigureAwait(false);
+                var token = FindAccessTokenInScript(js);
+                if (!string.IsNullOrWhiteSpace(token))
+                    return token!;
             }
 
-            // 抓 js
-            var js = await GetAsync(jsUrl).ConfigureAwait(false);
+            throw new Exception("AppleMusic: Failed to find access token");
+        }
 
-            // 找 JWT（通常以 eyJh 开头）
-            var tokenMatch = Regex.Match(js, "(?=eyJh)(.*?)(?=\")");
-            if (!tokenMatch.Success) throw new Exception("AppleMusic: Failed to find access token");
+        private static List<string> FindIndexScriptUrls(string html)
+        {
+            var urls = Regex.Matches(html, "(?<url>(?:https://music\\.apple\\.com)?/?assets/index(?!-legacy)[^\\\"'<>\\s]*?\\.js)", RegexOptions.IgnoreCase)
+                .Cast<Match>()
+                .Select(x => NormalizeAppleMusicAssetUrl(x.Groups["url"].Value))
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-            return tokenMatch.Value;
+            if (urls.Count > 0) return urls;
+
+            return Regex.Matches(html, "(?<url>(?:https://music\\.apple\\.com)?/?assets/index[^\\\"'<>\\s]*?\\.js)", RegexOptions.IgnoreCase)
+                .Cast<Match>()
+                .Select(x => NormalizeAppleMusicAssetUrl(x.Groups["url"].Value))
+                .Where(x => !string.IsNullOrWhiteSpace(x))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
+        }
+
+        private static string NormalizeAppleMusicAssetUrl(string url)
+        {
+            url = (url ?? string.Empty).Trim();
+            if (url.StartsWith("https://", StringComparison.OrdinalIgnoreCase)) return url;
+            if (url.StartsWith("/", StringComparison.Ordinal)) return "https://music.apple.com" + url;
+            return "https://music.apple.com/" + url;
+        }
+
+        private static string? FindAccessTokenInScript(string js)
+        {
+            return Regex.Matches(js, @"eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+")
+                .Cast<Match>()
+                .Select(x => x.Value)
+                .Distinct(StringComparer.Ordinal)
+                .Select(token => new { Token = token, Score = GetAccessTokenScore(token) })
+                .Where(x => x.Score >= 0)
+                .OrderByDescending(x => x.Score)
+                .Select(x => x.Token)
+                .FirstOrDefault();
+        }
+
+        private static int GetAccessTokenScore(string token)
+        {
+            if (!TryReadJwt(token, out var header, out var payload) || IsJwtRefreshRequired(payload))
+                return -1;
+
+            var score = 0;
+            var kid = header["kid"]?.Value<string>() ?? string.Empty;
+            var issuer = payload["iss"]?.Value<string>() ?? string.Empty;
+
+            if (string.Equals(kid, "WebPlayKid", StringComparison.OrdinalIgnoreCase)) score += 100;
+            if (string.Equals(issuer, "AMPWebPlay", StringComparison.OrdinalIgnoreCase)) score += 100;
+            if (payload["root_https_origin"] != null) score += 10;
+
+            return score;
         }
 
         private async Task FetchStorefrontAsync(string mediaUserToken)
