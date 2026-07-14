@@ -54,7 +54,9 @@ namespace Lyricify.Lyrics.Decrypter.Qrc
             {
                 sb.Append(content.Substring(currentPos, match.Index - currentPos));
 
-                var f = match.Result(match.Groups[1].Value + match.Groups[2].Value.Replace("\"", "&quot;")) + "\"";
+                var f = match.Result(match.Groups[1].Value + match.Groups[2].Value
+                    .Replace("\"", "&quot;")
+                    .Replace("<", "&lt;")) + "\"";
 
                 sb.Append(f);
 
