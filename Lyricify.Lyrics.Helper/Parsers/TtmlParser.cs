@@ -27,7 +27,7 @@ namespace Lyricify.Lyrics.Parsers
             public List<string> SpanTexts { get; init; } = new();
         }
 
-        public static LyricsData Parse(string ttml)
+        public static LyricsData Parse(string ttml, bool useEmbeddedSimplifiedChineseLyrics = true)
         {
             var data = new LyricsData
             {
@@ -57,6 +57,9 @@ namespace Lyricify.Lyrics.Parsers
             ParseITunesMetadata(doc, data);
             var translations = ParseTranslations(doc);
             var agents = ParseAgents(doc);
+            var rootLanguage = (string?)doc.Root?.Attribute(NsXml + "lang");
+            if (!useEmbeddedSimplifiedChineseLyrics && IsLanguage(rootLanguage, "zh-Hant"))
+                data.TrackMetadata!.Language = new List<string> { rootLanguage!.Trim() };
 
             var pNodes = doc.Descendants(NsTtml + "p").ToList();
             bool anyLineSynced = false;
@@ -114,6 +117,9 @@ namespace Lyricify.Lyrics.Parsers
                     // replacement: replace MAIN line only
                     var replacement = tmap
                         .Where(kv => kv.Key.type.Equals("replacement", StringComparison.OrdinalIgnoreCase))
+                        .Where(kv => useEmbeddedSimplifiedChineseLyrics
+                            || !IsLanguage(rootLanguage, "zh-Hant")
+                            || !IsLanguage(kv.Key.lang, "zh-Hans"))
                         .Select(kv => kv.Value)
                         .FirstOrDefault(v => !string.IsNullOrWhiteSpace(v.Text));
 
