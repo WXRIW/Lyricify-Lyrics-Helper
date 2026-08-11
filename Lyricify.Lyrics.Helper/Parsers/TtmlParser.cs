@@ -21,6 +21,70 @@ namespace Lyricify.Lyrics.Parsers
             public string Type { get; init; } = ""; // person/group/other/...
         }
 
+        /// <summary>
+        /// Mirrors Apple Music's stateful agent alignment. Person agents alternate
+        /// sides when the active person changes, while group and other agents have
+        /// fixed normal/flipped alignments respectively.
+        /// </summary>
+        private sealed class AgentAlignmentState
+        {
+            private readonly Dictionary<string, Agent> _agents;
+            private readonly bool _hasAgentMetadata;
+            private readonly bool _isDuet;
+            private string? _currentPersonId;
+            private bool _isFlipped;
+
+            public AgentAlignmentState(IEnumerable<Agent> agents)
+            {
+                _agents = agents
+                    .GroupBy(agent => agent.Id, StringComparer.Ordinal)
+                    .ToDictionary(group => group.Key, group => group.First(), StringComparer.Ordinal);
+                _hasAgentMetadata = _agents.Count > 0;
+                _isDuet = _agents.Count > 1;
+            }
+
+            public LyricsAlignment GetAlignment(string? agentId)
+            {
+                if (!_hasAgentMetadata)
+                    return LyricsAlignment.Unspecified;
+
+                // Apple exposes a single-vocalist mode separately from its per-line
+                // normal/flipped value. Our model only exposes alignment, so keep a
+                // single vocalist on the normal (left) side.
+                if (!_isDuet)
+                    return LyricsAlignment.Left;
+
+                if (!string.IsNullOrWhiteSpace(agentId)
+                    && _agents.TryGetValue(agentId.Trim(), out var agent))
+                {
+                    if (agent.Type.Equals("person", StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (_currentPersonId == null)
+                        {
+                            _currentPersonId = agent.Id;
+                        }
+                        else if (!string.Equals(_currentPersonId, agent.Id, StringComparison.Ordinal))
+                        {
+                            _isFlipped = !_isFlipped;
+                            _currentPersonId = agent.Id;
+                        }
+                    }
+                    else if (agent.Type.Equals("group", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return LyricsAlignment.Left;
+                    }
+                    else if (agent.Type.Equals("other", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return LyricsAlignment.Right;
+                    }
+                }
+
+                // Missing agents and unknown agent types inherit the current person
+                // side in Apple Music instead of losing duet alignment.
+                return _isFlipped ? LyricsAlignment.Right : LyricsAlignment.Left;
+            }
+        }
+
         private sealed class TranslationValue
         {
             public string Text { get; init; } = "";
@@ -57,11 +121,24 @@ namespace Lyricify.Lyrics.Parsers
             ParseITunesMetadata(doc, data);
             var translations = ParseTranslations(doc);
             var agents = ParseAgents(doc);
+            var agentAlignment = new AgentAlignmentState(agents);
             var rootLanguage = (string?)doc.Root?.Attribute(NsXml + "lang");
             if (!useEmbeddedSimplifiedChineseLyrics && IsLanguage(rootLanguage, "zh-Hant"))
                 data.TrackMetadata!.Language = new List<string> { rootLanguage!.Trim() };
 
             var pNodes = doc.Descendants(NsTtml + "p").ToList();
+            var alignmentByLine = pNodes
+                .Select((node, index) => new
+                {
+                    Node = node,
+                    Index = index,
+                    StartTime = GetLineStartTime(node) ?? int.MaxValue
+                })
+                .OrderBy(line => line.StartTime)
+                .ThenBy(line => line.Index)
+                .ToDictionary(
+                    line => line.Node,
+                    line => agentAlignment.GetAlignment((string?)line.Node.Attribute(NsTtm + "agent")));
             bool anyLineSynced = false;
             bool anySyllableSynced = false;
 
@@ -98,7 +175,7 @@ namespace Lyricify.Lyrics.Parsers
                     continue;
 
                 // Alignment
-                var align = GetLyricsAlignmentFromAgent(agentId, agents);
+                var align = alignmentByLine[p];
                 SetAlignment(line, align);
 
                 // Background -> SubLine
@@ -183,48 +260,6 @@ namespace Lyricify.Lyrics.Parsers
                 agents.Add(new Agent { Id = id.Trim(), Type = type });
             }
             return agents;
-        }
-
-        private static LyricsAlignment GetLyricsAlignmentFromAgent(string? agentId, List<Agent> agents)
-        {
-            if (agents == null || agents.Count == 0) return LyricsAlignment.Unspecified;
-            if (agents.Count == 1) return LyricsAlignment.Left;
-            if (string.IsNullOrWhiteSpace(agentId)) return LyricsAlignment.Unspecified;
-
-            List<Agent> persons = new();
-            List<Agent> groups = new();
-            List<Agent> others = new();
-            List<Agent> rest = new();
-
-            foreach (var agent in agents)
-            {
-                if (agent.Type == "person") persons.Add(agent);
-                else if (agent.Type == "group") groups.Add(agent);
-                else if (agent.Type == "other") others.Add(agent);
-                else rest.Add(agent);
-            }
-
-            var hit = agents.Find(a => a.Id == agentId);
-            if (hit == null) return LyricsAlignment.Unspecified;
-
-            var typeGroups = agents.GroupBy(a => a.Type, StringComparer.OrdinalIgnoreCase).ToList();
-            if (agents.Count == 2
-                && typeGroups.Count == 2
-                && typeGroups.All(g => g.Count() == 1)
-                && typeGroups.Any(g => string.Equals(g.Key, "person", StringComparison.OrdinalIgnoreCase)))
-            {
-                return string.Equals(hit.Type, "person", StringComparison.OrdinalIgnoreCase)
-                    ? LyricsAlignment.Left
-                    : LyricsAlignment.Right;
-            }
-
-            bool left;
-            if (hit.Type == "person") left = persons.IndexOf(hit) % 2 == 0;
-            else if (hit.Type == "group") left = groups.IndexOf(hit) % 2 == 0;
-            else if (hit.Type == "other") left = others.IndexOf(hit) % 2 == 0;
-            else left = rest.IndexOf(hit) % 2 == 0;
-
-            return left ? LyricsAlignment.Left : LyricsAlignment.Right;
         }
 
         // =========================
@@ -836,6 +871,21 @@ namespace Lyricify.Lyrics.Parsers
         // Time parsing
         // =========================
         private static string NormalizeText(string text) => text.Replace("\r", "").Replace("\n", "");
+
+        private static int? GetLineStartTime(XElement line)
+        {
+            var lineStart = ParseTimeMs((string?)line.Attribute("begin"));
+            if (lineStart.HasValue)
+                return lineStart;
+
+            var spanStarts = line.Descendants(NsTtml + "span")
+                .Select(span => ParseTimeMs((string?)span.Attribute("begin")))
+                .Where(time => time.HasValue)
+                .Select(time => time!.Value)
+                .ToList();
+
+            return spanStarts.Count > 0 ? spanStarts.Min() : null;
+        }
 
         private static int? ParseTimeMs(string? value)
         {
