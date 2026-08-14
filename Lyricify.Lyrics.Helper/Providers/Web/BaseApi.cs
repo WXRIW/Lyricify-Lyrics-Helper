@@ -21,9 +21,9 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected async Task<HttpResponseMessage> GetResponseAsync(string url)
         {
-            SetRequestHeaders();
-
-            return await HttpClient.GetAsync(url);
+            using var request = new HttpRequestMessage(HttpMethod.Get, url);
+            ApplyHeaders(request);
+            return await HttpClient.SendAsync(request);
         }
 
         protected async Task<string> GetAsync(string url)
@@ -38,10 +38,12 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected async Task<string> PostAsync(string url, Dictionary<string, string> paramDict)
         {
-            SetRequestHeaders();
-
-            var content = new FormUrlEncodedContent(paramDict);
-            var response = await HttpClient.PostAsync(url, content);
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new FormUrlEncodedContent(paramDict)
+            };
+            ApplyHeaders(request);
+            var response = await HttpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
@@ -51,11 +53,12 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected async Task<string> PostJsonAsync(string url, object param)
         {
-            SetRequestHeaders();
-
-            var content = new StringContent(JsonConvert.SerializeObject(param), Encoding.UTF8, "application/json");
-
-            var response = await HttpClient.PostAsync(url, content);
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(JsonConvert.SerializeObject(param), Encoding.UTF8, "application/json")
+            };
+            ApplyHeaders(request);
+            var response = await HttpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
@@ -65,10 +68,12 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected async Task<string> PostAsync(string url, Dictionary<string, object> paramDict)
         {
-            SetRequestHeaders();
-
-            var jsonContent = new StringContent(paramDict.ToJson(), Encoding.UTF8, "application/json");
-            var response = await HttpClient.PostAsync(url, jsonContent);
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(paramDict.ToJson(), Encoding.UTF8, "application/json")
+            };
+            ApplyHeaders(request);
+            var response = await HttpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
@@ -78,10 +83,12 @@ namespace Lyricify.Lyrics.Providers.Web
 
         protected async Task<string> PostAsync(string url, string param)
         {
-            SetRequestHeaders();
-
-            var jsonContent = new StringContent(param, Encoding.UTF8, "application/json");
-            var response = await HttpClient.PostAsync(url, jsonContent);
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new StringContent(param, Encoding.UTF8, "application/json")
+            };
+            ApplyHeaders(request);
+            var response = await HttpClient.SendAsync(request);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadAsStringAsync();
@@ -89,22 +96,20 @@ namespace Lyricify.Lyrics.Providers.Web
             return result;
         }
 
-        private void SetRequestHeaders()
+        private void ApplyHeaders(HttpRequestMessage request)
         {
-            HttpClient.DefaultRequestHeaders.Clear();
-
             if (!string.IsNullOrEmpty(HttpUserAgent))
-                HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("User-Agent", HttpUserAgent);
+                request.Headers.TryAddWithoutValidation("User-Agent", HttpUserAgent);
             if (!string.IsNullOrEmpty(HttpRefer))
-                HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Referer", HttpRefer);
+                request.Headers.TryAddWithoutValidation("Referer", HttpRefer);
             if (!string.IsNullOrEmpty(HttpCookie))
-                HttpClient.DefaultRequestHeaders.TryAddWithoutValidation("Cookie", HttpCookie);
+                request.Headers.TryAddWithoutValidation("Cookie", HttpCookie);
 
             if (AdditionalHeaders is not null)
             {
                 foreach (var pair in AdditionalHeaders)
                 {
-                    HttpClient.DefaultRequestHeaders.TryAddWithoutValidation(pair.Key, pair.Value);
+                    request.Headers.TryAddWithoutValidation(pair.Key, pair.Value);
                 }
             }
         }
