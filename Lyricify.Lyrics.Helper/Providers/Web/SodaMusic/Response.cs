@@ -521,11 +521,22 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
         [JsonProperty("track_player")]
         public TrackPlayer TrackPlayer { get; set; }
 
+        [JsonProperty("seo_track")]
+        public SeoTrackDetail SeoTrack { get; set; }
+
         [JsonProperty("risk_result")]
         public int? RiskResult { get; set; }
 
         [JsonProperty("expire_at")]
         public long? ExpireAt { get; set; }
+    }
+
+    public class SeoTrackDetail
+    {
+        public TrackInfo Track { get; set; }
+
+        [JsonProperty("track_player")]
+        public TrackPlayer TrackPlayer { get; set; }
     }
 
     public class LyricInfo
