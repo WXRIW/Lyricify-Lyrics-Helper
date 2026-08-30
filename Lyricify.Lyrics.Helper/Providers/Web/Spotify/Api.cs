@@ -34,7 +34,12 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
         private const string SearchUrl = "https://api.spotify.com/v1/search";
         private const string PathfinderSearchUrl = "https://api-partner.spotify.com/pathfinder/v1/query";
         private const string ServerTimeUrl = "https://open.spotify.com/api/server-time";
-        private const string SecretKeyUrl = "https://raw.githubusercontent.com/xyloflake/spot-secrets-go/main/secrets/secretDict.json";
+        private static readonly string[] SecretKeyUrls =
+        {
+            "https://code.thetadev.de/ThetaDev/spotify-secrets/raw/branch/main/secrets/secretDict.json",
+            "https://raw.githubusercontent.com/Thereallo1026/spotify-secrets/refs/heads/main/secrets/secretDict.json",
+            "https://raw.githubusercontent.com/xyloflake/spot-secrets-go/main/secrets/secretDict.json",
+        };
         private const string BundledSecretJson = "{\"59\":[123,105,79,70,110,59,52,125,60,49,80,70,89,75,80,86,63,53,123,37,117,49,52,93,77,62,47,86,48,104,68,72],\"60\":[79,109,69,123,90,65,46,74,94,34,58,48,70,71,92,85,122,63,91,64,87,87],\"61\":[44,55,47,42,70,40,34,114,76,74,50,111,120,97,75,76,94,102,43,69,49,120,118,80,64,78]}";
         private const string SpotifyUserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36";
         private static readonly string[] PathfinderSearchHashes =
@@ -51,7 +56,7 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
         {
             lock (_lock)
             {
-                _spDc = spDc?.Trim() ?? string.Empty;
+                _spDc = NormalizeSpDc(spDc);
             }
         }
 
@@ -61,6 +66,22 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
             {
                 return _spDc;
             }
+        }
+
+        private static string NormalizeSpDc(string? spDc)
+        {
+            var value = spDc?.Trim() ?? string.Empty;
+            var cookieValue = value
+                .Split(';', StringSplitOptions.RemoveEmptyEntries)
+                .Select(part => part.Trim())
+                .FirstOrDefault(part => part.StartsWith("sp_dc=", StringComparison.OrdinalIgnoreCase));
+
+            if (cookieValue != null)
+            {
+                value = cookieValue["sp_dc=".Length..].Trim();
+            }
+
+            return value.Trim().Trim('"');
         }
 
         public void SetAccessToken(string? token, long expirationTimestampMs = 0)
@@ -366,38 +387,58 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
             }
 
             var parameters = await BuildTokenParametersAsync().ConfigureAwait(false);
-            var query = string.Join("&", parameters.Select(t => $"{WebUtility.UrlEncode(t.Key)}={WebUtility.UrlEncode(t.Value)}"));
-            using var request = new HttpRequestMessage(HttpMethod.Get, TokenUrl + "?" + query);
-            request.Headers.TryAddWithoutValidation("User-Agent", SpotifyUserAgent);
-            request.Headers.TryAddWithoutValidation("Cookie", $"sp_dc={spDc}");
-
-            using var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-            var text = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-
-            if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
+            var response = await SendTokenRequestAsync(spDc, parameters).ConfigureAwait(false);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                throw new UnauthorizedAccessException("Spotify sp_dc is invalid.");
+                response.Dispose();
+                parameters = await BuildTokenParametersAsync(useLegacyParameters: true).ConfigureAwait(false);
+                response = await SendTokenRequestAsync(spDc, parameters).ConfigureAwait(false);
             }
 
-            if (!response.IsSuccessStatusCode)
+            using (response)
             {
-                throw new HttpRequestException($"Failed to refresh Spotify access token. HTTP {(int)response.StatusCode}: {PreviewText(text)}");
-            }
+                var text = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
 
-            var payload = JsonConvert.DeserializeObject<SpotifyTokenResponse>(text);
-            if (payload?.IsAnonymous == true || string.IsNullOrWhiteSpace(payload?.AccessToken))
-            {
-                throw new UnauthorizedAccessException("Spotify sp_dc is invalid.");
-            }
+                if (response.StatusCode == HttpStatusCode.Unauthorized || response.StatusCode == HttpStatusCode.Forbidden)
+                {
+                    throw new UnauthorizedAccessException("Spotify sp_dc is invalid.");
+                }
 
-            lock (_lock)
-            {
-                _accessToken = payload.AccessToken!;
-                _accessTokenExpirationTimestampMs = payload.AccessTokenExpirationTimestampMs;
+                if (!response.IsSuccessStatusCode)
+                {
+                    throw new HttpRequestException($"Failed to refresh Spotify access token. HTTP {(int)response.StatusCode}: {PreviewText(text)}");
+                }
+
+                var payload = JsonConvert.DeserializeObject<SpotifyTokenResponse>(text);
+                if (payload?.IsAnonymous == true || string.IsNullOrWhiteSpace(payload?.AccessToken))
+                {
+                    throw new UnauthorizedAccessException("Spotify sp_dc is invalid.");
+                }
+
+                lock (_lock)
+                {
+                    _accessToken = payload.AccessToken!;
+                    _accessTokenExpirationTimestampMs = payload.AccessTokenExpirationTimestampMs;
+                }
             }
         }
 
-        private async Task<List<KeyValuePair<string, string>>> BuildTokenParametersAsync()
+        private static async Task<HttpResponseMessage> SendTokenRequestAsync(
+            string spDc,
+            IEnumerable<KeyValuePair<string, string>> parameters)
+        {
+            var query = string.Join("&", parameters.Select(t => $"{WebUtility.UrlEncode(t.Key)}={WebUtility.UrlEncode(t.Value)}"));
+            using var request = new HttpRequestMessage(HttpMethod.Get, TokenUrl + "?" + query);
+            request.Headers.TryAddWithoutValidation("User-Agent", SpotifyUserAgent);
+            request.Headers.TryAddWithoutValidation("Accept", "application/json");
+            request.Headers.TryAddWithoutValidation("App-Platform", "WebPlayer");
+            request.Headers.TryAddWithoutValidation("Origin", "https://open.spotify.com");
+            request.Headers.TryAddWithoutValidation("Referer", "https://open.spotify.com/");
+            request.Headers.TryAddWithoutValidation("Cookie", $"sp_dc={spDc}");
+            return await _httpClient.SendAsync(request).ConfigureAwait(false);
+        }
+
+        private async Task<List<KeyValuePair<string, string>>> BuildTokenParametersAsync(bool useLegacyParameters = false)
         {
             using var serverTimeRequest = new HttpRequestMessage(HttpMethod.Get, ServerTimeUrl);
             using var serverTimeResponse = await _httpClient.SendAsync(serverTimeRequest).ConfigureAwait(false);
@@ -408,33 +449,41 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
 
             var (secret, version) = await FetchLatestSecretAsync().ConfigureAwait(false);
             var totp = GenerateTotp(serverTime, secret);
-            var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
-
-            return new List<KeyValuePair<string, string>>
+            var parameters = new List<KeyValuePair<string, string>>
             {
-                new("reason", "transport"),
+                new("reason", useLegacyParameters ? "transport" : "init"),
                 new("productType", "web-player"),
                 new("totp", totp),
                 new("totpVer", version),
-                new("ts", timestamp),
+                new("totpServer", totp),
             };
+
+            if (useLegacyParameters)
+            {
+                parameters.Add(new("ts", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()));
+            }
+
+            return parameters;
         }
 
         private async Task<(string Secret, string Version)> FetchLatestSecretAsync()
         {
-            try
+            foreach (var secretKeyUrl in SecretKeyUrls)
             {
-                using var request = new HttpRequestMessage(HttpMethod.Get, SecretKeyUrl);
-                using var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
-                response.EnsureSuccessStatusCode();
-                var raw = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                if (TryParseSecretPayload(raw, out var parsed))
+                try
                 {
-                    return parsed;
+                    using var request = new HttpRequestMessage(HttpMethod.Get, secretKeyUrl);
+                    using var response = await _httpClient.SendAsync(request).ConfigureAwait(false);
+                    response.EnsureSuccessStatusCode();
+                    var raw = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    if (TryParseSecretPayload(raw, out var parsed))
+                    {
+                        return parsed;
+                    }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
 
             if (TryParseSecretPayload(BundledSecretJson, out var fallback))
@@ -452,8 +501,11 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
             try
             {
                 var json = JObject.Parse(raw);
-                var lastProperty = json.Properties().LastOrDefault();
-                if (lastProperty?.Value is not JArray array)
+                var latestProperty = json.Properties()
+                    .Where(property => int.TryParse(property.Name, out _))
+                    .OrderByDescending(property => int.Parse(property.Name))
+                    .FirstOrDefault();
+                if (latestProperty?.Value is not JArray array)
                 {
                     return false;
                 }
@@ -463,7 +515,7 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
                     .Select(value => value.ToString())
                     .ToArray();
 
-                result = (string.Concat(transformed), lastProperty.Name);
+                result = (string.Concat(transformed), latestProperty.Name);
                 return true;
             }
             catch
