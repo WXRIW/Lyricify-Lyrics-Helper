@@ -106,10 +106,24 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         {
             var result = new Dictionary<string, Datum>();
 
-            var urls = await GetSongsUrl(songId, bitrate);
+            SongUrls? urls = null;
+            try
+            {
+                urls = await GetSongsUrl(songId, bitrate);
+            }
+            catch
+            {
+                // The legacy WEAPI is frequently rejected with code -460 on server networks.
+            }
+
+            if (urls?.Code != 200 || urls.Data == null || !urls.Data.Any(x => !string.IsNullOrWhiteSpace(x.Url)))
+            {
+                urls = await GetSongsUrlNew(songId, bitrate);
+            }
+
             if (urls?.Code == 200)
             {
-                foreach (var datum in urls.Data)
+                foreach (var datum in urls.Data ?? Array.Empty<Datum>())
                 {
                     result.Add(datum.Id, datum);
                 }
@@ -134,6 +148,10 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             }
 
             var detailResult = await GetDetail(songIds);
+            if (detailResult == null || detailResult.Code != 200 || detailResult.Songs == null || detailResult.Songs.Length == 0)
+            {
+                detailResult = await GetDetailNew(songIds);
+            }
             if (detailResult == null || detailResult.Code != 200)
             {
                 return result;
@@ -266,6 +284,27 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             return JsonConvert.DeserializeObject<SongUrls>(raw);
         }
 
+        private async Task<SongUrls?> GetSongsUrlNew(string[] songIds, long bitrate)
+        {
+            const string url = "https://interface3.music.163.com/eapi/song/enhance/player/url/v1";
+            var level = bitrate switch
+            {
+                <= 128000 => "standard",
+                <= 192000 => "higher",
+                <= 320000 => "exhigh",
+                <= 999000 => "lossless",
+                _ => "hires",
+            };
+            var data = new Dictionary<string, string>
+            {
+                { "ids", $"[{string.Join(",", songIds)}]" },
+                { "level", level },
+                { "encodeType", "flac" },
+            };
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            return JsonConvert.DeserializeObject<SongUrls>(raw);
+        }
+
         /// <summary>
         /// 批量获得歌曲详情
         /// </summary>
@@ -302,6 +341,44 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             {
                 return null;
             }
+        }
+
+        private async Task<DetailResult?> GetDetailNew(IEnumerable<string> songIds)
+        {
+            const string url = "https://interface3.music.163.com/eapi/v3/song/detail";
+            var ids = songIds.ToArray();
+            if (ids.Length == 0) return null;
+
+            var requests = ids.Select(id => new Dictionary<string, object>
+            {
+                { "id", long.TryParse(id, out var numericId) ? (object)numericId : id },
+                { "v", 0 },
+            });
+            var data = new Dictionary<string, string>
+            {
+                { "c", JsonConvert.SerializeObject(requests) },
+                { "rv", "true" },
+            };
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var eapi = JsonConvert.DeserializeObject<EapiDetailResult>(raw);
+            if (eapi == null) return null;
+
+            return new DetailResult
+            {
+                Code = eapi.Code,
+                Privileges = eapi.Privileges,
+                Songs = (eapi.Songs ?? Array.Empty<EapiSong>()).Select(song => new Song
+                {
+                    Name = song.Name,
+                    Id = song.Id,
+                    Artists = song.Artists,
+                    Alias = song.Alias,
+                    Album = song.Album,
+                    Duration = song.Duration,
+                    PublishTime = song.PublishTime,
+                    Privilege = song.Privilege,
+                }).ToArray(),
+            };
         }
 
         private Dictionary<string, string> Prepare(string raw)
