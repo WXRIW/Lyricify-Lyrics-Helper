@@ -1,4 +1,5 @@
 ﻿using Lyricify.Lyrics.Models;
+using System;
 
 namespace Lyricify.Lyrics.Helpers
 {
@@ -36,6 +37,65 @@ namespace Lyricify.Lyrics.Helpers
             LyricsRawTypes.Musixmatch => LyricsTypes.Musixmatch,
             _ => LyricsTypes.Unknown,
         };
+
+        public static bool TryParseRawType(string? name, out LyricsRawTypes type)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                type = LyricsRawTypes.Unknown;
+                return false;
+            }
+
+            var value = name.Trim();
+            if (!char.IsDigit(value[0])
+                && Enum.TryParse(value, true, out type)
+                && type != LyricsRawTypes.Unknown)
+            {
+                return true;
+            }
+
+            type = value.ToUpperInvariant() switch
+            {
+                "QRC (FULL)" or "QRC (XML)" => LyricsRawTypes.QrcFull,
+                "YRC (FULL)" or "YRC (JSON)" => LyricsRawTypes.YrcFull,
+                "APPLE MUSIC (JSON)" or "APPLE MUSIC JSON" or "APPLE MUSIC" => LyricsRawTypes.AppleJson,
+                "LYRICIFY LINE" or "LYRICIFY LINES" => LyricsRawTypes.LyricifyLines,
+                "LYRICIFY SYLLABLE" or "LYRICIFY SYLLABLES" => LyricsRawTypes.LyricifySyllable,
+                "MUSIXMATCH (JSON)" or "MUSIXMATCH JSON" or "MUSIXMATCHJSON" => LyricsRawTypes.Musixmatch,
+                "SPOTIFY (JSON)" or "SPOTIFY JSON" or "SPOTIFYJSON" => LyricsRawTypes.Spotify,
+                _ => LyricsRawTypes.Unknown,
+            };
+            return type != LyricsRawTypes.Unknown;
+        }
+
+        public static string GetDisplayName(this LyricsRawTypes type) => type switch
+        {
+            LyricsRawTypes.Lrc => "LRC",
+            LyricsRawTypes.Qrc => "QRC",
+            LyricsRawTypes.QrcFull => "QRC (Full)",
+            LyricsRawTypes.Krc => "KRC",
+            LyricsRawTypes.Yrc => "YRC",
+            LyricsRawTypes.YrcFull => "YRC (Full)",
+            LyricsRawTypes.Ttml => "TTML",
+            LyricsRawTypes.AppleJson => "Apple Music (JSON)",
+            LyricsRawTypes.LyricifyLines => "Lyricify Lines",
+            LyricsRawTypes.LyricifySyllable => "Lyricify Syllable",
+            LyricsRawTypes.Musixmatch => "Musixmatch (JSON)",
+            LyricsRawTypes.Spotify => "Spotify (JSON)",
+            _ => string.Empty,
+        };
+
+        public static string GetRawTypeDisplayName(string? name)
+        {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                return string.Empty;
+            }
+
+            return TryParseRawType(name, out var type)
+                ? type.GetDisplayName()
+                : name.Trim();
+        }
 
         /// <summary>
         /// 字符串是否是指定的歌词类型
