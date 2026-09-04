@@ -16,7 +16,7 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
     {
         protected override string? HttpRefer => "https://music.apple.com/";
 
-        // BaseApi 每次请求都会 Clear headers，所以我们把“动态 header”都通过 AdditionalHeaders 注入
+        // 动态 header 通过 AdditionalHeaders 注入到单次请求中
         protected override Dictionary<string, string>? AdditionalHeaders
         {
             get
@@ -284,7 +284,6 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
 
         private async Task<string> GetAccessTokenAsync()
         {
-            // 注意：BaseApi.GetAsync 会清 header，所以这里用同一个 Api 调即可
             // 先抓 browse HTML
             var html = await GetAsync("https://music.apple.com/us/browse").ConfigureAwait(false);
             var jsUrls = FindIndexScriptUrls(html);
@@ -360,7 +359,7 @@ namespace Lyricify.Lyrics.Providers.Web.AppleMusic
         private async Task FetchStorefrontAsync(string mediaUserToken)
         {
             // 这里必须带 Authorization + media-user-token
-            // 因为 BaseApi 每次 Clear header，所以本方法开头先把 _mediaUserToken 写入静态字段（让 AdditionalHeaders 注入）
+            // 先把 _mediaUserToken 写入静态字段，让 AdditionalHeaders 注入该次请求
             lock (_lock) _mediaUserToken = mediaUserToken;
 
             var json = await GetAsyncWithAccessTokenRetry("https://amp-api.music.apple.com/v1/me/storefront").ConfigureAwait(false);

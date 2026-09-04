@@ -36,12 +36,15 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             var data2 = EApi(url, data);
             url = Regex.Replace(url, @"\w*api", "eapi");
 
-            httpClient.DefaultRequestHeaders.Clear();
+            using var request = new HttpRequestMessage(HttpMethod.Post, url)
+            {
+                Content = new FormUrlEncodedContent(data2)
+            };
             foreach (var h in headers)
             {
-                httpClient.DefaultRequestHeaders.Add(h.Key, h.Value);
+                request.Headers.TryAddWithoutValidation(h.Key, h.Value);
             }
-            using var response = await httpClient.PostAsync(url, new FormUrlEncodedContent(data2));
+            using var response = await httpClient.SendAsync(request);
             response.EnsureSuccessStatusCode();
             byte[] buffer = await response.Content.ReadAsByteArrayAsync();
             return Encoding.UTF8.GetString(buffer);

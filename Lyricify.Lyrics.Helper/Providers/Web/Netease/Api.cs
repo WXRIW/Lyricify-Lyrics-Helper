@@ -10,6 +10,8 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
     {
         protected override string HttpRefer => "https://music.163.com/";
 
+        protected override string? HttpCookie => Cookie;
+
         protected override Dictionary<string, string>? AdditionalHeaders => null;
 
         // General
