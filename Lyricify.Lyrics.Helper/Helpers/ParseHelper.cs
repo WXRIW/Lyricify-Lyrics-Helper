@@ -17,7 +17,7 @@ namespace Lyricify.Lyrics.Helpers
             var type = TypeHelper.GetLyricsTypes(lyrics);
             if (type != LyricsRawTypes.Unknown)
             {
-                ParseLyrics(lyrics, type);
+                return ParseLyrics(lyrics, type);
             }
             return null;
         }

@@ -12,7 +12,7 @@ namespace Lyricify.Lyrics.Helpers
         /// <returns><see cref="LyricsRawTypes"/>, 如果没有识别成功则会返回 <see cref="LyricsRawTypes.Unknown"/>.</returns>
         public static LyricsRawTypes GetLyricsTypes(string lyrics)
         {
-            return LyricsRawTypes.Unknown;
+            return Types.LyricsTypeDetector.Detect(lyrics);
         }
 
         /// <summary>
@@ -104,12 +104,10 @@ namespace Lyricify.Lyrics.Helpers
         /// <param name="type">歌词类型</param>
         public static bool IsLyricsType(string lyrics, LyricsTypes type)
         {
-            return type switch
-            {
-                LyricsTypes.LyricifyLines => Types.LyricifyLines.IsLyricifyLines(lyrics),
-                LyricsTypes.Lrc => Types.Lrc.IsLrc(lyrics),
-                _ => false, // 暂不支持类型判断的，返回 false
-            };
+            if (type == LyricsTypes.Unknown) return false;
+
+            var rawType = GetLyricsTypes(lyrics);
+            return rawType != LyricsRawTypes.Unknown && rawType.GetLyricsType() == type;
         }
 
         /// <summary>
@@ -119,16 +117,13 @@ namespace Lyricify.Lyrics.Helpers
         /// <param name="types">歌词类型列表</param>
         public static bool IsLyricsType(string lyrics, LyricsTypes[] types)
         {
-            if (types.Length < 1) return false;
+            if (types is not { Length: > 0 }) return false;
 
-            foreach (var type in types)
-            {
-                if (IsLyricsType(lyrics, type))
-                {
-                    return true;
-                }
-            }
-            return false;
+            var rawType = GetLyricsTypes(lyrics);
+            if (rawType == LyricsRawTypes.Unknown) return false;
+
+            var type = rawType.GetLyricsType();
+            return type != LyricsTypes.Unknown && types.Contains(type);
         }
     }
 }
