@@ -488,7 +488,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
             public int Restricted { get; set; }
 
             [JsonProperty("first_release_date")]
-            public DateTime FirstReleaseDate { get; set; }
+            public DateTime? FirstReleaseDate { get; set; }
 
             [JsonProperty("updated_time")]
             public DateTime UpdatedTime { get; set; }

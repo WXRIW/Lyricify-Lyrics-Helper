@@ -70,9 +70,50 @@ namespace Lyricify.Lyrics.Searchers
             return await SearchForResults(track);
         }
 
-        public Task<List<ISearchResult>?> SearchForResults(string searchString)
+        public async Task<List<ISearchResult>?> SearchForResults(string searchString)
         {
-            return SearchForResults(searchString, string.Empty);
+            return await SearchForResultsAsync(
+                searchString,
+                null,
+                null,
+                null,
+                CancellationToken.None);
+        }
+
+        public async Task<List<ISearchResult>> SearchForResultsAsync(
+            string? keyword,
+            string? track,
+            string? artist,
+            int? durationMs,
+            CancellationToken cancellationToken)
+        {
+            var tracks = await Providers.Web.Providers.MusixmatchApi.SearchTracksAsync(
+                keyword,
+                track,
+                artist,
+                durationMs is > 0 ? durationMs / 1000 : null,
+                cancellationToken);
+            var results = tracks
+                .Select(result => (ISearchResult)new MusixmatchSearchResult(result))
+                .ToList();
+            if (string.IsNullOrWhiteSpace(track))
+            {
+                return results;
+            }
+
+            var metadata = new TrackMetadata
+            {
+                Title = track,
+                Artist = artist,
+                DurationMs = durationMs,
+            };
+            foreach (var result in results)
+            {
+                result.SetMatchType(CompareHelper.CompareTrack(metadata, result));
+            }
+            results.Sort((left, right) =>
+                -((int)left.MatchType!).CompareTo((int)right.MatchType!));
+            return results;
         }
     }
 }

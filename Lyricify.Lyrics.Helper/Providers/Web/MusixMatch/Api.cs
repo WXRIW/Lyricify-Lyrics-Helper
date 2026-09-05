@@ -1,220 +1,542 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 {
     public class Api : BaseApi
     {
+        private const string ApiBaseUrl = "https://apic.musixmatch.com/ws/1.1/";
+        private const string AppId = "android-player-v1.0";
+        private const int RequestRetryCount = 5;
+        private const int ResultRetryCount = 5;
+
+        private static readonly HttpClient Client = CreateClient();
+        private static readonly SemaphoreSlim RequestLock = new(1, 1);
+        private readonly SemaphoreSlim tokenLock = new(1, 1);
+        private static DateTime lastRequestUtc = DateTime.MinValue;
+        private string? userToken;
+
         protected override string? HttpRefer => null;
 
-        protected override Dictionary<string, string>? AdditionalHeaders =>
-            new()
-            {
-                { "authority", "apic-desktop.musixmatch.com" }
-            };
+        protected override Dictionary<string, string>? AdditionalHeaders => null;
 
-        private string? _userToken { get; set; } = null;
-
-        /// <summary>
-        /// 设置 UserToken (例如之前缓存的 Token)
-        /// </summary>
         public void SetUserToken(string token)
         {
-            _userToken = token;
+            userToken = IsUsableToken(token) ? token : null;
         }
 
-        /// <summary>
-        /// 获取当前的 UserToken (例如用于缓存)
-        /// </summary>
         public string? GetUserToken()
         {
-            return _userToken;
+            return userToken;
         }
 
         public async Task<GetTokenResponse?> GetToken()
         {
-            var response = await GetAsync("https://apic-desktop.musixmatch.com/ws/1.1/token.get?app_id=web-desktop-app-v1.0&t=" + RandomId());
-            var resp = JsonConvert.DeserializeObject<GetTokenResponse>(response);
-            return resp;
+            var response = await RequestTokenAsync(CancellationToken.None);
+            return response is null
+                ? null
+                : JsonConvert.DeserializeObject<GetTokenResponse>(response.ToString(Formatting.None));
         }
 
-        /// <summary>
-        /// 获取曲目
-        /// </summary>
-        /// <param name="track">曲目</param>
-        /// <param name="artist">艺人</param>
-        /// <param name="duration">曲目市场 (秒)</param>
         public async Task<GetTrackResponse?> GetTrack(string track, string artist, int? duration = null)
         {
-            await EnsureUserToken();
+            var tracks = await SearchTracksAsync(
+                null,
+                track,
+                artist,
+                duration,
+                CancellationToken.None);
+            var result = tracks.FirstOrDefault();
+            if (result is null)
+            {
+                return null;
+            }
 
-            var response = await MusixmatchGetAsync("matcher.track.get" +
-                $"?q_track={track}" +
-                $"&q_artist={artist}" +
-                (duration.HasValue ? $"&q_duration={duration}" : string.Empty));
-            if (response == null) return null;
-            return JsonConvert.DeserializeObject<GetTrackResponse>(response);
+            return new GetTrackResponse
+            {
+                Message = new GetTrackResponse.MessageContent
+                {
+                    Header = new GetTrackResponse.Header
+                    {
+                        StatusCode = 200,
+                        Confidence = 1000,
+                    },
+                    Body = new GetTrackResponse.Body
+                    {
+                        Track = result,
+                    },
+                },
+            };
         }
 
-        /// <summary>
-        /// 获取完整歌词
-        /// </summary>
-        /// <param name="track">曲目</param>
-        /// <param name="artist">艺人</param>
-        /// <param name="duration">曲目市场 (秒)</param>
-        public async Task<GetTrackResponse?> GetFullLyrics(string track, string artist, int? duration = null)
+        public async Task<IReadOnlyList<GetTrackResponse.Track>> SearchTracksAsync(
+            string? keyword,
+            string? track,
+            string? artist,
+            int? duration,
+            CancellationToken cancellationToken)
         {
-            await EnsureUserToken();
+            var parameters = new List<string>
+            {
+                "page_size=10",
+                "page=1",
+                "s_track_rating=desc",
+            };
+            AddParameter(parameters, "q", keyword);
+            AddParameter(parameters, "q_track", track);
+            AddParameter(parameters, "q_artist", artist);
+            if (duration is > 0)
+            {
+                parameters.Add($"q_duration={duration.Value}");
+            }
 
+            var request = "track.search?" + string.Join("&", parameters);
+            for (var attempt = 0; attempt < ResultRetryCount; attempt++)
+            {
+                var response = await SendApiRequestAsync(request, cancellationToken);
+                if (GetBody(response)?["track_list"] is JArray list)
+                {
+                    var results = list
+                        .Select(item => item["track"]?.ToObject<GetTrackResponse.Track>())
+                        .Where(item => item is not null)
+                        .Select(item => item!)
+                        .ToList();
+                    if (results.Count > 0 && HasRelatedResult(results, keyword, track, artist))
+                    {
+                        return results;
+                    }
+                }
+
+                if (attempt + 1 < ResultRetryCount)
+                {
+                    await DelayBeforeResultRetryAsync(attempt, cancellationToken);
+                }
+            }
+
+            return Array.Empty<GetTrackResponse.Track>();
+        }
+
+        public async Task<GetTrackResponse.Track?> ResolveTrackAsync(
+            string identifier,
+            CancellationToken cancellationToken)
+        {
+            if (int.TryParse(identifier, out var trackId))
+            {
+                var response = await SendApiRequestAsync(
+                    $"track.get?track_id={trackId}",
+                    cancellationToken);
+                var track = GetBody(response)?["track"]?.ToObject<GetTrackResponse.Track>();
+                if (track?.TrackId == trackId)
+                {
+                    return track;
+                }
+
+                track = GetMatchedTrack(await GetLyricsResponseAsync(trackId, cancellationToken));
+                return track?.TrackId == trackId ? track : null;
+            }
+
+            var vanity = NormalizeVanity(identifier);
+            var parts = vanity.Split(new[] { '/' }, 2);
+            if (parts.Length != 2)
+            {
+                return null;
+            }
+
+            var artist = DecodeVanityPart(parts[0]);
+            var title = DecodeVanityPart(parts[1]);
+            var results = await SearchTracksAsync(null, title, artist, null, cancellationToken);
+            return results.FirstOrDefault(result =>
+                    NormalizeVanity(result.CommontrackVanityId)
+                        .Equals(vanity, StringComparison.OrdinalIgnoreCase))
+                ?? results.FirstOrDefault(result =>
+                    result.TrackName.Equals(title, StringComparison.OrdinalIgnoreCase)
+                    && result.ArtistName.Split(new[] { " feat. ", " & " }, StringSplitOptions.RemoveEmptyEntries)
+                        .Any(value => value.Equals(artist, StringComparison.OrdinalIgnoreCase)));
+        }
+
+        public async Task<GetTrackResponse?> GetFullLyrics(
+            string track,
+            string artist,
+            int? duration = null)
+        {
             var response = await GetFullLyricsRaw(track, artist, duration);
-            if (response == null) return null;
-            return JsonConvert.DeserializeObject<GetTrackResponse>(response);
+            return response is null ? null : JsonConvert.DeserializeObject<GetTrackResponse>(response);
         }
 
-        /// <summary>
-        /// 获取完整歌词 (返回的原始字符串)
-        /// </summary>
-        /// <param name="trackId">曲目 ID</param>
-        /// <returns>接口返回的原始字符串，可直接用 MusixmatchParser 解析</returns>
-        public async Task<string?> GetFullLyricsRaw(string trackId)
+        public Task<string?> GetFullLyricsRaw(string trackId)
         {
-            await EnsureUserToken();
-
-            var response = await MusixmatchGetAsync("macro.subtitles.get?namespace=lyrics_richsynched&optional_calls=track.richsync&subtitle_format=lrc" +
-                $"&track_id={trackId}" +
-                "&f_subtitle_length_max_deviation=40");
-            return response;
+            return GetFullLyricsRaw(trackId, null, CancellationToken.None);
         }
 
-        /// <summary>
-        /// 获取完整歌词 (返回的原始字符串)
-        /// </summary>
-        /// <param name="track">曲目</param>
-        /// <param name="artist">艺人</param>
-        /// <param name="duration">曲目市场 (秒)</param>
-        /// <returns>接口返回的原始字符串，可直接用 MusixmatchParser 解析</returns>
-        public async Task<string?> GetFullLyricsRaw(string track, string artist, int? duration = null)
+        public async Task<string?> GetFullLyricsRaw(
+            string trackId,
+            string? expectedVanityId,
+            CancellationToken cancellationToken)
         {
-            await EnsureUserToken();
-
-            var response = await MusixmatchGetAsync("macro.subtitles.get?namespace=lyrics_richsynched&optional_calls=track.richsync&subtitle_format=lrc" +
-                $"&q_track={track}" +
-                $"&q_artist={artist}" +
-                (duration.HasValue ? $"&f_subtitle_length={duration}&q_duration={duration}" : string.Empty) +
-                "&f_subtitle_length_max_deviation=40");
-            return response;
-        }
-
-        /// <summary>
-        /// 获取翻译
-        /// </summary>
-        /// <param name="trackId">曲目 ID</param>
-        /// <param name="language">翻译的语言</param>
-        public async Task<GetTranslationsResponse?> GetTranslations(string trackId, string language = "zh")
-        {
-            var response = await MusixmatchGetAsync("crowd.track.translations.get?translation_fields_set=minimal" +
-                $"&selected_language={language}" +
-                $"&track_id={trackId}" +
-                $"&comment_format=text&part=user");
-            if (response == null) return null;
-            return JsonConvert.DeserializeObject<GetTranslationsResponse>(response);
-        }
-
-        /// <summary>
-        /// Musixmatch GET 请求
-        /// </summary>
-        /// <param name="req">URL 部分</param>
-        /// <returns></returns>
-        private async Task<string?> MusixmatchGetAsync(string req, int maxTrial = 8)
-        {
-            if (--maxTrial < 0) return null;
-
-            await EnsureUserToken();
-
-            var url = "https://apic-desktop.musixmatch.com/ws/1.1/" +
-                req +
-                $"&usertoken={_userToken}" +
-                "&format=json" +
-                "&app_id=web-desktop-app-v1.0" +
-                "&t=" + RandomId();
-
-            var response = await GetAsync(url);
-
-            if (response?.Contains("\"status_code\":401") == true)
+            if (!int.TryParse(trackId, out var id))
             {
-                if (response.Contains("\"hint\":\"renew\"") == true)
+                return null;
+            }
+
+            for (var attempt = 0; attempt < ResultRetryCount; attempt++)
+            {
+                var response = await GetLyricsResponseAsync(id, cancellationToken);
+                var matched = GetMatchedTrack(response);
+                if (matched?.TrackId == id
+                    && (string.IsNullOrWhiteSpace(expectedVanityId)
+                        || NormalizeVanity(matched.CommontrackVanityId)
+                            .Equals(NormalizeVanity(expectedVanityId), StringComparison.OrdinalIgnoreCase)))
                 {
-                    _userToken = null;
-                    response = await MusixmatchGetAsync(req, maxTrial) ?? response;
+                    return response!.ToString(Formatting.None);
                 }
-                else if (response.Contains("\"hint\":\"captcha\"") == true)
+
+                if (attempt + 1 < ResultRetryCount)
                 {
-                    await Task.Delay(1000);
-                    response = await MusixmatchGetAsync(req, maxTrial) ?? response;
+                    await DelayBeforeResultRetryAsync(attempt, cancellationToken);
                 }
             }
 
-            if (response?.Contains("\"status_code\":401") == true
-                && response.Contains("\"hint\":\"captcha\"") == true)
-            {
-                throw new RequestCaptchaException(url, response);
-            }
-
-            return response;
+            return null;
         }
 
-        /// <summary>
-        /// 生成请求随机参数
-        /// </summary>
-        private static string RandomId()
+        public async Task<string?> GetFullLyricsRaw(
+            string track,
+            string artist,
+            int? duration = null)
         {
-            var code = ConvertToBase36((long)(new Random().NextDouble() * long.MaxValue));
-            code = new string(code.Where(char.IsLetter).ToArray());
-            return code.Substring(2, Math.Min(8, code.Length - 2));
+            var tracks = await SearchTracksAsync(
+                null,
+                track,
+                artist,
+                duration,
+                CancellationToken.None);
+            var result = tracks.FirstOrDefault();
+            return result is null
+                ? null
+                : await GetFullLyricsRaw(
+                    result.TrackId.ToString(),
+                    result.CommontrackVanityId,
+                    CancellationToken.None);
+        }
 
-            static string ConvertToBase36(long value)
+        public async Task<GetTranslationsResponse?> GetTranslations(
+            string trackId,
+            string language = "zh")
+        {
+            var response = await GetTranslationsRaw(trackId, language, CancellationToken.None);
+            return response is null
+                ? null
+                : JsonConvert.DeserializeObject<GetTranslationsResponse>(response);
+        }
+
+        public async Task<string?> GetTranslationsRaw(
+            string trackId,
+            string language,
+            CancellationToken cancellationToken)
+        {
+            var response = await SendApiRequestAsync(
+                "crowd.track.translations.get?translation_fields_set=minimal" +
+                $"&selected_language={Uri.EscapeDataString(language)}" +
+                $"&track_id={Uri.EscapeDataString(trackId)}" +
+                "&comment_format=text&part=user",
+                cancellationToken);
+            return response?.ToString(Formatting.None);
+        }
+
+        private Task<JObject?> GetLyricsResponseAsync(
+            int trackId,
+            CancellationToken cancellationToken)
+        {
+            return SendApiRequestAsync(
+                "macro.subtitles.get?namespace=lyrics_richsynched" +
+                "&optional_calls=track.richsync" +
+                "&subtitle_format=lrc" +
+                $"&track_id={trackId}" +
+                "&f_subtitle_length_max_deviation=40",
+                cancellationToken);
+        }
+
+        private async Task<JObject?> SendApiRequestAsync(
+            string request,
+            CancellationToken cancellationToken)
+        {
+            Exception? lastError = null;
+            for (var attempt = 0; attempt < RequestRetryCount; attempt++)
             {
-                const string chars = "0123456789abcdefghijklmnopqrstuvwxyz";
-                int radix = chars.Length;
-                char[] result = new char[13];
-                int index = 12;
-
-                do
+                string? responseHint = null;
+                cancellationToken.ThrowIfCancellationRequested();
+                try
                 {
-                    result[index--] = chars[(int)(value % radix)];
-                    value /= radix;
-                } while (value > 0 && index >= 0);
+                    var token = await EnsureUserTokenAsync(cancellationToken);
+                    var separator = request.Contains('?') ? '&' : '?';
+                    var url = ApiBaseUrl + request + separator +
+                        $"usertoken={Uri.EscapeDataString(token)}" +
+                        "&format=json" +
+                        $"&app_id={AppId}" +
+                        $"&t={Guid.NewGuid():N}";
+                    var response = await GetResponseAsync(url, cancellationToken);
+                    if (string.IsNullOrWhiteSpace(response.Content))
+                    {
+                        throw new HttpRequestException(
+                            $"Musixmatch returned HTTP {response.StatusCode}.");
+                    }
 
-                return new string(result, index + 1, 12 - index);
+                    var json = JObject.Parse(response.Content);
+                    var header = json["message"]?["header"];
+                    var statusCode = header?["status_code"]?.Value<int>();
+                    var hint = header?["hint"]?.Value<string>();
+                    responseHint = hint;
+                    if (statusCode == 404)
+                    {
+                        return json;
+                    }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        throw new HttpRequestException(
+                            $"Musixmatch returned HTTP {response.StatusCode}.");
+                    }
+                    if (statusCode == 200)
+                    {
+                        return json;
+                    }
+
+                    if (statusCode == 401 &&
+                        (hint?.Equals("renew", StringComparison.OrdinalIgnoreCase) == true ||
+                         hint?.Equals("captcha", StringComparison.OrdinalIgnoreCase) == true))
+                    {
+                        InvalidateToken();
+                    }
+                    lastError = new HttpRequestException(
+                        $"Musixmatch returned API status {statusCode?.ToString() ?? "unknown"}" +
+                        (string.IsNullOrWhiteSpace(hint) ? "." : $" ({hint})."));
+                }
+                catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    lastError = ex;
+                }
+
+                if (attempt + 1 < RequestRetryCount)
+                {
+                    await DelayBeforeRequestRetryAsync(attempt, responseHint, cancellationToken);
+                }
             }
+
+            throw new HttpRequestException(
+                "Musixmatch request failed after all retries.",
+                lastError);
         }
 
-        /// <summary>
-        /// 确保有 UserToken
-        /// </summary>
-        private async Task EnsureUserToken()
+        private async Task<string> EnsureUserTokenAsync(CancellationToken cancellationToken)
         {
-            if (_userToken != null) return;
-            await RefreshUserToken(true);
-        }
-
-        /// <summary>
-        /// 刷新 UserToken，可用于失效时的刷新
-        /// </summary>
-        /// <returns></returns>
-        private async Task RefreshUserToken(bool isEnsure = false)
-        {
-            var response = await GetToken();
-            int maxTry = 10;
-            while (response?.Message.Header.StatusCode == 401 && response?.Message.Header.Hint == "captcha" && maxTry-- > 0)
+            if (IsUsableToken(userToken))
             {
-                await Task.Delay(1000);
-                if (isEnsure && !string.IsNullOrEmpty(_userToken)) return;
-                response = await GetToken();
+                return userToken!;
             }
-            if (string.IsNullOrEmpty(response?.Message?.Body?.UserToken))
-                throw new Exception("User Token failed to refresh");
 
-            _userToken = response?.Message?.Body?.UserToken;
+            await tokenLock.WaitAsync(cancellationToken);
+            try
+            {
+                if (IsUsableToken(userToken))
+                {
+                    return userToken!;
+                }
+
+                var response = await RequestTokenAsync(cancellationToken);
+                var token = response?["message"]?["body"]?["user_token"]?.Value<string>();
+                if (IsUsableToken(token))
+                {
+                    userToken = token;
+                    return token!;
+                }
+
+                throw new InvalidOperationException("Musixmatch token request failed.");
+            }
+            finally
+            {
+                tokenLock.Release();
+            }
+        }
+
+        private static async Task<JObject?> RequestTokenAsync(CancellationToken cancellationToken)
+        {
+            var url = ApiBaseUrl +
+                $"token.get?user_language=en&app_id={AppId}&t={Guid.NewGuid():N}";
+            var response = await GetResponseAsync(url, cancellationToken);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new HttpRequestException(
+                    $"Musixmatch returned HTTP {response.StatusCode}.");
+            }
+            return string.IsNullOrWhiteSpace(response.Content)
+                ? null
+                : JObject.Parse(response.Content);
+        }
+
+        private static async Task<(bool IsSuccessStatusCode, int StatusCode, string Content)> GetResponseAsync(
+            string url,
+            CancellationToken cancellationToken)
+        {
+            await RequestLock.WaitAsync(cancellationToken);
+            try
+            {
+                var elapsed = DateTime.UtcNow - lastRequestUtc;
+                if (elapsed < TimeSpan.FromMilliseconds(250))
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(250) - elapsed, cancellationToken);
+                }
+
+                using var response = await Client.GetAsync(url, cancellationToken);
+                var content = await response.Content.ReadAsStringAsync();
+                lastRequestUtc = DateTime.UtcNow;
+                return (
+                    response.IsSuccessStatusCode,
+                    (int)response.StatusCode,
+                    content);
+            }
+            finally
+            {
+                RequestLock.Release();
+            }
+        }
+
+        private static GetTrackResponse.Track? GetMatchedTrack(JObject? response)
+        {
+            var calls = GetBody(response)?["macro_calls"] as JObject;
+            var matcher = calls?["matcher.track.get"] as JObject;
+            var message = matcher?["message"] as JObject;
+            var body = message?["body"] as JObject;
+            return body?["track"]?.ToObject<GetTrackResponse.Track>();
+        }
+
+        private static JObject? GetBody(JObject? response)
+        {
+            return (response?["message"] as JObject)?["body"] as JObject;
+        }
+
+        private static bool IsUsableToken(string? token)
+        {
+            return !string.IsNullOrWhiteSpace(token)
+                && token != "null"
+                && token.Any(character => character != '0');
+        }
+
+        private void InvalidateToken()
+        {
+            userToken = null;
+        }
+
+        private static Task DelayBeforeRequestRetryAsync(
+            int attempt,
+            string? responseHint,
+            CancellationToken cancellationToken)
+        {
+            var delay = responseHint?.Equals(
+                "captcha",
+                StringComparison.OrdinalIgnoreCase) == true
+                    ? 1000
+                    : Math.Min(500 * (1 << attempt), 2000);
+            return Task.Delay(delay, cancellationToken);
+        }
+
+        private static Task DelayBeforeResultRetryAsync(
+            int attempt,
+            CancellationToken cancellationToken)
+        {
+            return Task.Delay(Math.Min(200 * (attempt + 1), 800), cancellationToken);
+        }
+
+        private static HttpClient CreateClient()
+        {
+            var client = new HttpClient
+            {
+                Timeout = TimeSpan.FromSeconds(4),
+            };
+            client.DefaultRequestHeaders.TryAddWithoutValidation(
+                "User-Agent",
+                "Dalvik/2.1.0 (Linux; U; Android 13)");
+            client.DefaultRequestHeaders.TryAddWithoutValidation(
+                "Cookie",
+                "AWSELB=0; AWSELBCORS=0");
+            return client;
+        }
+
+        private static void AddParameter(
+            ICollection<string> parameters,
+            string name,
+            string? value)
+        {
+            if (!string.IsNullOrWhiteSpace(value))
+            {
+                parameters.Add($"{name}={Uri.EscapeDataString(value)}");
+            }
+        }
+
+        private static string NormalizeVanity(string? value)
+        {
+            return Uri.UnescapeDataString(value ?? string.Empty).Trim().Trim('/');
+        }
+
+        private static string DecodeVanityPart(string value)
+        {
+            return Uri.UnescapeDataString(value).Replace('-', ' ').Trim();
+        }
+
+        private static bool HasRelatedResult(
+            IReadOnlyCollection<GetTrackResponse.Track> results,
+            string? keyword,
+            string? title,
+            string? artist)
+        {
+            var keywordTokens = Tokenize(keyword);
+            var titleTokens = Tokenize(title);
+            var artistTokens = Tokenize(artist);
+            if (keywordTokens.Length == 0
+                && titleTokens.Length == 0
+                && artistTokens.Length == 0)
+            {
+                return true;
+            }
+
+            return results.Any(result =>
+            {
+                var actualTitle = result.TrackName.ToLowerInvariant();
+                var actualArtists = result.ArtistName.ToLowerInvariant();
+                if (titleTokens.Length > 0
+                    && !titleTokens.All(actualTitle.Contains))
+                {
+                    return false;
+                }
+                if (artistTokens.Length > 0
+                    && !artistTokens.Any(actualArtists.Contains))
+                {
+                    return false;
+                }
+
+                if (keywordTokens.Length == 0)
+                {
+                    return true;
+                }
+                var actual = $"{actualTitle} {actualArtists}";
+                var requiredMatches = Math.Max(
+                    1,
+                    (int)Math.Ceiling(keywordTokens.Length * 0.6));
+                return keywordTokens.Count(actual.Contains) >= requiredMatches;
+            });
+        }
+
+        private static string[] Tokenize(string? value)
+        {
+            return (value ?? string.Empty)
+                .ToLowerInvariant()
+                .Split(
+                    new[] { ' ', '-', '_', '/', ',', '.', '(', ')', '[', ']', '&' },
+                    StringSplitOptions.RemoveEmptyEntries)
+                .Where(token => token.Length > 1)
+                .ToArray();
         }
     }
 

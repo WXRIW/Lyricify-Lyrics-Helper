@@ -141,7 +141,7 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
         public object LimitedFreeInfo { get; set; }
 
         /// <summary>
-        /// 1: 有人声; 2: 伴奏/翻唱等
+        /// 1: 有人声; 2: 纯音乐、伴奏等无人声曲目
         /// </summary>
         public int? Vocal { get; set; }
 
@@ -639,6 +639,9 @@ namespace Lyricify.Lyrics.Providers.Web.SodaMusic
         [JsonProperty("limited_free_info")]
         public LimitedFreeInfo LimitedFreeInfo { get; set; }
 
+        /// <summary>
+        /// 1: 有人声; 2: 纯音乐、伴奏等无人声曲目
+        /// </summary>
         public int? Vocal { get; set; }
 
         [JsonProperty("lang_codes")]
