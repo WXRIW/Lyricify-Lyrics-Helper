@@ -284,7 +284,6 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
             Exception? lastError = null;
             for (var attempt = 0; attempt < RequestRetryCount; attempt++)
             {
-                string? responseHint = null;
                 cancellationToken.ThrowIfCancellationRequested();
                 try
                 {
@@ -306,7 +305,6 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                     var header = json["message"]?["header"];
                     var statusCode = header?["status_code"]?.Value<int>();
                     var hint = header?["hint"]?.Value<string>();
-                    responseHint = hint;
                     if (statusCode == 404)
                     {
                         return json;
@@ -322,16 +320,24 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                     }
 
                     if (statusCode == 401 &&
-                        (hint?.Equals("renew", StringComparison.OrdinalIgnoreCase) == true ||
-                         hint?.Equals("captcha", StringComparison.OrdinalIgnoreCase) == true))
+                        hint?.Equals("renew", StringComparison.OrdinalIgnoreCase) == true)
                     {
                         InvalidateToken();
+                    }
+                    else if (statusCode == 401 &&
+                        hint?.Equals("captcha", StringComparison.OrdinalIgnoreCase) == true)
+                    {
+                        throw new RequestCaptchaException();
                     }
                     lastError = new HttpRequestException(
                         $"Musixmatch returned API status {statusCode?.ToString() ?? "unknown"}" +
                         (string.IsNullOrWhiteSpace(hint) ? "." : $" ({hint})."));
                 }
                 catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+                {
+                    throw;
+                }
+                catch (RequestCaptchaException)
                 {
                     throw;
                 }
@@ -342,7 +348,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
                 if (attempt + 1 < RequestRetryCount)
                 {
-                    await DelayBeforeRequestRetryAsync(attempt, responseHint, cancellationToken);
+                    await DelayBeforeRequestRetryAsync(attempt, cancellationToken);
                 }
             }
 
@@ -394,9 +400,27 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 throw new HttpRequestException(
                     $"Musixmatch returned HTTP {response.StatusCode}.");
             }
-            return string.IsNullOrWhiteSpace(response.Content)
-                ? null
-                : JObject.Parse(response.Content);
+            if (string.IsNullOrWhiteSpace(response.Content))
+            {
+                return null;
+            }
+
+            var json = JObject.Parse(response.Content);
+            var header = json["message"]?["header"];
+            var statusCode = header?["status_code"]?.Value<int>();
+            var hint = header?["hint"]?.Value<string>();
+            if (statusCode == 401 &&
+                hint?.Equals("captcha", StringComparison.OrdinalIgnoreCase) == true)
+            {
+                throw new RequestCaptchaException();
+            }
+            if (statusCode != 200)
+            {
+                throw new HttpRequestException(
+                    $"Musixmatch returned API status {statusCode?.ToString() ?? "unknown"}" +
+                    (string.IsNullOrWhiteSpace(hint) ? "." : $" ({hint})."));
+            }
+            return json;
         }
 
         private async Task<(bool IsSuccessStatusCode, int StatusCode, string Content)> GetResponseAsync(
@@ -470,14 +494,9 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 
         private static Task DelayBeforeRequestRetryAsync(
             int attempt,
-            string? responseHint,
             CancellationToken cancellationToken)
         {
-            var delay = responseHint?.Equals(
-                "captcha",
-                StringComparison.OrdinalIgnoreCase) == true
-                    ? 1000
-                    : Math.Min(500 * (1 << attempt), 2000);
+            var delay = Math.Min(500 * (1 << attempt), 2000);
             return Task.Delay(delay, cancellationToken);
         }
 
