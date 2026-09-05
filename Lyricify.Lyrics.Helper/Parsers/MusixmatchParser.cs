@@ -18,17 +18,26 @@ namespace Lyricify.Lyrics.Parsers
             var jsonObj = JObject.Parse(rawJson);
             if (jsonObj?["message"]?["body"]?["macro_calls"] is not JObject calls) return null;
 
+            static JObject? GetMessage(JObject? call)
+                => call?["message"] as JObject;
+
+            static JObject? GetBody(JObject? call)
+                => GetMessage(call)?["body"] as JObject;
+
             static bool CheckHeader200(JObject? getObj)
             {
-                if (getObj?["message"]?["header"]?["status_code"]?.Type != JTokenType.Integer) return false;
-                if (getObj?["message"]?["header"]?.Value<int>("status_code") != 200) return false;
+                var header = GetMessage(getObj)?["header"] as JObject;
+                if (header?["status_code"]?.Type != JTokenType.Integer) return false;
+                if (header.Value<int>("status_code") != 200) return false;
                 return true;
             }
 
             var track_get = calls["track.richsync.get"] as JObject;
             if (!ignoreSyllable && CheckHeader200(track_get))
             {
-                var lyrics = track_get?["message"]?["body"]?["richsync"]?["richsync_body"]?.Value<string>();
+                var body = GetBody(track_get);
+                var richsync = body?["richsync"] as JObject;
+                var lyrics = richsync?["richsync_body"]?.Value<string>();
 
                 if (!string.IsNullOrEmpty(lyrics) && JsonConvert.DeserializeObject<List<RichSyncedLine>>(lyrics) is List<RichSyncedLine> list)
                 {
@@ -60,8 +69,8 @@ namespace Lyricify.Lyrics.Parsers
                     };
                     lyricsData.File.Type = LyricsTypes.Musixmatch;
                     lyricsData.File.SyncTypes = SyncTypes.SyllableSynced;
-                    var language = track_get?["message"]?["body"]?["richsync"]?["richssync_language"]?.Value<string>()
-                        ?? track_get?["message"]?["body"]?["richsync"]?["richsync_language"]?.Value<string>();
+                    var language = richsync?["richssync_language"]?.Value<string>()
+                        ?? richsync?["richsync_language"]?.Value<string>();
                     if (language is not null)
                     {
                         lyricsData.TrackMetadata.Language = new() { language };
@@ -73,7 +82,8 @@ namespace Lyricify.Lyrics.Parsers
             track_get = calls["track.subtitles.get"] as JObject;
             if (CheckHeader200(track_get))
             {
-                var list = track_get?["message"]?["body"]?["subtitle_list"] as JArray;
+                var body = GetBody(track_get);
+                var list = body?["subtitle_list"] as JArray;
                 if (list is { Count: > 0 })
                 {
                     var subtitle = list[0]["subtitle"]?["subtitle_body"]?.Value<string>();
@@ -101,7 +111,8 @@ namespace Lyricify.Lyrics.Parsers
             track_get = calls["track.lyrics.get"] as JObject;
             if (CheckHeader200(track_get))
             {
-                var lyrics = track_get?["message"]?["body"]?["lyrics"]?["lyrics_body"]?.Value<string>();
+                var body = GetBody(track_get);
+                var lyrics = (body?["lyrics"] as JObject)?["lyrics_body"]?.Value<string>();
 
                 if (!string.IsNullOrEmpty(lyrics))
                 {

@@ -70,30 +70,8 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             }
 
             // Step 2: merge consecutive syllables into one word via FullSyllableInfo.SubItems
-            var merged = new List<ISyllableInfo>(expanded.Count);
-
-            foreach (var cur in expanded)
-            {
-                if (merged.Count == 0)
-                {
-                    merged.Add(cur);
-                    continue;
-                }
-
-                var prev = merged[^1];
-
-                if (ShouldMergeAsSameWord(prev.Text, cur.Text))
-                {
-                    merged[^1] = MergeToFullSyllable(prev, cur);
-                }
-                else
-                {
-                    merged.Add(cur);
-                }
-            }
-
-            line.Syllables = merged;
-            line.RefreshProperties();
+            line.Syllables = expanded;
+            SyllableWordMerger.Merge(line);
         }
 
         private static void RemoveRedundantTranslations(ILineInfo line, bool isBackground)
@@ -280,7 +258,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 if (ch == ' ') hasSpace = true;
                 if (ch == '-') hasHyphen = true;
 
-                if (IsZhJaSplitChar(ch)) zhja++;
+                if (SyllableWordMerger.IsChineseOrJapaneseCharacter(ch)) zhja++;
                 else if (IsLatinWordChar(ch)) hasLatin = true;
             }
 
@@ -373,7 +351,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 if (ch == '\r' || ch == '\n') { i++; continue; }
 
                 // Zh/Ja: per char token
-                if (IsZhJaSplitChar(ch))
+                if (SyllableWordMerger.IsChineseOrJapaneseCharacter(ch))
                 {
                     Flush();
                     tokens.Add(ch.ToString());
@@ -467,7 +445,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
 
         private static int TokenWeight(string token)
         {
-            if (token.Any(IsZhJaSplitChar)) return 1;
+            if (token.Any(SyllableWordMerger.IsChineseOrJapaneseCharacter)) return 1;
 
             int w = 0;
             foreach (var ch in token)
@@ -478,100 +456,8 @@ namespace Lyricify.Lyrics.Helpers.Optimization
         }
 
         // =========================
-        // Merge rules (FullSyllableInfo.SubItems)
-        // =========================
-
-        private static bool ShouldMergeAsSameWord(string? prevText, string? curText)
-        {
-            if (string.IsNullOrEmpty(prevText) || string.IsNullOrEmpty(curText)) return false;
-
-            // don't merge across whitespace boundary
-            if (char.IsWhiteSpace(prevText[^1])) return false;
-            if (char.IsWhiteSpace(curText[0])) return false;
-
-            // don't merge if contains zh/ja split chars (avoid merging back)
-            if (prevText.Any(IsZhJaSplitChar) || curText.Any(IsZhJaSplitChar)) return false;
-
-            // both should look like word parts
-            return LooksLikeWordPart(prevText) && LooksLikeWordPart(curText);
-        }
-
-        private static bool LooksLikeWordPart(string text)
-        {
-            foreach (var ch in text)
-            {
-                if (char.IsLetterOrDigit(ch)) return true;
-            }
-            return false;
-        }
-
-        private static ISyllableInfo MergeToFullSyllable(ISyllableInfo prev, ISyllableInfo cur)
-        {
-            // flatten both into SyllableInfo list
-            var prevItems = FlattenToSyllableInfos(prev);
-            var curItems = FlattenToSyllableInfos(cur);
-
-            if (prev is FullSyllableInfo fullPrev)
-            {
-                // mutate existing object: append and refresh cached properties
-                fullPrev.SubItems.AddRange(curItems);
-                fullPrev.RefreshProperties();
-                return fullPrev;
-            }
-
-            // create new FullSyllableInfo from two lists
-            var all = new List<SyllableInfo>(prevItems.Count + curItems.Count);
-            all.AddRange(prevItems);
-            all.AddRange(curItems);
-
-            var full = new FullSyllableInfo(all);
-            // FullSyllableInfo has cached computed props, but newly created is fine;
-            // no need to set Text/Start/End (readonly).
-            return full;
-        }
-
-        private static List<SyllableInfo> FlattenToSyllableInfos(ISyllableInfo s)
-        {
-            if (s is SyllableInfo si)
-            {
-                return new List<SyllableInfo> { new(NormalizeText(si.Text), si.StartTime, si.EndTime) };
-            }
-
-            if (s is FullSyllableInfo fi)
-            {
-                // copy to new instances to keep everything writable/isolated
-                return fi.SubItems
-                    .Select(x => new SyllableInfo(NormalizeText(x.Text), x.StartTime, x.EndTime))
-                    .ToList();
-            }
-
-            // fallback for other implementations
-            return new List<SyllableInfo>
-            {
-                new(NormalizeText(s.Text ?? string.Empty), s.StartTime, s.EndTime)
-            };
-        }
-
-        // =========================
         // Char classification
         // =========================
-
-        /// <summary>
-        /// only split Chinese Hanzi + Japanese Kana. Korean Hangul is NOT split.
-        /// </summary>
-        private static bool IsZhJaSplitChar(char ch)
-        {
-            // Hanzi
-            if (ch >= '\u4E00' && ch <= '\u9FFF') return true;
-            if (ch >= '\u3400' && ch <= '\u4DBF') return true;
-
-            // Kana
-            if (ch >= '\u3040' && ch <= '\u309F') return true; // Hiragana
-            if (ch >= '\u30A0' && ch <= '\u30FF') return true; // Katakana
-            if (ch >= '\u31F0' && ch <= '\u31FF') return true; // Katakana Extensions
-
-            return false;
-        }
 
         private static bool IsLatinWordChar(char ch)
         {
