@@ -1,10 +1,27 @@
-﻿using Lyricify.Lyrics.Models;
+using Lyricify.Lyrics.Models;
 using Lyricify.Lyrics.Searchers.Helpers;
 
 namespace Lyricify.Lyrics.Searchers
 {
     public class MusixmatchSearcher : ISearcher
     {
+        private readonly Providers.Web.Musixmatch.Api api;
+
+        public MusixmatchSearcher()
+            : this(Providers.Web.Providers.MusixmatchApi)
+        {
+        }
+
+        public MusixmatchSearcher(Providers.Web.Musixmatch.Api api)
+        {
+            this.api = api ?? throw new ArgumentNullException(nameof(api));
+        }
+
+        public MusixmatchSearcher(Action<Providers.Web.Musixmatch.ApiOptions> configure)
+            : this(new Providers.Web.Musixmatch.Api(configure))
+        {
+        }
+
         public string Name => "Musixmatch";
 
         public string DisplayName => "Musixmatch";
@@ -33,7 +50,7 @@ namespace Lyricify.Lyrics.Searchers
 
             try
             {
-                var result = await Providers.Web.Providers.MusixmatchApi.GetTrack(track, artist, duration / 1000);
+                var result = await api.GetTrack(track, artist, duration / 1000);
                 var t = result?.Message?.Body?.Track;
                 if (t == null) return null;
                 var r = new MusixmatchSearchResult(t)
@@ -87,7 +104,7 @@ namespace Lyricify.Lyrics.Searchers
             int? durationMs,
             CancellationToken cancellationToken)
         {
-            var tracks = await Providers.Web.Providers.MusixmatchApi.SearchTracksAsync(
+            var tracks = await api.SearchTracksAsync(
                 keyword,
                 track,
                 artist,

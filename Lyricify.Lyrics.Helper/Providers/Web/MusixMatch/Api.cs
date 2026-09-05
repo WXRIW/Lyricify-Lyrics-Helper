@@ -1,24 +1,45 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 namespace Lyricify.Lyrics.Providers.Web.Musixmatch
 {
     public class Api : BaseApi
     {
-        private const string ApiBaseUrl = "https://apic.musixmatch.com/ws/1.1/";
-        private const string AppId = "android-player-v1.0";
         private const int RequestRetryCount = 5;
         private const int ResultRetryCount = 5;
 
-        private static readonly HttpClient Client = CreateClient();
-        private static readonly SemaphoreSlim RequestLock = new(1, 1);
+        private readonly ApiOptions options;
+        private readonly HttpClient client;
+        private readonly SemaphoreSlim requestLock = new(1, 1);
         private readonly SemaphoreSlim tokenLock = new(1, 1);
-        private static DateTime lastRequestUtc = DateTime.MinValue;
+        private DateTime lastRequestUtc = DateTime.MinValue;
         private string? userToken;
 
         protected override string? HttpRefer => null;
 
         protected override Dictionary<string, string>? AdditionalHeaders => null;
+
+        /// <summary>
+        /// 使用 Android API 创建实例。
+        /// </summary>
+        public Api() : this(null)
+        {
+        }
+
+        /// <summary>
+        /// 使用调用方注入的配置创建实例。
+        /// </summary>
+        /// <param name="configure">
+        /// 配置委托。可调用 <see cref="ApiOptions.UseAndroid"/> 或
+        /// <see cref="ApiOptions.UseDesktop"/>，也可进一步覆盖具体配置。
+        /// </param>
+        public Api(Action<ApiOptions>? configure)
+        {
+            options = new ApiOptions();
+            configure?.Invoke(options);
+            ValidateOptions(options);
+            client = CreateClient(options);
+        }
 
         public void SetUserToken(string token)
         {
@@ -269,11 +290,11 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 {
                     var token = await EnsureUserTokenAsync(cancellationToken);
                     var separator = request.Contains('?') ? '&' : '?';
-                    var url = ApiBaseUrl + request + separator +
+                    var url = options.ApiBaseUrl + request + separator +
                         $"usertoken={Uri.EscapeDataString(token)}" +
                         "&format=json" +
-                        $"&app_id={AppId}" +
-                        $"&t={Guid.NewGuid():N}";
+                        $"&app_id={Uri.EscapeDataString(options.AppId)}" +
+                        $"&t={Uri.EscapeDataString(options.RequestIdFactory())}";
                     var response = await GetResponseAsync(url, cancellationToken);
                     if (string.IsNullOrWhiteSpace(response.Content))
                     {
@@ -361,10 +382,12 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
             }
         }
 
-        private static async Task<JObject?> RequestTokenAsync(CancellationToken cancellationToken)
+        private async Task<JObject?> RequestTokenAsync(CancellationToken cancellationToken)
         {
-            var url = ApiBaseUrl +
-                $"token.get?user_language=en&app_id={AppId}&t={Guid.NewGuid():N}";
+            var url = options.ApiBaseUrl +
+                "token.get?user_language=en" +
+                $"&app_id={Uri.EscapeDataString(options.AppId)}" +
+                $"&t={Uri.EscapeDataString(options.RequestIdFactory())}";
             var response = await GetResponseAsync(url, cancellationToken);
             if (!response.IsSuccessStatusCode)
             {
@@ -376,11 +399,11 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                 : JObject.Parse(response.Content);
         }
 
-        private static async Task<(bool IsSuccessStatusCode, int StatusCode, string Content)> GetResponseAsync(
+        private async Task<(bool IsSuccessStatusCode, int StatusCode, string Content)> GetResponseAsync(
             string url,
             CancellationToken cancellationToken)
         {
-            await RequestLock.WaitAsync(cancellationToken);
+            await requestLock.WaitAsync(cancellationToken);
             try
             {
                 var elapsed = DateTime.UtcNow - lastRequestUtc;
@@ -389,7 +412,23 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
                     await Task.Delay(TimeSpan.FromMilliseconds(250) - elapsed, cancellationToken);
                 }
 
-                using var response = await Client.GetAsync(url, cancellationToken);
+                using var request = new HttpRequestMessage(HttpMethod.Get, url);
+                if (!string.IsNullOrWhiteSpace(options.UserAgent))
+                {
+                    request.Headers.TryAddWithoutValidation(
+                        "User-Agent",
+                        options.UserAgent);
+                }
+                if (!string.IsNullOrWhiteSpace(options.Cookie))
+                {
+                    request.Headers.TryAddWithoutValidation(
+                        "Cookie",
+                        options.Cookie);
+                }
+                options.ConfigureRequest?.Invoke(request);
+                using var response = options.SendAsync is null
+                    ? await client.SendAsync(request, cancellationToken)
+                    : await options.SendAsync(request, cancellationToken);
                 var content = await response.Content.ReadAsStringAsync();
                 lastRequestUtc = DateTime.UtcNow;
                 return (
@@ -399,7 +438,7 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
             }
             finally
             {
-                RequestLock.Release();
+                requestLock.Release();
             }
         }
 
@@ -449,19 +488,39 @@ namespace Lyricify.Lyrics.Providers.Web.Musixmatch
             return Task.Delay(Math.Min(200 * (attempt + 1), 800), cancellationToken);
         }
 
-        private static HttpClient CreateClient()
+        private static HttpClient CreateClient(ApiOptions options)
         {
             var client = new HttpClient
             {
-                Timeout = TimeSpan.FromSeconds(4),
+                Timeout = options.Timeout,
             };
-            client.DefaultRequestHeaders.TryAddWithoutValidation(
-                "User-Agent",
-                "Dalvik/2.1.0 (Linux; U; Android 13)");
-            client.DefaultRequestHeaders.TryAddWithoutValidation(
-                "Cookie",
-                "AWSELB=0; AWSELBCORS=0");
             return client;
+        }
+
+        private static void ValidateOptions(ApiOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(options.ApiBaseUrl))
+            {
+                throw new ArgumentException("Musixmatch API base URL is required.");
+            }
+            if (!options.ApiBaseUrl.EndsWith("/", StringComparison.Ordinal))
+            {
+                options.ApiBaseUrl += "/";
+            }
+            if (string.IsNullOrWhiteSpace(options.AppId))
+            {
+                throw new ArgumentException("Musixmatch app ID is required.");
+            }
+            if (options.Timeout <= TimeSpan.Zero)
+            {
+                throw new ArgumentOutOfRangeException(
+                    nameof(options.Timeout),
+                    "Musixmatch request timeout must be greater than zero.");
+            }
+            if (options.RequestIdFactory is null)
+            {
+                throw new ArgumentException("Musixmatch request ID factory is required.");
+            }
         }
 
         private static void AddParameter(

@@ -126,6 +126,16 @@ Console.WriteLine(lyrics?.SyncedLyrics);
 
 其他在线来源可通过 `ProviderHelper` 中相应的 `QQMusicApi`、`NeteaseApi`、`KugouApi`、`SodaMusicApi`、`AppleMusicApi`、`MusixmatchApi` 和 `SpotifyApi` 访问。
 
+Musixmatch 默认使用 Android API，也可以在创建实例时通过配置委托选择桌面 API，或注入自己的请求发送函数：
+
+```csharp
+var mobileApi = new Lyricify.Lyrics.Providers.Web.Musixmatch.Api();
+var desktopApi = new Lyricify.Lyrics.Providers.Web.Musixmatch.Api(
+    options => options.UseDesktop());
+
+var searcher = new MusixmatchSearcher(desktopApi);
+```
+
 ## 项目结构
 
 ```text
