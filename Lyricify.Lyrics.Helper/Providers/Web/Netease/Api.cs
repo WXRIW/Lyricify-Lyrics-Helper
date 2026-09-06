@@ -12,6 +12,12 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
         protected override Dictionary<string, string>? AdditionalHeaders => null;
 
+        public Dictionary<string, string> SessionCookies { get; set; } = new();
+
+        protected override string? HttpCookie => SessionCookies.Count == 0
+            ? base.HttpCookie
+            : string.Join("; ", SessionCookies.Select(pair => pair.Key + "=" + pair.Value));
+
         // General
         private const string MODULUS = "00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7";
         private const string NONCE = "0CoJUm6Qyw8W8jud";
@@ -47,7 +53,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 _ => "1",
             };
 
-            string url = $"http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={Uri.EscapeDataString(keyword)}&type={type}&offset=0&total=true&limit=20";
+            string url = $"https://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={Uri.EscapeDataString(keyword)}&type={type}&offset=0&total=true&limit=20";
 
             var res = await GetAsync(url);
 
@@ -67,7 +73,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "total", "true" }
             };
 
-            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
 
             var eapiResult = JsonConvert.DeserializeObject<EapiSearchResult>(raw);
             if (eapiResult is null) return null;
@@ -256,7 +262,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "csrf_token", string.Empty }
             };
 
-            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
 
             return JsonConvert.DeserializeObject<LyricResult>(raw);
         }
@@ -276,7 +282,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             {
                 { "ids", $"[{string.Join(",", songId)}]" },
                 { "br", bitrate.ToString() },
-                { "csrf_token", string.Empty }
+                { "csrf_token", SessionCookies.GetValueOrDefault("__csrf", string.Empty) }
             };
 
             var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
@@ -301,7 +307,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "level", level },
                 { "encodeType", "flac" },
             };
-            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
             return JsonConvert.DeserializeObject<SongUrls>(raw);
         }
 
@@ -359,7 +365,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "c", JsonConvert.SerializeObject(requests) },
                 { "rv", "true" },
             };
-            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
             var eapi = JsonConvert.DeserializeObject<EapiDetailResult>(raw);
             if (eapi == null) return null;
 

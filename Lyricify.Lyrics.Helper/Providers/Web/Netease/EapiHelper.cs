@@ -9,7 +9,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 {
     internal class EapiHelper
     {
-        public static async Task<string> PostAsync(string url, HttpClient httpClient, Dictionary<string, string> data)
+        public static async Task<string> PostAsync(string url, HttpClient httpClient, Dictionary<string, string> data, IReadOnlyDictionary<string, string> cookies = null)
         {
             var headers = new Dictionary<string, string>
             {
@@ -31,6 +31,9 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 ["versioncode"] = "140",
                 ["MUSIC_U"] = "",
             };
+            if (cookies != null)
+                foreach (var cookie in cookies)
+                    header[cookie.Key] = cookie.Value;
             headers["Cookie"] = string.Join("; ", header.Select(t => t.Key + "=" + t.Value));
             data["header"] = JsonConvert.SerializeObject(header);
             var data2 = EApi(url, data);
