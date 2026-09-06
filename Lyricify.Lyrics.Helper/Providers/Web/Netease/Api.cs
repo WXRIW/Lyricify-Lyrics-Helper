@@ -341,7 +341,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
                 var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
 
-                return JsonConvert.DeserializeObject<DetailResult>(raw);
+                return ParseDetailResponse(raw);
             }
             catch
             {
@@ -366,6 +366,17 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "rv", "true" },
             };
             var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
+            return ParseDetailResponse(raw);
+        }
+
+        private static DetailResult? ParseDetailResponse(string raw)
+        {
+            // Successful authenticated WEAPI v3 responses use the same short
+            // ar/al/dt fields as EAPI. Still accept older long-field responses.
+            var legacy = JsonConvert.DeserializeObject<DetailResult>(raw);
+            if (legacy?.Songs != null && legacy.Songs.All(song => song.Artists != null && song.Album != null))
+                return legacy;
+
             var eapi = JsonConvert.DeserializeObject<EapiDetailResult>(raw);
             if (eapi == null) return null;
 
