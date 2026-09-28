@@ -749,22 +749,22 @@ namespace Lyricify.Lyrics.Parsers
                     dict[langKey] = kv.Value;
             }
 
-            // If has bg line: split translations into main/bg parts.
-            // - bg part comes from (...) in translation, stored WITHOUT brackets.
-            // - main part removes (...) segments.
-            Dictionary<string, string>? bgDict = null;
-            if (subLine != null)
+            // Parenthesized background translations never belong to the main line,
+            // even when the TTML has no corresponding background vocal syllables.
+            // Only attach them to a subline when one exists.
+            Dictionary<string, string>? bgDict = subLine != null
+                ? new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+                : null;
+            foreach (var k in dict.Keys.ToList())
             {
-                bgDict = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
-                foreach (var k in dict.Keys.ToList())
-                {
-                    var (mainText, bgText) = SplitSubtitleByParentheses(dict[k]);
+                var (mainText, bgText) = SplitSubtitleByParentheses(dict[k]);
+                if (string.IsNullOrWhiteSpace(mainText))
+                    dict.Remove(k);
+                else
                     dict[k] = mainText;
 
-                    if (!string.IsNullOrWhiteSpace(bgText))
-                        bgDict[k] = bgText!;
-                }
+                if (bgDict != null && !string.IsNullOrWhiteSpace(bgText))
+                    bgDict[k] = bgText!;
             }
 
             // Apply to MAIN line
