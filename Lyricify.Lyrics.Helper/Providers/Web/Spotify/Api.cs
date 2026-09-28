@@ -386,13 +386,40 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
                 throw new UnauthorizedAccessException("Spotify sp_dc is not configured.");
             }
 
-            var parameters = await BuildTokenParametersAsync().ConfigureAwait(false);
-            var response = await SendTokenRequestAsync(spDc, parameters).ConfigureAwait(false);
+            SpotifyTokenResponse payload;
+            try
+            {
+                // Preserve the platform-selected handler and its existing session
+                // for callers whose token exchange already works.
+                payload = await RequestAccessTokenAsync(_httpClient, spDc).ConfigureAwait(false);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                // Android's native handler can overwrite the manual Cookie header
+                // with server-time cookies. Retry authentication once with sp_dc
+                // in the same cookie container as those server-issued cookies.
+                using var tokenHandler = new HttpClientHandler();
+                tokenHandler.CookieContainer.Add(new Uri("https://open.spotify.com/"), new Cookie("sp_dc", spDc));
+                using var tokenClient = new HttpClient(tokenHandler);
+                payload = await RequestAccessTokenAsync(tokenClient).ConfigureAwait(false);
+            }
+
+            lock (_lock)
+            {
+                _accessToken = payload.AccessToken!;
+                _accessTokenExpirationTimestampMs = payload.AccessTokenExpirationTimestampMs;
+            }
+        }
+
+        private async Task<SpotifyTokenResponse> RequestAccessTokenAsync(HttpClient tokenClient, string? spDc = null)
+        {
+            var parameters = await BuildTokenParametersAsync(tokenClient).ConfigureAwait(false);
+            var response = await SendTokenRequestAsync(tokenClient, parameters, spDc).ConfigureAwait(false);
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
                 response.Dispose();
-                parameters = await BuildTokenParametersAsync(useLegacyParameters: true).ConfigureAwait(false);
-                response = await SendTokenRequestAsync(spDc, parameters).ConfigureAwait(false);
+                parameters = await BuildTokenParametersAsync(tokenClient, useLegacyParameters: true).ConfigureAwait(false);
+                response = await SendTokenRequestAsync(tokenClient, parameters, spDc).ConfigureAwait(false);
             }
 
             using (response)
@@ -415,17 +442,14 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
                     throw new UnauthorizedAccessException("Spotify sp_dc is invalid.");
                 }
 
-                lock (_lock)
-                {
-                    _accessToken = payload.AccessToken!;
-                    _accessTokenExpirationTimestampMs = payload.AccessTokenExpirationTimestampMs;
-                }
+                return payload!;
             }
         }
 
         private static async Task<HttpResponseMessage> SendTokenRequestAsync(
-            string spDc,
-            IEnumerable<KeyValuePair<string, string>> parameters)
+            HttpClient tokenClient,
+            IEnumerable<KeyValuePair<string, string>> parameters,
+            string? spDc)
         {
             var query = string.Join("&", parameters.Select(t => $"{WebUtility.UrlEncode(t.Key)}={WebUtility.UrlEncode(t.Value)}"));
             using var request = new HttpRequestMessage(HttpMethod.Get, TokenUrl + "?" + query);
@@ -434,14 +458,17 @@ namespace Lyricify.Lyrics.Providers.Web.Spotify
             request.Headers.TryAddWithoutValidation("App-Platform", "WebPlayer");
             request.Headers.TryAddWithoutValidation("Origin", "https://open.spotify.com");
             request.Headers.TryAddWithoutValidation("Referer", "https://open.spotify.com/");
-            request.Headers.TryAddWithoutValidation("Cookie", $"sp_dc={spDc}");
-            return await _httpClient.SendAsync(request).ConfigureAwait(false);
+            if (!string.IsNullOrWhiteSpace(spDc))
+            {
+                request.Headers.TryAddWithoutValidation("Cookie", $"sp_dc={spDc}");
+            }
+            return await tokenClient.SendAsync(request).ConfigureAwait(false);
         }
 
-        private async Task<List<KeyValuePair<string, string>>> BuildTokenParametersAsync(bool useLegacyParameters = false)
+        private async Task<List<KeyValuePair<string, string>>> BuildTokenParametersAsync(HttpClient tokenClient, bool useLegacyParameters = false)
         {
             using var serverTimeRequest = new HttpRequestMessage(HttpMethod.Get, ServerTimeUrl);
-            using var serverTimeResponse = await _httpClient.SendAsync(serverTimeRequest).ConfigureAwait(false);
+            using var serverTimeResponse = await tokenClient.SendAsync(serverTimeRequest).ConfigureAwait(false);
             serverTimeResponse.EnsureSuccessStatusCode();
             var serverTimeText = await serverTimeResponse.Content.ReadAsStringAsync().ConfigureAwait(false);
             var serverTime = JObject.Parse(serverTimeText)["serverTime"]?.Value<long>()
