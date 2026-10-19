@@ -1,6 +1,8 @@
 ﻿using Lyricify.Lyrics.Decrypter.Qrc;
 using Lyricify.Lyrics.Helpers.General;
+using Newtonsoft.Json.Linq;
 using System.ComponentModel;
+using System.Net.Http.Headers;
 using System.Text;
 using System.Xml;
 
@@ -11,6 +13,12 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
         protected override string HttpRefer => "https://c.y.qq.com/";
 
         protected override Dictionary<string, string>? AdditionalHeaders => null;
+
+        private const string SearchModule = "music.search.SearchCgiService";
+        private const string MobileSearchMethod = "DoSearchForQQMusicMobile";
+        private const string MobileSearchRequestKey = SearchModule + "." + MobileSearchMethod;
+        // Android 20.8.5.8 的协议版本，与该版本的 UA 和 comm 保持一致。
+        private const string MobileClientVersion = "20080508";
 
         private static readonly DateTime _dtFrom = new(1970, 1, 1, 8, 0, 0, 0, DateTimeKind.Local);
 
@@ -30,6 +38,9 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             [Description("歌单")] PLAYLIST_ID = 2,
         }
 
+        /// <summary>
+        /// 使用 Desktop 接口搜索，保留既有调用方的请求和返回结构。
+        /// </summary>
         public async Task<MusicFcgApiResult?> Search(string keyword, SearchTypeEnum searchType)
         {
             // 0单曲 2专辑 1歌手 3歌单 7歌词 12mv
@@ -45,8 +56,9 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
                 {
                     "req_1", new Dictionary<string, object>
                     {
+                        // 单曲、专辑和歌单均保持原有 Desktop 结构。
                         { "method", "DoSearchForQQMusicDesktop" },
-                        { "module", "music.search.SearchCgiService" },
+                        { "module", SearchModule },
                         {
                             "param", new Dictionary<string, object>
                             {
@@ -60,18 +72,174 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
                 }
             };
 
-            var resp = await PostAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
+            var resp = await PostAsync("https://u6.y.qq.com/cgi-bin/musicu.fcg", data);
 
             return resp.ToEntity<MusicFcgApiResult>();
         }
 
+        /// <summary>
+        /// 使用原有 Desktop 备用入口搜索单曲。
+        /// </summary>
         public async Task<MusicFcgApiAlternativeResult?> SearchAlternative(string keyword)
         {
-            string data = "{\"music.search.SearchCgiService\": {\"method\": \"DoSearchForQQMusicDesktop\",\"module\": \"music.search.SearchCgiService\",\"param\": {\"num_per_page\": 10,\"page_num\": 1,\"query\": \"" + keyword + "\",\"search_type\": 0}}}";
+            var data = new Dictionary<string, object>
+            {
+                [SearchModule] = new
+                {
+                    method = "DoSearchForQQMusicDesktop",
+                    module = SearchModule,
+                    param = new
+                    {
+                        num_per_page = 10,
+                        page_num = 1,
+                        query = keyword,
+                        search_type = 0,
+                    }
+                }
+            };
 
-            var resp = await PostAsync("https://u.y.qq.com/cgi-bin/musicu.fcg", data);
-
+            var resp = await PostAsync("https://u6.y.qq.com/cgi-bin/musicu.fcg", data);
             return resp.ToEntity<MusicFcgApiAlternativeResult>();
+        }
+
+        /// <summary>
+        /// 使用 Mobile 接口搜索单曲，并映射到现有的 Song.List 返回路径。
+        /// </summary>
+        public async Task<MusicFcgApiResult?> SearchMobile(string keyword)
+        {
+            var resp = await SearchMobileAsync(keyword, 30);
+            return ParseMobileSearchResponse<MusicFcgApiResult>(resp, "req_1");
+        }
+
+        /// <summary>
+        /// 使用 Mobile 接口搜索单曲，返回备用入口使用的响应模型。
+        /// </summary>
+        public async Task<MusicFcgApiAlternativeResult?> SearchMobileAlternative(string keyword)
+        {
+            var resp = await SearchMobileAsync(keyword, 10);
+            return ParseMobileSearchResponse<MusicFcgApiAlternativeResult>(resp, SearchModule);
+        }
+
+        private async Task<string> SearchMobileAsync(string keyword, int pageSize)
+        {
+            var data = new Dictionary<string, object>
+            {
+                ["comm"] = new
+                {
+                    ct = "11",
+                    // 匿名调用实测中 ct=11 与 cv 同发会得到空结果，仅保留协议版本 v。
+                    v = MobileClientVersion,
+                    tmeLoginType = "0",
+                    tmeLoginMethod = "0",
+                },
+                [MobileSearchRequestKey] = new
+                {
+                    module = SearchModule,
+                    method = MobileSearchMethod,
+                    param = new
+                    {
+                        query = keyword,
+                        highlight = 1,
+                        // 未持有官方 Session 或 UI 搜索上下文时使用原版的空值分支。
+                        searchid = string.Empty,
+                        sub_searchid = 0,
+                        search_type = 0,
+                        nqc_flag = 0,
+                        sin = 0,
+                        // 官方窗口固定为 sin + 30，与可配置的每页数量独立。
+                        ein = 30,
+                        page_num = 1,
+                        num_per_page = pageSize,
+                        cat = 2,
+                        grp = 1,
+                        remoteplace = string.Empty,
+                        from = string.Empty,
+                        multi_zhida = 1,
+                        sem = 0,
+                        related_data = string.Empty,
+                        ambi_data = string.Empty,
+                    }
+                }
+            };
+
+            using var request = new HttpRequestMessage(HttpMethod.Post, "https://u6.y.qq.com/cgi-bin/musicu.fcg")
+            {
+                Content = new ByteArrayContent(Encoding.UTF8.GetBytes(data.ToJson()!)),
+            };
+            // 原版 POST 使用此 Content-Type，正文仍是 UTF-8 JSON。
+            request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/x-www-form-urlencoded");
+            request.Headers.TryAddWithoutValidation("User-Agent", $"QQMusic {MobileClientVersion}(android)");
+            request.Headers.TryAddWithoutValidation("Accept", "*/*");
+
+            // 保留调用方显式提供的会话和请求头，默认匿名请求不附带 Cookie。
+            var cookie = HttpCookie;
+            if (!string.IsNullOrEmpty(cookie))
+                request.Headers.TryAddWithoutValidation("Cookie", cookie);
+            var additionalHeaders = AdditionalHeaders;
+            if (additionalHeaders is not null)
+            {
+                foreach (var header in additionalHeaders)
+                {
+                    if (request.Headers.Any(existing =>
+                        string.Equals(existing.Key, header.Key, StringComparison.OrdinalIgnoreCase)))
+                        request.Headers.Remove(header.Key);
+                    request.Headers.TryAddWithoutValidation(header.Key, header.Value);
+                }
+            }
+
+            using var response = await HttpClient.SendAsync(request);
+            response.EnsureSuccessStatusCode();
+            return await response.Content.ReadAsStringAsync();
+        }
+
+        private static T? ParseMobileSearchResponse<T>(string response, string requestKey) where T : class
+        {
+            var json = response.ToEntity<JObject>();
+            if (json?[MobileSearchRequestKey] is JObject mobileRequest)
+            {
+                // 请求使用官方完整别名，对外继续保留既有模型的模块路径。
+                json[requestKey] = mobileRequest;
+                json.Remove(MobileSearchRequestKey);
+            }
+            if (json?[requestKey] is JObject request && request["data"] is JObject data &&
+                data["body"] is JObject body && body["item_song"] is JArray songs)
+            {
+                RemoveSearchHighlights(songs);
+                // 保持公开的 Song.List 路径、歌曲字段和 grp 子项。
+                body["song"] = new JObject { ["list"] = songs };
+            }
+            return json?.ToObject<T>();
+        }
+
+        private static void RemoveSearchHighlights(JArray songs)
+        {
+            foreach (var song in songs.OfType<JObject>())
+            {
+                RemoveSearchHighlights(song);
+                if (song["album"] is JObject album)
+                    RemoveSearchHighlights(album);
+                if (song["singer"] is JArray singers)
+                {
+                    foreach (var singer in singers.OfType<JObject>())
+                        RemoveSearchHighlights(singer);
+                }
+                if (song["grp"] is JArray group)
+                    RemoveSearchHighlights(group);
+            }
+        }
+
+        private static void RemoveSearchHighlights(JObject item)
+        {
+            foreach (var property in item.Properties())
+            {
+                if (property.Name is "name" or "title" or "subtitle" &&
+                    property.Value.Type == JTokenType.String)
+                {
+                    // QQ Music 的高亮标记不是曲目元数据，不能带入匹配文本。
+                    property.Value = property.Value.Value<string>()!
+                        .Replace("<em>", string.Empty).Replace("</em>", string.Empty);
+                }
+            }
         }
 
         public async Task<AlbumResult?> GetAlbum(string albumMid)
