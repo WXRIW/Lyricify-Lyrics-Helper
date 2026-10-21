@@ -4,7 +4,12 @@ Lyricify 家族中的 .NET 歌词工具库，为 Lyricify 歌词相关功能竭�
 
 ## 主要功能
 
-### 歌词格式
+- 歌词格式识别、解析和生成
+- 歌曲搜索、匹配与歌词获取
+- 逐行、逐字歌词处理，支持翻译和多语言发音
+- 歌词优化、时间偏移、解密与中文简繁转换
+
+## 支持的歌词格式
 
 | 格式 | 解析 | 生成 | 说明 |
 | --- | :---: | :---: | --- |
@@ -18,52 +23,26 @@ Lyricify 家族中的 .NET 歌词工具库，为 Lyricify 歌词相关功能竭�
 | Spotify (JSON) | ✓ | — | 未同步、逐行或逐字歌词 |
 | Musixmatch (JSON) | ✓ | — | 未同步、逐行或逐字歌词 |
 
-`ParseHelper` 和 `GenerateHelper` 分别提供统一的解析、生成入口；`TypeHelper` 用于自动识别格式、转换类型以及获取格式的显示名称。
+`ParseHelper` 和 `GenerateHelper` 分别提供统一的解析、生成入口，详细用法见[歌词解析与处理](docs/lyrics.md)。
 
-格式识别还支持 QRC (XML)、网易云音乐完整 YRC (JSON) 和 Apple Music (JSON) 等原始封装类型。
-
-### 歌曲搜索与在线接口
+## 歌曲搜索与在线接口
 
 `SearchHelper` 支持下表中的全部来源，可根据标题、艺人、专辑和时长查找最匹配的歌曲。
 
-| 来源 | 歌词能力 | 其他常用接口 | 凭据要求 |
-| --- | --- | --- | --- |
-| QQ 音乐 | 获取歌词及翻译 | 歌曲、专辑、歌单和播放链接 | 无需配置 |
-| 网易云音乐 | 获取 LRC、YRC 等歌词数据 | 歌曲、专辑和歌单 | 无需配置 |
-| 酷狗音乐 | 搜索歌词并获取 KRC | 歌曲搜索 | 无需配置 |
-| 汽水音乐 | 从曲目详情获取歌词信息 | 曲目详情 | 无需配置 |
-| Apple Music | 获取 TTML 歌词 | 曲目搜索 | 获取歌词必须提供 Media User Token；Access Token 自动获取 |
-| Musixmatch | 获取逐字、逐行或未同步歌词及翻译 | 曲目匹配 | User Token 自动获取，也可手动设置 |
-| Spotify | 获取未同步、逐行或逐字歌词 | 曲目搜索 | 必须提供 `sp_dc` Cookie |
-| LRCLIB | 获取同步或纯文本歌词 | 按曲目信息搜索、按 ID 查询 | 无需配置 |
+| 来源 | 歌词能力 | 其他常用接口 |
+| --- | --- | --- |
+| QQ 音乐 | 获取歌词及翻译 | 歌曲、专辑、歌单和播放链接 |
+| 网易云音乐 | 获取 LRC、YRC 等歌词数据 | 歌曲、专辑和歌单 |
+| 酷狗音乐 | 搜索歌词并获取 KRC | 歌曲搜索 |
+| 汽水音乐 | 从曲目详情获取歌词信息 | 曲目详情 |
+| Apple Music | 获取 TTML 歌词 | 曲目搜索 |
+| Musixmatch | 获取逐字、逐行或未同步歌词及翻译 | 曲目匹配 |
+| Spotify | 获取未同步、逐行或逐字歌词 | 曲目搜索 |
+| LRCLIB | 获取同步或纯文本歌词 | 按曲目信息搜索、按 ID 查询 |
 
-- 已有歌曲信息、需要寻找对应平台曲目时，使用 `SearchHelper`
-- 已知来源、曲目 ID 或需要调用特定平台能力时，使用 `ProviderHelper`
-
-在线接口依赖对应服务的可用性，返回结果也可能受到账号权限和地区限制。
-
-### 歌词优化
-
-- 处理或还原 Explicit 歌词
-- 标准化 YRC、Musixmatch 歌词
-- 识别并处理信息行（标题行）
-- 解析 Apple Music TTML 扩展中的翻译、简体中文替换、歌曲元数据、背景人声和演唱者对齐信息
-
-### 时间轴与结构处理
-
-- 为逐行、逐字歌词添加时间偏移
-- 将逐字歌词降级为逐行歌词等较低同步级别
-- 使用统一模型表示未同步、逐行、逐字和混合同步歌词
-
-### 解密与通用工具
-
-- QRC、KRC 歌词解密与获取帮助
-- 中文简繁转换
-- 字符串和数学帮助方法
+访问凭据和调用示例见[搜索与在线接口](docs/providers.md)。
 
 ## 快速开始
-
-### 引用项目
 
 在解决方案目录中添加项目引用：
 
@@ -71,7 +50,7 @@ Lyricify 家族中的 .NET 歌词工具库，为 Lyricify 歌词相关功能竭�
 dotnet add path/to/YourProject.csproj reference Lyricify.Lyrics.Helper/Lyricify.Lyrics.Helper.csproj
 ```
 
-### 解析与转换
+读取歌词文件并转换为 LRC：
 
 ```csharp
 using Lyricify.Lyrics.Helpers;
@@ -87,71 +66,12 @@ if (lyricsData is not null)
 }
 ```
 
-已知原始格式时，也可以显式传入类型：
+## 文档
 
-```csharp
-var lyricsData = ParseHelper.ParseLyrics(rawLyrics, LyricsRawTypes.Qrc);
-```
-
-### 搜索与获取歌词
-
-```csharp
-using Lyricify.Lyrics.Helpers;
-using Lyricify.Lyrics.Models;
-using Lyricify.Lyrics.Searchers.Helpers;
-using SearchSource = Lyricify.Lyrics.Searchers.Searchers;
-
-var track = new TrackMultiArtistMetadata
-{
-    Title = "RUNAWAY",
-    Artists = new() { "OneRepublic" },
-    Album = "RUNAWAY",
-    AlbumArtists = new() { "OneRepublic" },
-    DurationMs = 143264,
-};
-
-var match = await SearchHelper.Search(
-    track,
-    SearchSource.LRCLIB,
-    CompareHelper.MatchType.Medium);
-
-var lyrics = await ProviderHelper.LRCLIBApi.Get(
-    track.Title,
-    track.Artist!,
-    track.Album,
-    track.DurationMs / 1000d);
-
-Console.WriteLine(lyrics?.SyncedLyrics);
-```
-
-其他在线来源可通过 `ProviderHelper` 中相应的 `QQMusicApi`、`NeteaseApi`、`KugouApi`、`SodaMusicApi`、`AppleMusicApi`、`MusixmatchApi` 和 `SpotifyApi` 访问。
-
-Musixmatch 默认使用 Android API，也可以在创建实例时通过配置委托选择桌面 API，或注入自己的请求发送函数：
-
-```csharp
-var mobileApi = new Lyricify.Lyrics.Providers.Web.Musixmatch.Api();
-var desktopApi = new Lyricify.Lyrics.Providers.Web.Musixmatch.Api(
-    options => options.UseDesktop());
-
-var searcher = new MusixmatchSearcher(desktopApi);
-```
-
-## 项目结构
-
-```text
-Lyricify.Lyrics.Helper/
-├─ Decrypter/        # QRC、KRC 解密
-├─ Generators/       # 歌词生成
-├─ Helpers/          # 统一入口、歌词优化与通用帮助类
-├─ Models/           # 歌词、时间轴和曲目元数据模型
-├─ Parsers/          # 歌词解析
-├─ Providers/Web/    # 在线服务接口与响应模型
-└─ Searchers/        # 歌曲搜索与匹配
-
-Lyricify.Lyrics.Demo/
-├─ Program.cs        # 使用示例
-└─ RawLyrics/        # 示例歌词
-```
+- [文档目录与项目结构](docs/README.md)
+- [歌词解析与处理](docs/lyrics.md)
+- [搜索与在线接口](docs/providers.md)
+- [多语言发音](docs/pronunciation.md)
 
 ## Lyricify 家族
 
@@ -178,6 +98,7 @@ Lyricify Lyrics Helper 是 Lyricify 家族的开源成员之一，专注于为 L
 
 特别感谢 [@cnbluefire](https://github.com/cnbluefire) 和 [@Raspberry Kan](https://github.com/Raspberry-Monster) 提供的帮助与支持。
 
-#### 感谢以下第三方代码
+### 感谢以下第三方代码
+
 - [LyricParser](https://github.com/HyPlayer/LyricParser)（MIT License）
 - [163MusicLyrics](https://github.com/jitwxs/163MusicLyrics)（Apache-2.0 License）
