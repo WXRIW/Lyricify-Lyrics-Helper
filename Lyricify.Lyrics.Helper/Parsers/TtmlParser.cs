@@ -8,7 +8,7 @@ namespace Lyricify.Lyrics.Parsers
     /// <summary>
     /// Apple Music TTML parser
     /// </summary>
-    public static class TtmlParser
+    public static partial class TtmlParser
     {
         private static readonly XNamespace NsTtml = "http://www.w3.org/ns/ttml";
         private static readonly XNamespace NsTtm = "http://www.w3.org/ns/ttml#metadata";
@@ -91,7 +91,26 @@ namespace Lyricify.Lyrics.Parsers
             public List<string> SpanTexts { get; init; } = new();
         }
 
+        // Keep the original two-argument signature for compiled consumers. The exact
+        // one-argument overload also keeps calls with omitted options unambiguous.
+        public static LyricsData Parse(string ttml)
+            => Parse(ttml, true, true, null);
+
         public static LyricsData Parse(string ttml, bool useEmbeddedSimplifiedChineseLyrics = true)
+            => Parse(ttml, useEmbeddedSimplifiedChineseLyrics, true, null);
+
+        /// <summary>
+        /// Parses TTML lyrics and maps supported native pronunciation metadata into the shared lyric models by default.
+        /// Text splitting remains the responsibility of AppleMusic.PrepareLyrics.
+        /// </summary>
+        public static LyricsData Parse(string ttml, bool useEmbeddedSimplifiedChineseLyrics = true,
+            bool parsePronunciations = true, Action<string>? diagnostic = null)
+            => parsePronunciations
+                ? ParsePronunciationDocument(ttml, useEmbeddedSimplifiedChineseLyrics, diagnostic)
+                : ParseCore(ttml, useEmbeddedSimplifiedChineseLyrics);
+
+        private static LyricsData ParseCore(string ttml, bool useEmbeddedSimplifiedChineseLyrics,
+            XDocument? document = null, List<PronunciationLine>? pronunciationLines = null)
         {
             var data = new LyricsData
             {
@@ -111,7 +130,7 @@ namespace Lyricify.Lyrics.Parsers
             XDocument doc;
             try
             {
-                doc = XDocument.Parse(ttml, LoadOptions.PreserveWhitespace);
+                doc = document ?? XDocument.Parse(ttml, LoadOptions.PreserveWhitespace);
             }
             catch
             {
@@ -127,12 +146,14 @@ namespace Lyricify.Lyrics.Parsers
                 data.TrackMetadata!.Language = new List<string> { rootLanguage!.Trim() };
 
             var pNodes = doc.Descendants(NsTtml + "p").ToList();
+            Func<string?, int?> sourceTimeParser = pronunciationLines == null
+                ? ParseTimeMs : ParseSourcePronunciationTime;
             var alignmentByLine = pNodes
                 .Select((node, index) => new
                 {
                     Node = node,
                     Index = index,
-                    StartTime = GetLineStartTime(node) ?? int.MaxValue
+                    StartTime = GetLineStartTime(node, sourceTimeParser) ?? int.MaxValue
                 })
                 .OrderBy(line => line.StartTime)
                 .ThenBy(line => line.Index)
@@ -149,7 +170,22 @@ namespace Lyricify.Lyrics.Parsers
 
                 var mainSyllables = new List<SyllableInfo>();
                 var bgSyllables = new List<SyllableInfo>();
-                CollectSyllablesFromNodes(p.Nodes(), mainSyllables, bgSyllables, isBackgroundContext: false);
+                var backgroundGroups = pronunciationLines == null ? null : new List<SourceBackground>();
+                CollectSyllablesFromNodes(p.Nodes(), mainSyllables, bgSyllables, isBackgroundContext: false,
+                    onCollected: backgroundGroups == null ? null : (element, syllable, background) =>
+                    {
+                        if (!background) return;
+                        var group = element.AncestorsAndSelf().TakeWhile(ancestor => ancestor != p)
+                            .LastOrDefault(IsBackgroundSpan);
+                        if (group == null) return;
+                        var sourceGroup = backgroundGroups.FirstOrDefault(item => item.Element == group);
+                        if (sourceGroup == null)
+                        {
+                            sourceGroup = new SourceBackground { Element = group };
+                            backgroundGroups.Add(sourceGroup);
+                        }
+                        sourceGroup.Syllables.Add(syllable);
+                    }, parseTime: sourceTimeParser);
 
                 ILineInfo? line = null;
 
@@ -160,8 +196,8 @@ namespace Lyricify.Lyrics.Parsers
                 }
                 else
                 {
-                    var begin = ParseTimeMs((string?)p.Attribute("begin"));
-                    var end = ParseTimeMs((string?)p.Attribute("end"));
+                    var begin = sourceTimeParser((string?)p.Attribute("begin"));
+                    var end = sourceTimeParser((string?)p.Attribute("end"));
                     var text = NormalizeText(p.Value).Trim();
 
                     if (!string.IsNullOrWhiteSpace(text) && begin.HasValue)
@@ -220,6 +256,14 @@ namespace Lyricify.Lyrics.Parsers
                 }
 
                 data.Lines!.Add(line);
+                pronunciationLines?.Add(new PronunciationLine
+                {
+                    Element = p,
+                    Line = line,
+                    Index = data.Lines.Count - 1,
+                    BackgroundSyllables = bgSyllables,
+                    BackgroundGroups = backgroundGroups!
+                });
             }
 
             if (anyLineSynced && anySyllableSynced) data.File!.SyncTypes = SyncTypes.MixedSynced;
@@ -466,8 +510,10 @@ namespace Lyricify.Lyrics.Parsers
         // =========================
         // Syllable collection (main + background)
         // =========================
-        private static void CollectSyllablesFromNodes(IEnumerable<XNode> nodes, List<SyllableInfo> main, List<SyllableInfo> bg, bool isBackgroundContext)
+        private static void CollectSyllablesFromNodes(IEnumerable<XNode> nodes, List<SyllableInfo> main, List<SyllableInfo> bg, bool isBackgroundContext,
+            Action<XElement, SyllableInfo, bool>? onCollected = null, Func<string?, int?>? parseTime = null)
         {
+            parseTime ??= ParseTimeMs;
             foreach (var node in nodes)
             {
                 if (node is XText xt)
@@ -486,8 +532,8 @@ namespace Lyricify.Lyrics.Parsers
                         var beginAttr = (string?)el.Attribute("begin");
                         if (!string.IsNullOrWhiteSpace(beginAttr))
                         {
-                            var beginMs = ParseTimeMs(beginAttr);
-                            var endMs = ParseTimeMs((string?)el.Attribute("end")) ?? beginMs;
+                            var beginMs = parseTime(beginAttr);
+                            var endMs = parseTime((string?)el.Attribute("end")) ?? beginMs;
 
                             if (beginMs.HasValue)
                             {
@@ -498,19 +544,21 @@ namespace Lyricify.Lyrics.Parsers
 
                                 if (raw.Length > 0)
                                 {
-                                    (isBg ? bg : main).Add(new SyllableInfo(raw, beginMs.Value, endMs!.Value));
+                                    var syllable = new SyllableInfo(raw, beginMs.Value, endMs!.Value);
+                                    (isBg ? bg : main).Add(syllable);
+                                    onCollected?.Invoke(el, syllable, isBg);
                                 }
                             }
                         }
                         else
                         {
                             // container span
-                            CollectSyllablesFromNodes(el.Nodes(), main, bg, isBg);
+                            CollectSyllablesFromNodes(el.Nodes(), main, bg, isBg, onCollected, parseTime);
                         }
                     }
                     else
                     {
-                        CollectSyllablesFromNodes(el.Nodes(), main, bg, isBackgroundContext);
+                        CollectSyllablesFromNodes(el.Nodes(), main, bg, isBackgroundContext, onCollected, parseTime);
                     }
                 }
             }
@@ -872,14 +920,15 @@ namespace Lyricify.Lyrics.Parsers
         // =========================
         private static string NormalizeText(string text) => text.Replace("\r", "").Replace("\n", "");
 
-        private static int? GetLineStartTime(XElement line)
+        private static int? GetLineStartTime(XElement line, Func<string?, int?>? parseTime = null)
         {
-            var lineStart = ParseTimeMs((string?)line.Attribute("begin"));
+            parseTime ??= ParseTimeMs;
+            var lineStart = parseTime((string?)line.Attribute("begin"));
             if (lineStart.HasValue)
                 return lineStart;
 
             var spanStarts = line.Descendants(NsTtml + "span")
-                .Select(span => ParseTimeMs((string?)span.Attribute("begin")))
+                .Select(span => parseTime((string?)span.Attribute("begin")))
                 .Where(time => time.HasValue)
                 .Select(time => time!.Value)
                 .ToList();

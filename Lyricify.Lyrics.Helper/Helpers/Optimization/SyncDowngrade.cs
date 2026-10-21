@@ -46,8 +46,9 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 var end = syllables.Last().EndTime;
 
                 // 如果带翻译/注音信息：生成 FullLineInfo 并复制字典 & 注音
-                if (line is IFullLineInfo full)
+                if (line is IFullLineInfo || line.GetPronunciations().Count > 0)
                 {
+                    var full = line as IFullLineInfo;
                     var downgradedFull = new FullLineInfo
                     {
                         Text = text,
@@ -55,12 +56,11 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                         EndTime = end,
                         LyricsAlignment = syllableLine.LyricsAlignment,
                         SubLine = sub,
-                        Pronunciation = full.Pronunciation,
-                        Translations = full.Translations != null
+                        Translations = full?.Translations != null
                             ? new Dictionary<string, string>(full.Translations)
                             : new Dictionary<string, string>()
                     };
-
+                    PronunciationHelper.CopyPronunciations(line, downgradedFull);
                     return downgradedFull;
                 }
 

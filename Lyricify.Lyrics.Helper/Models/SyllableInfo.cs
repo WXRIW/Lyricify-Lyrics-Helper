@@ -18,6 +18,11 @@
         public int StartTime { get; set; }
 
         public int EndTime { get; set; }
+
+        /// <summary>Language-tagged pronunciation text for this lyric unit, independent of its source format.</summary>
+        public Dictionary<string, List<string>> Pronunciations { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public bool ShouldSerializePronunciations() => Pronunciations is { Count: > 0 };
     }
 
     public class FullSyllableInfo : ISyllableInfo
@@ -41,6 +46,17 @@
         public int EndTime => _endTime ??= SubItems.Last().EndTime;
 
         public List<SyllableInfo> SubItems { get; set; }
+
+        /// <summary>Language-tagged pronunciations shared by all lyric units in this group, independent of source format.</summary>
+        public Dictionary<string, List<string>> GroupPronunciations { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public bool ShouldSerializeGroupPronunciations() => GroupPronunciations.Count > 0;
+
+        /// <summary>Read-only view using group-owned text for each language, or aggregating child pronunciations.</summary>
+        public IReadOnlyDictionary<string, IReadOnlyList<string>> Pronunciations =>
+            Helpers.PronunciationHelper.Aggregate(SubItems, GroupPronunciations);
+
+        public bool ShouldSerializePronunciations() => Pronunciations.Count > 0;
 
         /// <summary>
         /// Refresh preloaded properties if SubItems have been updated

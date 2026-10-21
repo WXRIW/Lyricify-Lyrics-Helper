@@ -14,7 +14,8 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             var merged = new List<ISyllableInfo>(line.Syllables.Count);
             foreach (var current in line.Syllables)
             {
-                if (merged.Count > 0 && ShouldMerge(merged[^1].Text, current.Text))
+                if (merged.Count > 0 && !HasSharedPronunciation(merged[^1]) && !HasSharedPronunciation(current)
+                    && ShouldMerge(merged[^1].Text, current.Text))
                 {
                     merged[^1] = MergeItems(merged[^1], current);
                 }
@@ -27,6 +28,9 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             line.Syllables = merged;
             line.RefreshProperties();
         }
+
+        private static bool HasSharedPronunciation(ISyllableInfo item)
+            => item is FullSyllableInfo group && group.GroupPronunciations.Count > 0;
 
         public static bool IsChineseOrJapaneseCharacter(char character)
         {
@@ -79,14 +83,13 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             if (item is FullSyllableInfo full)
             {
                 return full.SubItems
-                    .Select(part => new SyllableInfo(part.Text, part.StartTime, part.EndTime))
+                    .Select(part => PronunciationHelper.Clone(part))
                     .ToList();
             }
 
-            return new List<SyllableInfo>
-            {
-                new(item.Text, item.StartTime, item.EndTime),
-            };
+            var copy = new SyllableInfo(item.Text, item.StartTime, item.EndTime);
+            PronunciationHelper.CopyPronunciations(item, copy);
+            return new List<SyllableInfo> { copy };
         }
     }
 }

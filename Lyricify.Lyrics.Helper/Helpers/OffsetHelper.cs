@@ -47,8 +47,10 @@ namespace Lyricify.Lyrics.Helpers
                         subItems.StartTime -= offset;
                         subItems.EndTime -= offset;
                     }
+                    fullSyllableInfo.RefreshProperties();
                 }
             }
+            line.RefreshProperties();
         }
     }
 }

@@ -8,7 +8,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
         #region Prepare Lyrics
 
         /// <summary>
-        /// 预处理歌词
+        /// 对通用歌词模型中的原文和发音应用 Apple Music 的预处理规则，可处理任意来源的数据。
         /// </summary>
         public static void PrepareLyrics(List<ILineInfo> list)
         {
@@ -20,6 +20,9 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             }
         }
 
+        /// <summary>
+        /// 对通用歌词模型中的单行原文和发音应用 Apple Music 的预处理规则。
+        /// </summary>
         public static void PrepareLyrics(ILineInfo line)
         {
             if (line == null) return;
@@ -50,28 +53,114 @@ namespace Lyricify.Lyrics.Helpers.Optimization
 
             foreach (var s in line.Syllables)
             {
-                var text = NormalizeText(s.Text ?? string.Empty);
-
-                if (string.IsNullOrEmpty(text))
-                {
-                    expanded.Add(new SyllableInfo(string.Empty, s.StartTime, s.EndTime));
-                    continue;
-                }
-
-                if (ShouldSplitToken(text))
-                {
-                    foreach (var part in SplitIntoTokens(text, s.StartTime, s.EndTime))
-                        expanded.Add(part);
-                }
-                else
-                {
-                    expanded.Add(new SyllableInfo(text, s.StartTime, s.EndTime));
-                }
+                expanded.AddRange(PrepareSyllable(s));
             }
 
             // Step 2: merge consecutive syllables into one word via FullSyllableInfo.SubItems
             line.Syllables = expanded;
+            line.RefreshProperties();
             SyllableWordMerger.Merge(line);
+        }
+
+        private static IEnumerable<ISyllableInfo> PrepareSyllable(ISyllableInfo source)
+        {
+            // Shared pronunciation belongs to exactly this group's original units.
+            // Preparing its children must neither widen that group nor copy its text to them.
+            if (source is FullSyllableInfo full && source.GetPronunciations().Count > 0)
+            {
+                if (full.GroupPronunciations.Count == 0)
+                    return full.SubItems.SelectMany(PrepareSyllable).ToList();
+
+                var items = new List<SyllableInfo>();
+                foreach (var item in full.SubItems)
+                {
+                    var prepared = PrepareSyllable(item).ToList();
+                    if (prepared.OfType<FullSyllableInfo>().Any(part => part.GroupPronunciations.Count > 0))
+                    {
+                        // SubItems is a flat list. Keep this original unit intact when
+                        // splitting it would require a nested shared pronunciation group.
+                        items.Add(PronunciationHelper.Clone(item, NormalizeText(item.Text ?? string.Empty)));
+                    }
+                    else
+                        items.AddRange(prepared.SelectMany(FlattenPreparedSyllable));
+                }
+                var group = new FullSyllableInfo(items);
+                PronunciationHelper.CopyPronunciations(full, group);
+                return new ISyllableInfo[] { group };
+            }
+
+            var text = NormalizeText(source.Text ?? string.Empty);
+            var parts = !string.IsNullOrEmpty(text) && ShouldSplitToken(text)
+                ? SplitIntoTokens(text, source.StartTime, source.EndTime).ToList()
+                : new List<SyllableInfo> { new(text, source.StartTime, source.EndTime) };
+
+            if (parts.Count == 1)
+            {
+                PronunciationHelper.CopyPronunciations(source, parts[0]);
+                return parts;
+            }
+
+            FullSyllableInfo? retainedGroup = null;
+            foreach (var pronunciation in source.GetPronunciations())
+            {
+                var values = pronunciation.Value;
+                var tokens = values.Count == parts.Count
+                    ? values.ToList()
+                    : SplitPronunciationAtWhitespace(string.Concat(values));
+
+                if (tokens.Count == parts.Count)
+                {
+                    for (var i = 0; i < parts.Count; i++)
+                        parts[i].Pronunciations[pronunciation.Key] = new List<string> { tokens[i] };
+                }
+                else
+                {
+                    retainedGroup ??= new FullSyllableInfo(parts);
+                    retainedGroup.GroupPronunciations[pronunciation.Key] = new List<string>(values);
+                }
+            }
+
+            return retainedGroup != null ? new ISyllableInfo[] { retainedGroup } : parts;
+        }
+
+        private static IEnumerable<SyllableInfo> FlattenPreparedSyllable(ISyllableInfo syllable)
+        {
+            if (syllable is FullSyllableInfo full)
+                return full.SubItems;
+            if (syllable is SyllableInfo leaf)
+                return new[] { leaf };
+
+            var copy = new SyllableInfo(syllable.Text, syllable.StartTime, syllable.EndTime);
+            PronunciationHelper.CopyPronunciations(syllable, copy);
+            return new[] { copy };
+        }
+
+        private static List<string> SplitPronunciationAtWhitespace(string text)
+        {
+            var tokens = new List<string>();
+            var start = 0;
+            var hasText = false;
+            var separator = false;
+            for (var i = 0; i < text.Length; i++)
+            {
+                if (char.IsWhiteSpace(text[i]))
+                {
+                    separator = hasText;
+                }
+                else
+                {
+                    if (separator)
+                    {
+                        tokens.Add(text.Substring(start, i - start));
+                        start = i;
+                    }
+                    hasText = true;
+                    separator = false;
+                }
+            }
+            if (start < text.Length)
+                tokens.Add(text.Substring(start));
+            return tokens;
         }
 
         private static void RemoveRedundantTranslations(ILineInfo line, bool isBackground)
@@ -192,7 +281,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 var text = si.Text?.TrimStart() ?? string.Empty;
                 if (text == si.Text) return s;
 
-                return new SyllableInfo(text, si.StartTime, si.EndTime);
+                return PronunciationHelper.Clone(si, text);
             }
 
             if (s is FullSyllableInfo fi && fi.SubItems.Count > 0)
@@ -202,7 +291,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
 
                 if (trimmed != first.Text)
                 {
-                    fi.SubItems[0] = new SyllableInfo(trimmed, first.StartTime, first.EndTime);
+                    fi.SubItems[0] = PronunciationHelper.Clone(first, trimmed);
                     fi.RefreshProperties();
                 }
                 return fi;
@@ -218,7 +307,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 var text = si.Text?.TrimEnd() ?? string.Empty;
                 if (text == si.Text) return s;
 
-                return new SyllableInfo(text, si.StartTime, si.EndTime);
+                return PronunciationHelper.Clone(si, text);
             }
 
             if (s is FullSyllableInfo fi && fi.SubItems.Count > 0)
@@ -229,7 +318,7 @@ namespace Lyricify.Lyrics.Helpers.Optimization
 
                 if (trimmed != item.Text)
                 {
-                    fi.SubItems[last] = new SyllableInfo(trimmed, item.StartTime, item.EndTime);
+                    fi.SubItems[last] = PronunciationHelper.Clone(item, trimmed);
                     fi.RefreshProperties();
                 }
                 return fi;
@@ -638,9 +727,9 @@ namespace Lyricify.Lyrics.Helpers.Optimization
             {
                 var fullRepl = new FullLineInfo(repl)
                 {
-                    Pronunciation = full.Pronunciation,
                     Translations = new Dictionary<string, string>(full.Translations)
                 };
+                PronunciationHelper.CopyPronunciations(line, fullRepl);
                 return fullRepl;
             }
 
@@ -709,7 +798,9 @@ namespace Lyricify.Lyrics.Helpers.Optimization
                 return fi;
             }
 
-            return new SyllableInfo(newText, syllable.StartTime, syllable.EndTime);
+            var replacement = new SyllableInfo(newText, syllable.StartTime, syllable.EndTime);
+            PronunciationHelper.CopyPronunciations(syllable, replacement);
+            return replacement;
         }
 
         private static string NormalizeSentenceCasePreserveLength(string s, bool lowerFirst)

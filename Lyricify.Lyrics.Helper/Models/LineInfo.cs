@@ -107,11 +107,31 @@
             EndTime = lineInfo.EndTime;
             LyricsAlignment = lineInfo.LyricsAlignment;
             SubLine = lineInfo.SubLine;
+            Helpers.PronunciationHelper.CopyPronunciations(lineInfo, this);
         }
 
         public Dictionary<string, string> Translations { get; set; } = new();
 
-        public string? Pronunciation { get; set; }
+        internal string? PronunciationOverride { get; set; }
+
+        [Newtonsoft.Json.JsonProperty]
+        internal string? PronunciationLanguage { get; set; }
+
+        public bool ShouldSerializePronunciationLanguage() => PronunciationLanguage != null && Pronunciations is { Count: > 0 };
+
+        public string? Pronunciation
+        {
+            get => PronunciationOverride ?? Helpers.PronunciationHelper.GetDefaultPronunciation(Pronunciations, PronunciationLanguage);
+            set => PronunciationOverride = value;
+        }
+
+        // Serialize only explicit overrides when the multilingual data supplies the text.
+        public bool ShouldSerializePronunciation() => PronunciationOverride != null || Pronunciations is not { Count: > 0 };
+
+        /// <summary>Language-tagged pronunciation text for the whole line, independent of its source format.</summary>
+        public Dictionary<string, List<string>> Pronunciations { get; set; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public bool ShouldSerializePronunciations() => Pronunciations is { Count: > 0 };
     }
 
     public class FullSyllableLineInfo : SyllableLineInfo, IFullLineInfo
@@ -123,6 +143,13 @@
             LyricsAlignment = lineInfo.LyricsAlignment;
             SubLine = lineInfo.SubLine;
             Syllables = lineInfo.Syllables;
+            if (lineInfo is FullSyllableLineInfo full)
+            {
+                foreach (var pair in full.UnassignedPronunciations)
+                    UnassignedPronunciations[pair.Key] = new List<string>(pair.Value);
+                PronunciationLanguage = full.PronunciationLanguage;
+                PronunciationOverride = full.PronunciationOverride;
+            }
         }
 
         public FullSyllableLineInfo(SyllableLineInfo lineInfo, string? chineseTranslation = null, string? pronunciation = null) : this(lineInfo)
@@ -140,7 +167,31 @@
 
         public Dictionary<string, string> Translations { get; set; } = new();
 
-        public string? Pronunciation { get; set; }
+        internal string? PronunciationOverride { get; set; }
+
+        [Newtonsoft.Json.JsonProperty]
+        internal string? PronunciationLanguage { get; set; }
+
+        public bool ShouldSerializePronunciationLanguage() => PronunciationLanguage != null && Pronunciations.Count > 0;
+
+        public string? Pronunciation
+        {
+            get => PronunciationOverride ?? Helpers.PronunciationHelper.GetDefaultPronunciation(Pronunciations, PronunciationLanguage);
+            set => PronunciationOverride = value;
+        }
+
+        public bool ShouldSerializePronunciation() => PronunciationOverride != null || Pronunciations.Count == 0;
+
+        [Newtonsoft.Json.JsonProperty]
+        internal Dictionary<string, List<string>> UnassignedPronunciations { get; } = new(StringComparer.OrdinalIgnoreCase);
+
+        public bool ShouldSerializeUnassignedPronunciations() => UnassignedPronunciations.Count > 0;
+
+        /// <summary>Read-only multilingual view of the lyric units and any unassigned whole-line pronunciation.</summary>
+        public IReadOnlyDictionary<string, IReadOnlyList<string>> Pronunciations =>
+            Helpers.PronunciationHelper.Aggregate(Syllables, UnassignedPronunciations);
+
+        public bool ShouldSerializePronunciations() => Pronunciations.Count > 0;
     }
 
     public enum LyricsAlignment
