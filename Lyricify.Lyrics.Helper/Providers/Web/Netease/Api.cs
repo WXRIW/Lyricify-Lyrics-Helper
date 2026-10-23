@@ -14,6 +14,12 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
         protected override Dictionary<string, string>? AdditionalHeaders => null;
 
+        public Dictionary<string, string> SessionCookies { get; set; } = new();
+
+        protected override string? HttpCookie => SessionCookies.Count == 0
+            ? base.HttpCookie
+            : string.Join("; ", SessionCookies.Select(pair => pair.Key + "=" + pair.Value));
+
         // General
         private const string MODULUS = "00e0b509f6259df8642dbc35662901477df22677ec152b5ff68ace615bb7b725152b3ab17a876aea8a5aa76d2e417629ec4ee341f56135fccf695280104e0312ecbda92557c93870114af6c9d05c4f7f0c3685b7a46bee255932575cce10b424d813cfe4875d3e82047b97ddef52741d546b8e289dc6935b3ece0462db0a22b8e7";
         private const string NONCE = "0CoJUm6Qyw8W8jud";
@@ -49,7 +55,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 _ => "1",
             };
 
-            string url = $"http://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={Uri.EscapeDataString(keyword)}&type={type}&offset=0&total=true&limit=20";
+            string url = $"https://music.163.com/api/search/get/web?csrf_token=hlpretag=&hlposttag=&s={Uri.EscapeDataString(keyword)}&type={type}&offset=0&total=true&limit=20";
 
             var res = await GetAsync(url);
 
@@ -69,7 +75,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "total", "true" }
             };
 
-            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
 
             var eapiResult = JsonConvert.DeserializeObject<EapiSearchResult>(raw);
             if (eapiResult is null) return null;
@@ -108,10 +114,24 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         {
             var result = new Dictionary<string, Datum>();
 
-            var urls = await GetSongsUrl(songId, bitrate);
+            SongUrls? urls = null;
+            try
+            {
+                urls = await GetSongsUrl(songId, bitrate);
+            }
+            catch
+            {
+                // The legacy WEAPI is frequently rejected with code -460 on server networks.
+            }
+
+            if (urls?.Code != 200 || urls.Data == null || !urls.Data.Any(x => !string.IsNullOrWhiteSpace(x.Url)))
+            {
+                urls = await GetSongsUrlNew(songId, bitrate);
+            }
+
             if (urls?.Code == 200)
             {
-                foreach (var datum in urls.Data)
+                foreach (var datum in urls.Data ?? Array.Empty<Datum>())
                 {
                     result.Add(datum.Id, datum);
                 }
@@ -136,6 +156,10 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             }
 
             var detailResult = await GetDetail(songIds);
+            if (detailResult == null || detailResult.Code != 200 || detailResult.Songs == null || detailResult.Songs.Length == 0)
+            {
+                detailResult = await GetDetailNew(songIds);
+            }
             if (detailResult == null || detailResult.Code != 200)
             {
                 return result;
@@ -240,7 +264,7 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
                 { "csrf_token", string.Empty }
             };
 
-            var raw = await EapiHelper.PostAsync(url, HttpClient, data);
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
 
             return JsonConvert.DeserializeObject<LyricResult>(raw);
         }
@@ -260,11 +284,32 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
             {
                 { "ids", $"[{string.Join(",", songId)}]" },
                 { "br", bitrate.ToString() },
-                { "csrf_token", string.Empty }
+                { "csrf_token", SessionCookies.GetValueOrDefault("__csrf", string.Empty) }
             };
 
             var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
 
+            return JsonConvert.DeserializeObject<SongUrls>(raw);
+        }
+
+        private async Task<SongUrls?> GetSongsUrlNew(string[] songIds, long bitrate)
+        {
+            const string url = "https://interface3.music.163.com/eapi/song/enhance/player/url/v1";
+            var level = bitrate switch
+            {
+                <= 128000 => "standard",
+                <= 192000 => "higher",
+                <= 320000 => "exhigh",
+                <= 999000 => "lossless",
+                _ => "hires",
+            };
+            var data = new Dictionary<string, string>
+            {
+                { "ids", $"[{string.Join(",", songIds)}]" },
+                { "level", level },
+                { "encodeType", "flac" },
+            };
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
             return JsonConvert.DeserializeObject<SongUrls>(raw);
         }
 
@@ -298,12 +343,61 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
 
                 var raw = await PostAsync(url, Prepare(JsonConvert.SerializeObject(data)));
 
-                return JsonConvert.DeserializeObject<DetailResult>(raw);
+                return ParseDetailResponse(raw);
             }
             catch
             {
                 return null;
             }
+        }
+
+        private async Task<DetailResult?> GetDetailNew(IEnumerable<string> songIds)
+        {
+            const string url = "https://interface3.music.163.com/eapi/v3/song/detail";
+            var ids = songIds.ToArray();
+            if (ids.Length == 0) return null;
+
+            var requests = ids.Select(id => new Dictionary<string, object>
+            {
+                { "id", long.TryParse(id, out var numericId) ? (object)numericId : id },
+                { "v", 0 },
+            });
+            var data = new Dictionary<string, string>
+            {
+                { "c", JsonConvert.SerializeObject(requests) },
+                { "rv", "true" },
+            };
+            var raw = await EapiHelper.PostAsync(url, HttpClient, data, SessionCookies);
+            return ParseDetailResponse(raw);
+        }
+
+        private static DetailResult? ParseDetailResponse(string raw)
+        {
+            // Successful authenticated WEAPI v3 responses use the same short
+            // ar/al/dt fields as EAPI. Still accept older long-field responses.
+            var legacy = JsonConvert.DeserializeObject<DetailResult>(raw);
+            if (legacy?.Songs != null && legacy.Songs.All(song => song.Artists != null && song.Album != null))
+                return legacy;
+
+            var eapi = JsonConvert.DeserializeObject<EapiDetailResult>(raw);
+            if (eapi == null) return null;
+
+            return new DetailResult
+            {
+                Code = eapi.Code,
+                Privileges = eapi.Privileges,
+                Songs = (eapi.Songs ?? Array.Empty<EapiSong>()).Select(song => new Song
+                {
+                    Name = song.Name,
+                    Id = song.Id,
+                    Artists = song.Artists,
+                    Alias = song.Alias,
+                    Album = song.Album,
+                    Duration = song.Duration,
+                    PublishTime = song.PublishTime,
+                    Privilege = song.Privilege,
+                }).ToArray(),
+            };
         }
 
         private Dictionary<string, string> Prepare(string raw)

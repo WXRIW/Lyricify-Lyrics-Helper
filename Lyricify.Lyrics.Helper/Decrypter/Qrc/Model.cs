@@ -5,6 +5,8 @@
         public string? Lyrics { get; set; }
 
         public string? Trans { get; set; }
+
+        public string? Roma { get; set; }
     }
 
     public class SongResponse

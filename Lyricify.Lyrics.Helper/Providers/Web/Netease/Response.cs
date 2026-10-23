@@ -418,6 +418,13 @@ namespace Lyricify.Lyrics.Providers.Web.Netease
         public long Code { get; set; }
     }
 
+    public class EapiDetailResult
+    {
+        public EapiSong[] Songs { get; set; }
+        public Privilege[] Privileges { get; set; }
+        public long Code { get; set; }
+    }
+
 
     public class Al
     {

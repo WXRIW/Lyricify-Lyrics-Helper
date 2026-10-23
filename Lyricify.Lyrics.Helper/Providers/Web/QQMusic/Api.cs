@@ -448,7 +448,8 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
             var result = new QqLyricsResponse
             {
                 Lyrics = "",
-                Trans = ""
+                Trans = "",
+                Roma = ""
             };
 
             foreach (var pair in dict)
@@ -510,11 +511,14 @@ namespace Lyricify.Lyrics.Providers.Web.QQMusic
                         case "ts":
                             result.Trans = s;
                             break;
+                        case "roma":
+                            result.Roma = s;
+                            break;
                     }
                 }
             }
 
-            if (result.Lyrics == "" && result.Trans == "")
+            if (result.Lyrics == "" && result.Trans == "" && result.Roma == "")
             {
                 return null;
             }
